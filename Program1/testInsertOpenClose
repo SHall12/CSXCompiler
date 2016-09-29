@@ -1,0 +1,10 @@
+open
+insert five 5
+dump
+open
+insert six 6
+insert five 7
+dump
+close
+dump
+quit

@@ -1,0 +1,18 @@
+Enter any of the following commands:
+----------------------------------------------------
+open (a new scope)
+close (innermost current scope)
+insert (symbol,integer pair into symbol table)
+lookup (lookup symbol in top scope)
+global (global lookup of symbol in symbol table)
+dump (contents of symbol table)
+quit (quits test driver)
+menu (displays menu
+
+No scope found!
+Enter Symbol: Enter associated integer: No scope found!
+New scope opened!
+Enter Symbol: Enter associated integer: (five:5) entered into symbol table.
+Enter Symbol: Enter associated integer: five already entered into top scope.
+Scope closed!
+Testing Done!

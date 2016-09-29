@@ -1,0 +1,14 @@
+open
+insert five 5
+open
+insert six 6
+dump
+global five
+global eight
+lookup six
+lookup five
+insert five 4
+global five
+close
+global five
+quit

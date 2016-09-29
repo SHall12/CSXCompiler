@@ -1,0 +1,8 @@
+open
+insert FIVE 5
+lookup fiVe
+insert Eight 8
+lookup EIGHT
+dump
+close
+quit

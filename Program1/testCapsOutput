@@ -1,0 +1,20 @@
+Enter any of the following commands:
+----------------------------------------------------
+open (a new scope)
+close (innermost current scope)
+insert (symbol,integer pair into symbol table)
+lookup (lookup symbol in top scope)
+global (global lookup of symbol in symbol table)
+dump (contents of symbol table)
+quit (quits test driver)
+menu (displays menu
+
+New scope opened!
+Enter Symbol: Enter associated integer: (five:5) entered into symbol table.
+Enter a symbol for local lookup: (five:5) found in top scope.
+Enter Symbol: Enter associated integer: (eight:8) entered into symbol table.
+Enter a symbol for local lookup: (eight:8) found in top scope.
+Dumping contents............
+{five=(five:5) eight=(eight:8) }
+Scope closed!
+Testing Done!
