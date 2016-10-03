@@ -35,20 +35,35 @@ class CSXIntLitToken extends CSXToken {
 }
 
 class CSXFloatLitToken extends CSXToken {
-	// Expand - should contain floatValue
+	float floatValue;
+	
+	CSXFloatLitToken(float val, Position P){
+		super(p);
+		floatValue = val;
 }
 
 class CSXIdentifierToken extends CSXToken {
-	// Expand - should contain identifierText
+	String identifierText;
 	
+	CSXIdentifierToken(String str, Position P){
+		super(p);
+		identifierText = str;
 }
 
 class CSXCharLitToken extends CSXToken {
-	// Expand - should contain charValue
+	char charValue;
+	
+	CSXCharLitToken(char chr, Position P){
+		super(p);
+		charValue = chr;
 }
 
 class CSXStringLitToken extends CSXToken {
-	// Expand - should contain stringText
+	String stringText;
+	
+	CSXStringLitToken(String str, Position P){
+		super(p);
+		stringText = str;
 }
 
 // This class is used to track line and column numbers
@@ -86,8 +101,36 @@ class Symbol {
 
 %%
 
-DIGIT=[0-9]
-STRLIT = \"([^\" \\ ]|\\n|\\t|\\\"|\\\\)*\"		// to be fixed
+//--------------------------Reserved words----------------------------
+IF = [iI][fF]
+BOOL = [bB][oO][oO][lL]
+BREAK = [bB][rR][eE][aA][kK]
+INT = [iI][nN][tT]
+CHAR = [cC][hH][aA][rR]
+READ = [rR][eE][aA][dD]
+CLASS = [cC][lL][aA][sS][sS]
+CONST = [cC][oO][nN][sS][tT]
+CONTINUE = [cC][oO][nN][tT][iI][nN][uU][eE]
+ELSE = [eE][lL][sS][eE]
+FALSE = [fF][aA][lL][sS][eE]
+FLOAT = [fL][lL][oO][aA][tT]
+RETURN = [rR][eE][tT][uU][rR][nN]
+TRUE = [tT][rR][uU][eE]
+VOID = [vV][oO][iI][dD]
+PRINT = [pP][rR][iI][nN][tT]
+WHILE = [wW][hH][iI][lL][eE]
+
+//---------------------------Other macros-------------------------------
+DIGIT = [0-9]
+DIGITS = [0-9]+
+LETTER = [A-Za-z]
+/////////for STRLIT, shouldn't it be: \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"    ???
+STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\\\|\\\")*\"
+RAWSTR = @"([ !#-\[\]-~]|\\\"|\\|\n|\t)*\"
+INTLIT = ~?{DIGITS}
+FLOATLIT = ~?({DIGIT}*\.{DIGITS}|{DIGITS}\.)
+CHARLIT = \'([ -&(-\[-\]-~]|\\\'|\\n|\\t|\\\\)\'
+IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 
 %type Symbol
 %column
@@ -104,19 +147,102 @@ STRLIT = \"([^\" \\ ]|\\n|\\t|\\\"|\\\\)*\"		// to be fixed
 ************************************************************************/
 "+"	{
 	Pos.setColumn(yycolumn);
-	return new Symbol(sym.PLUS,
-		new CSXToken(Pos));
+	return new Symbol(sym.PLUS, new CSXToken(Pos));
 }
 "!="	{
 	Pos.setColumn(yycolumn);
-	return new Symbol(sym.NOTEQ,
-		new CSXToken(Pos));
+	return new Symbol(sym.NOTEQ, new CSXToken(Pos));
 }
 ";"	{
 	Pos.setColumn(yycolumn);
-	return new Symbol(sym.SEMI,
-		new CSXToken(Pos));
+	return new Symbol(sym.SEMI, new CSXToken(Pos));
 }
+"["	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.LBRACKET, new CSXToken(Pos));
+}
+"/"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.SLASH, new CSXToken(Pos));
+}
+"~"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.MINUS, new CSXToken(Pos));
+}
+")"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.RPAREN, new CSXToken(Pos));
+}
+"!"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.NOT, new CSXToken(Pos));
+}
+"<"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.LT, new CSXToken(Pos));
+}
+","	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.COMMA, new CSXToken(Pos));
+}
+"++"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.INC, new CSXToken(Pos));
+}
+">="	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.GEQ, new CSXToken(Pos));
+}
+"}"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.RBBRACKET, new CSXToken(Pos));
+}
+"||"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.COR, new CSXToken(Pos));
+}
+"=="	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.EQ, new CSXToken(Pos));
+}
+"="	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.ASG, new CSXToken(Pos));
+}
+"*"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.TIMES, new CSXToken(Pos));
+}
+";"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.COLON, new CSXToken(Pos));
+}
+"["	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.LBRACE, new CSXToken(Pos));
+}
+"]"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.RBRACE, new CSXToken(Pos));
+}
+"&&"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.CAND, new CSXToken(Pos));
+}
+"<="	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.LEQ, new CSXToken(Pos));
+}
+"--"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.DEC, new CSXToken(Pos));
+}
+">"	{
+	Pos.setColumn(yycolumn);
+	return new Symbol(sym.GT, new CSXToken(Pos));
+}
+
+//////////////////////////////////////////////////////////////////
 {DIGIT}+	{
 	// This def doesn't check for overflow -- be sure to update it
 	Pos.setColumn(yycolumn);
