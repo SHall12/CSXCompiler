@@ -5,30 +5,25 @@ class CSXToken
 	int linenum;
 	int colnum;
 	
-	CSXToken() 
-	{
-
+	CSXToken() { 
 	}
 	
-	CSXToken(int line,int col) 
-	{
+	CSXToken(int line,int col) {
 		linenum = line;
 		colnum = col;
 	}
 	
-	CSXToken(Position p) 
-	{
+	CSXToken(Position p) {
 		linenum = p.linenum;
 		colnum = p.colnum;
-		
 	}
 
 }
 
 class CSXIntLitToken extends CSXToken {
 	int intValue;
-	CSXIntLitToken(int val, Position p) 
-	{
+	
+	CSXIntLitToken(int val, Position p) {
 	   super(p);
 	   intValue=val; 
 	}
@@ -37,9 +32,10 @@ class CSXIntLitToken extends CSXToken {
 class CSXFloatLitToken extends CSXToken {
 	float floatValue;
 	
-	CSXFloatLitToken(float val, Position P){
+	CSXFloatLitToken(float val, Position P) {
 		super(p);
 		floatValue = val;
+	}
 }
 
 class CSXIdentifierToken extends CSXToken {
@@ -48,6 +44,7 @@ class CSXIdentifierToken extends CSXToken {
 	CSXIdentifierToken(String str, Position P){
 		super(p);
 		identifierText = str;
+	}
 }
 
 class CSXCharLitToken extends CSXToken {
@@ -56,6 +53,7 @@ class CSXCharLitToken extends CSXToken {
 	CSXCharLitToken(char chr, Position P){
 		super(p);
 		charValue = chr;
+	}
 }
 
 class CSXStringLitToken extends CSXToken {
@@ -64,6 +62,7 @@ class CSXStringLitToken extends CSXToken {
 	CSXStringLitToken(String str, Position P){
 		super(p);
 		stringText = str;
+	}
 }
 
 // This class is used to track line and column numbers
@@ -72,20 +71,19 @@ class Position {
 	int  linenum; 			
 	int  colnum; 			
 
-	Position()
-	{
+	Position() {
   		linenum = 1; 	
   		colnum = 1; 
 	}
-	void setColumn(int c) 
-	{ // yycolumn is 0 based so we add 1 to it
+	void setColumn(int c) {
+		// yycolumn is 0 based so we add 1 to it
 		colnum = c + 1;
 	}
-        void incLine()
-        {
-            ++linenum;
-        }
-} ;
+    	
+	void incLine() {
+    	++linenum;
+    }
+}
 
 
 //This class is used by the scanner to return token information that is useful for the parser
@@ -144,114 +142,208 @@ WHITESPACE = ( |\t|\n)
 %}
 
 %%
+
 /***********************************************************************
  Tokens for the CSX language are defined here using regular expressions
 ************************************************************************/
-"+"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.PLUS, new CSXToken(Pos));
+//------------------------RESERVED WORDS--------------------------------
+<YYINITIAL> {
+	{IF} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_IF, new CSXToken(Pos));
+    }
+	{BOOL} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_BOOL, new CSXToken(Pos));
+    }
+	{BREAK} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_BREAK, new CSXToken(Pos));
+    }
+	{INT} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_INT, new CSXToken(Pos));
+    }
+	{CHAR} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_CHAR, new CSXToken(Pos));
+    }
+	{READ} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_READ, new CSXToken(Pos));
+    }
+	{CLASS} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_CLASS, new CSXToken(Pos));
+    }
+	{CONST} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_CONST, new CSXToken(Pos));
+    }
+	{CONTINUE} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_CONTINUE, new CSXToken(Pos));
+    }
+	{ELSE} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_ELSE, new CSXToken(Pos));
+    }
+	{FALSE} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_FALSE, new CSXToken(Pos));
+    }
+	{FLOAT} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_FLOAT, new CSXToken(Pos));
+    }
+	{RETURN} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_RETURN, new CSXToken(Pos));
+    }
+	{TRUE} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_TRUE, new CSXToken(Pos));
+    }
+	{VOID} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_VOID, new CSXToken(Pos));
+    }
+    {PRINT} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_PRINT, new CSXToken(Pos));
+    }
+    {WHILE} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.rw_WHILE, new CSXToken(Pos));
+    }
 }
-"!="	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.NOTEQ, new CSXToken(Pos));
-}
-";"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.SEMI, new CSXToken(Pos));
-}
-"["	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.LBRACKET, new CSXToken(Pos));
-}
-"/"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.SLASH, new CSXToken(Pos));
-}
-"~"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.MINUS, new CSXToken(Pos));
-}
-")"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.RPAREN, new CSXToken(Pos));
-}
-"!"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.NOT, new CSXToken(Pos));
-}
-"<"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.LT, new CSXToken(Pos));
-}
-","	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.COMMA, new CSXToken(Pos));
-}
-"++"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.INC, new CSXToken(Pos));
-}
-">="	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.GEQ, new CSXToken(Pos));
-}
-"}"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.RBBRACKET, new CSXToken(Pos));
-}
-"||"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.COR, new CSXToken(Pos));
-}
-"=="	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.EQ, new CSXToken(Pos));
-}
-"="	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.ASG, new CSXToken(Pos));
-}
-"*"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.TIMES, new CSXToken(Pos));
-}
-";"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.COLON, new CSXToken(Pos));
-}
-"["	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.LBRACE, new CSXToken(Pos));
-}
-"]"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.RBRACE, new CSXToken(Pos));
-}
-"&&"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.CAND, new CSXToken(Pos));
-}
-"<="	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.LEQ, new CSXToken(Pos));
-}
-"--"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.DEC, new CSXToken(Pos));
-}
-">"	{
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.GT, new CSXToken(Pos));
+
+//-------------------------OPERATORS----------------------------
+<YYINITIAL> {
+	"+"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.PLUS, new CSXToken(Pos));
+	}
+	"!="	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.NOTEQ, new CSXToken(Pos));
+	}
+	";"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.SEMI, new CSXToken(Pos));
+	}
+	"["	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.LBRACKET, new CSXToken(Pos));
+	}
+	"/"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.SLASH, new CSXToken(Pos));
+	}
+	"~"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.MINUS, new CSXToken(Pos));
+	}
+	")"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.RPAREN, new CSXToken(Pos));
+	}
+	"!"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.NOT, new CSXToken(Pos));
+	}
+	"<"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.LT, new CSXToken(Pos));
+	}
+	","	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.COMMA, new CSXToken(Pos));
+	}
+	"++"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.INC, new CSXToken(Pos));
+	}
+	">="	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.GEQ, new CSXToken(Pos));
+	}
+	"}"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.RBBRACKET, new CSXToken(Pos));
+	}
+	"||"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.COR, new CSXToken(Pos));
+	}
+	"=="	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.EQ, new CSXToken(Pos));
+	}
+	"="	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.ASG, new CSXToken(Pos));
+	}
+	"*"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.TIMES, new CSXToken(Pos));
+	}
+	";"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.COLON, new CSXToken(Pos));
+	}
+	"["	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.LBRACE, new CSXToken(Pos));
+	}
+	"]"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.RBRACE, new CSXToken(Pos));
+	}
+	"&&"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.CAND, new CSXToken(Pos));	
+	}
+	"<="	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.LEQ, new CSXToken(Pos));
+	}
+	"--"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.DEC, new CSXToken(Pos));
+	}
+	">"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.GT, new CSXToken(Pos));
+	}
 }
 
 //////////////////////////////////////////////////////////////////
-{INTLIT}{
-	
-	// This def doesn't check for overflow -- be sure to update it
-	
-	Pos.setColumn(yycolumn);
-	return new Symbol(sym.INTLIT, new CSXIntLitToken(Integer.parseInt(yytext()), Pos));
+////////////////////TIRED OF SCROLLING
+//DIGIT = [0-9]
+//DIGITS = [0-9]+
+//LETTER = [A-Za-z]
+//STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
+//RAWSTR = @"([ !#-\[\]-~]|\\\"|\\|\n|\t)*\"
+//INTLIT = ~?{DIGITS}
+//FLOATLIT = ~?({DIGIT}*\.{DIGITS}|{DIGITS}\.?)
+//CHARLIT = \'([ -&(-\[-\]-~]|\\\'|\\n|\\t|\\\\)\'
+//IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
+//SINGLECOMMENT = \/\/[^\n]*\n
+//MULTICOMMENT = ##(#?[^#])*##
+//WHITESPACE = ( |\t|\n)
+
+<YYINITIAL>{
+	{INTLIT}{
+
+		// This def doesn't check for overflow -- be sure to update it
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.INTLIT, new CSXIntLitToken(Integer.parseInt(yytext()), Pos));
+	}
 }
+
+
+
 //EOL to be fixed so that it accepts different formats
 
 \n	{
