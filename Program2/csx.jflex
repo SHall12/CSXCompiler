@@ -124,13 +124,15 @@ WHILE = [wW][hH][iI][lL][eE]
 DIGIT = [0-9]
 DIGITS = [0-9]+
 LETTER = [A-Za-z]
-/////////for STRLIT, shouldn't it be: \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"    ???
-STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\\\|\\\")*\"
+STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
 RAWSTR = @"([ !#-\[\]-~]|\\\"|\\|\n|\t)*\"
 INTLIT = ~?{DIGITS}
-FLOATLIT = ~?({DIGIT}*\.{DIGITS}|{DIGITS}\.)
+FLOATLIT = ~?({DIGIT}*\.{DIGITS}|{DIGITS}\.?)
 CHARLIT = \'([ -&(-\[-\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
+SINGLECOMMENT = \/\/[^\n]*\n
+MULTICOMMENT = ##(#?[^#])*##
+WHITESPACE = ( |\t|\n)
 
 %type Symbol
 %column
@@ -243,12 +245,12 @@ IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 }
 
 //////////////////////////////////////////////////////////////////
-{DIGIT}+	{
+{INTLIT}{
+	
 	// This def doesn't check for overflow -- be sure to update it
+	
 	Pos.setColumn(yycolumn);
-	return new Symbol(sym.INTLIT,
-		new CSXIntLitToken(Integer.parseInt(yytext()),
-			Pos));
+	return new Symbol(sym.INTLIT, new CSXIntLitToken(Integer.parseInt(yytext()), Pos));
 }
 //EOL to be fixed so that it accepts different formats
 
