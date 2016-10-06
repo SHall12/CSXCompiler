@@ -82,7 +82,7 @@ class Position {
     	
 	void incLine() {
     	++linenum;
-    }
+   }
 }
 
 
@@ -123,14 +123,14 @@ DIGIT = [0-9]
 DIGITS = [0-9]+
 LETTER = [A-Za-z]
 STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
-RAWSTR = @"([ !#-\[\]-~]|\\\"|\\|\n|\t)*\"
-INTLIT = ~?{DIGITS}
-FLOATLIT = ~?({DIGIT}*\.{DIGITS}|{DIGITS}\.?)
-CHARLIT = \'([ -&(-\[-\]-~]|\\\'|\\n|\\t|\\\\)\'
+RAWSTR = @\"([ !#-~]|\\n|\\t)*\"
+INTLIT = (~{DIGITS}|{DIGITS})
+FLOATLIT = ~\?({DIGIT}*\.{DIGITS}|{DIGITS}\.\?)
+CHARLIT = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 SINGLECOMMENT = \/\/[^\n]*\n
 MULTICOMMENT = ##(#?[^#])*##
-WHITESPACE = ( |\t|\n)
+WHITESPACE = (\t|\n)
 
 %type Symbol
 %column
@@ -318,38 +318,4 @@ WHITESPACE = ( |\t|\n)
 	}
 }
 
-//////////////////////////////////////////////////////////////////
-////////////////////TIRED OF SCROLLING
-//DIGIT = [0-9]
-//DIGITS = [0-9]+
-//LETTER = [A-Za-z]
-//STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
-//RAWSTR = @"([ !#-\[\]-~]|\\\"|\\|\n|\t)*\"
-//INTLIT = ~?{DIGITS}
-//FLOATLIT = ~?({DIGIT}*\.{DIGITS}|{DIGITS}\.?)
-//CHARLIT = \'([ -&(-\[-\]-~]|\\\'|\\n|\\t|\\\\)\'
-//IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
-//SINGLECOMMENT = \/\/[^\n]*\n
-//MULTICOMMENT = ##(#?[^#])*##
-//WHITESPACE = ( |\t|\n)
-
-<YYINITIAL>{
-	{INTLIT}{
-
-		// This def doesn't check for overflow -- be sure to update it
-		Pos.setColumn(yycolumn);
-		return new Symbol(sym.INTLIT, new CSXIntLitToken(Integer.parseInt(yytext()), Pos));
-	}
-}
-
-
-
 //EOL to be fixed so that it accepts different formats
-
-\n	{
-	Pos.incLine();
-	Pos.setColumn(1);
-}
-" "	{
-	Pos.setColumn(yycolumn);
-}
