@@ -124,7 +124,7 @@ DIGITS = [0-9]+
 LETTER = [A-Za-z]
 STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
 RAWSTR = @\"([ !#-~]|\\n|\\t)*\"
-INTLIT = (~{DIGITS}|{DIGITS})
+INTLIT = ~{DIGITS}|{DIGITS}
 FLOATLIT = ~\?({DIGIT}*\.{DIGITS}|{DIGITS}\.\?)
 CHARLIT = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
@@ -216,6 +216,29 @@ WHITESPACE = (\t|\n)
         Pos.setColumn(yycolumn);
         return new Symbol(sym.rw_WHILE, new CSXToken(Pos));
     }
+//------------------IDENTIFIERS AND LITERALS--------------------
+    "~"?{DIGIT}+ {
+        Pos.setColumn(yycolumn);
+        int val = 0;
+        boolean negative = false;
+        String text = yytext();
+        if (text.charAt(0) == '~') {
+            text = "-"+text.substring(1, text.length());
+            negative = true;
+        }
+        try {
+            val = Integer.parseInt(text);
+        } catch (Exception e) {
+            System.out.println("Integer overflow");
+            if (negative) {
+                val = Integer.MIN_VALUE;
+            } else {
+                val = Integer.MAX_VALUE;
+            }
+        }
+        return new Symbol(sym.INTLIT, new CSXIntLitToken(val, Pos));
+    }
+
 
 //-------------------------OPERATORS----------------------------
 	"+"	{
@@ -320,6 +343,7 @@ WHITESPACE = (\t|\n)
 	 	Pos.incLine();
 		Pos.setColumn(1);
 	}
+
 	" "	{
 	 	Pos.setColumn(yycolumn);
 	}
@@ -329,5 +353,3 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.error, new CSXToken(Pos));
 	}
 }
-
-//EOL to be fixed so that it accepts different formats
