@@ -32,7 +32,7 @@ class CSXIntLitToken extends CSXToken {
 class CSXFloatLitToken extends CSXToken {
 	float floatValue;
 	
-	CSXFloatLitToken(float val, Position P) {
+	CSXFloatLitToken(float val, Position p) {
 		super(p);
 		floatValue = val;
 	}
@@ -41,7 +41,7 @@ class CSXFloatLitToken extends CSXToken {
 class CSXIdentifierToken extends CSXToken {
 	String identifierText;
 	
-	CSXIdentifierToken(String str, Position P){
+	CSXIdentifierToken(String str, Position p){
 		super(p);
 		identifierText = str;
 	}
@@ -50,7 +50,7 @@ class CSXIdentifierToken extends CSXToken {
 class CSXCharLitToken extends CSXToken {
 	char charValue;
 	
-	CSXCharLitToken(char chr, Position P){
+	CSXCharLitToken(char chr, Position p){
 		super(p);
 		charValue = chr;
 	}
@@ -59,7 +59,7 @@ class CSXCharLitToken extends CSXToken {
 class CSXStringLitToken extends CSXToken {
 	String stringText;
 	
-	CSXStringLitToken(String str, Position P){
+	CSXStringLitToken(String str, Position p){
 		super(p);
 		stringText = str;
 	}
@@ -270,7 +270,7 @@ WHITESPACE = (\t|\n)
 	}
 	"}"	{
 		Pos.setColumn(yycolumn);
-		return new Symbol(sym.RBBRACKET, new CSXToken(Pos));
+		return new Symbol(sym.RBRACKET, new CSXToken(Pos));
 	}
 	"||"	{
 		Pos.setColumn(yycolumn);
