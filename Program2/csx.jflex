@@ -216,10 +216,8 @@ WHITESPACE = (\t|\n)
         Pos.setColumn(yycolumn);
         return new Symbol(sym.rw_WHILE, new CSXToken(Pos));
     }
-}
 
 //-------------------------OPERATORS----------------------------
-<YYINITIAL> {
 	"+"	{
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.PLUS, new CSXToken(Pos));
@@ -315,6 +313,20 @@ WHITESPACE = (\t|\n)
 	">"	{
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.GT, new CSXToken(Pos));
+	}
+
+//------------------------WHITESPACE----------------------------
+	\n	{
+	 	Pos.incLine();
+		Pos.setColumn(1);
+	}
+	" "	{
+	 	Pos.setColumn(yycolumn);
+	}
+
+	.	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.error, new CSXToken(Pos));
 	}
 }
 
