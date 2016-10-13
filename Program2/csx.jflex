@@ -141,7 +141,7 @@ BADIDENTIFIER = (_|{DIGITS}){IDENTIFIER}
 SINGLECOMMENT = \/\/[^\n]*\n
 MULTICOMMENT = ##(#?[^#])*##
 RUNAWAYSTRING = \"([ !#-\[\]-~]|\\.)*\n
-RUNAWAYCHAR = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)[^\']
+RUNAWAYCHAR = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
 WHITESPACE = (\t|\n)
 
 %type Symbol
@@ -274,9 +274,11 @@ WHITESPACE = (\t|\n)
         return new Symbol(sym.FLOATLIT, new CSXFloatLitToken(val, Pos));
 	}
 	{STRLIT} {
+                Pos.setColumn(yycolumn);
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(yytext(), Pos));
 	}
 	{RAWSTR} {
+                Pos.setColumn(yycolumn);
 		String val = yytext();
 		val = val.replace("\t", "\\t");
 		val = val.replace("\n", "\\n");
@@ -284,9 +286,16 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos));
 	}
 	{CHARLIT} {
-		return new Symbol(sym.CHARLIT, new CSXCharLitToken(yytext().charAt(0), Pos));
+                Pos.setColumn(yycolumn);
+                String str = yytext();
+                if (str == "'\n") 
+                    return new Symbol(sym.CHARLIT, new CSXCharLitToken('\n', Pos));
+                } else {
+                    return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
+                }
 	}
 	{IDENTIFIER} {
+                Pos.setColumn(yycolumn);
 		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
 	}
 	{BADIDENTIFIER} {
@@ -294,17 +303,21 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.error, new CSXErrorToken("Invalid Identifier: " + yytext(), Pos));
 	}
 	{RUNAWAYSTRING} {
-		return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + yytext(), Pos));
+                Pos.setColumn(yycolumn);
+                String str = yytext();
+		return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos));
 	}
         {RUNAWAYCHAR} {
-		return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
+                Pos.setColumn(yycolumn);
+                return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
+               
 	}
 	{SINGLECOMMENT} {
 		Pos.setColumn(yycolumn);
-	}
+        }
 	{MULTICOMMENT} {
 		Pos.setColumn(yycolumn);
-	}
+        }
 //-------------------------OPERATORS----------------------------
 	"+"	{
 		Pos.setColumn(yycolumn);
