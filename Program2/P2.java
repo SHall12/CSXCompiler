@@ -106,7 +106,7 @@ class P2 {
 			System.out.println("\t;");
 			break;
 	 	case sym.LBRACKET:
-			System.out.println("\t{");
+			System.out.println("\t[");
 			break;
 	 	case sym.SLASH:
 			System.out.println("\t/");
@@ -136,7 +136,7 @@ class P2 {
 			System.out.println("\t>=");
 			break;
 	 	case sym.RBRACKET:
-			System.out.println("\t}");
+			System.out.println("\t]");
 			break;
 	 	case sym.COR:
 			System.out.println("\t||");
