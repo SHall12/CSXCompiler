@@ -173,6 +173,14 @@ class P2 {
 			System.out.println("\tinteger literal(" +
 				((CSXIntLitToken) token.value).intValue + ")");
 			break;
+	        case sym.STRLIT:
+			System.out.println("\tstring literal(" +
+				((CSXStringLitToken) token.value).stringText + ")");
+			break;
+	        case sym.CHRLIT:
+			System.out.println("\tstring literal(" +
+				((CSXCharLitToken) token.value).charValue + ")");
+			break;
 		case sym.error:
 			System.out.println("Error: " + ((CSXErrorToken)token.value).unmatachedVal + ")");
 			break;
