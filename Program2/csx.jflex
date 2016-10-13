@@ -363,7 +363,7 @@ WHITESPACE = (\t|\n)
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.TIMES, new CSXToken(Pos));
 	}
-	";"	{
+	":"	{
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.COLON, new CSXToken(Pos));
 	}
