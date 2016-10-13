@@ -27,6 +27,7 @@ _BadId1 1BadId 23BadIds 2_BadId
 ' '
 '
 '\'
+'\t' ''
 '\n'
 'ab'
 'a'

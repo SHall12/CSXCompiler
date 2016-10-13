@@ -286,16 +286,34 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos));
 	}
 	{CHARLIT} {
-                Pos.setColumn(yycolumn);
-                String str = yytext();
-                if (str == "'\n") {
-                    return new Symbol(sym.CHARLIT, new CSXCharLitToken('\n', Pos));
-                } else {
-                    return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
-                }
+        Pos.setColumn(yycolumn);
+        String str = yytext();
+        if (str.charAt(1) == '\\') {
+			char val;
+			switch (str.charAt(2)) {
+				case '\\':
+					val = '\\';
+					break;
+				case 'n':
+					val = '\n';
+					break;
+				case 't':
+					val = '\t';
+					break;
+				case '\'':
+					val = '\'';
+					break;
+				default:
+					val = str.charAt(2);
+			}
+			System.out.println(str);
+            return new Symbol(sym.CHARLIT, new CSXCharLitToken(val, Pos));
+        } else {
+        	return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
+        }
 	}
 	{IDENTIFIER} {
-                Pos.setColumn(yycolumn);
+        Pos.setColumn(yycolumn);
 		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
 	}
 	{BADIDENTIFIER} {
@@ -303,14 +321,14 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.error, new CSXErrorToken("Invalid Identifier: " + yytext(), Pos));
 	}
 	{RUNAWAYSTRING} {
-                Pos.setColumn(yycolumn);
-                String str = yytext();
+        Pos.setColumn(yycolumn);
+        String str = yytext();
 		return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos));
 	}
 
-        {RUNAWAYCHAR} {
-                Pos.setColumn(yycolumn);
-                return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
+    {RUNAWAYCHAR} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
                
 	}
 	{SINGLECOMMENT} {
@@ -419,6 +437,10 @@ WHITESPACE = (\t|\n)
 	">"	{
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.GT, new CSXToken(Pos));
+	}
+	"-"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.MINUS, new CSXToken(Pos));
 	}
 
 //------------------------WHITESPACE----------------------------

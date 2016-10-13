@@ -118,7 +118,7 @@ class P2 {
 			System.out.println("\t)");
 			break;
 		case sym.LPAREN:
-			System.out.println("\t)");
+			System.out.println("\t(");
 			break;
 	 	case sym.NOT:
 			System.out.println("\t!");
@@ -171,32 +171,35 @@ class P2 {
 		case sym.GT:
 			System.out.println("\t>");
 			break;
+        case sym.MINUS:
+			System.out.println("\t-");
+			break;
 		// LITERALS AND IDENTIFIERS
 		case sym.INTLIT:
-			System.out.println("\tinteger literal(" +
+			System.out.println("\tinteger literal (" +
 				((CSXIntLitToken) token.value).intValue + ")");
 			break;
 	        case sym.STRLIT:
-			System.out.println("\tstring literal(" +
+			System.out.println("\tstring literal (" +
 				((CSXStringLitToken) token.value).stringText + ")");
 			break;
 	        case sym.CHARLIT:
-			System.out.println("\tchar literal(" +
+			System.out.println("\tchar literal (" +
 				((CSXCharLitToken) token.value).charValue + ")");
 			break;
 	         case sym.FLOATLIT:
-			System.out.println("\tfloat literal(" +
+			System.out.println("\tfloat literal (" +
 				((CSXFloatLitToken) token.value).floatValue + ")");
 			break;
 		case sym.IDENTIFIER:
-			System.out.println("\tidentifier(" +
+			System.out.println("\tidentifier (" +
 				((CSXIdentifierToken) token.value).identifierText + ")");
 			break;
 		case sym.error:
-			System.out.println("\tError: " + ((CSXErrorToken)token.value).errorMessage + ")");
+			System.out.println("\tERROR: (" + ((CSXErrorToken)token.value).errorMessage + ")");
 			break;
 		default:
-			System.out.println("unrecognized token type: " + token.value);
+			System.out.println("SUPER ERROR: unrecognized token type: " + token.value);
 		} // switch(token.sym)
 		token = lex.yylex(); // get next token
 	} // not at EOF
