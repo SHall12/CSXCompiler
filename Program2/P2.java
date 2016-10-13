@@ -47,15 +47,15 @@ class P2 {
 			System.out.println("\tinteger literal(" +
 				((CSXIntLitToken) token.value).intValue + ")");
 			break;
-
 		case sym.PLUS:
 			System.out.println("\t+");
 			break;
-
 		case sym.NOTEQ:
 			System.out.println("\t!=");
 			break;
-
+		case sym.error:
+			System.out.println("Error: " + ((CSXErrorToken)token.value).unmatachedVal + ")");
+			break;
 		default:
 			System.out.println("unrecognized token type: " + token.value);
 		} // switch(token.sym)

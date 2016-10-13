@@ -65,6 +65,15 @@ class CSXStringLitToken extends CSXToken {
 	}
 }
 
+class CSXErrorToken extends CSXToken {
+	String unmatachedVal;
+	
+	CSXErrorToken(String val, Position p){
+		super(p);
+		unmatachedVal = val;
+	}
+}
+
 // This class is used to track line and column numbers
 // Feel free to change it and extend it
 class Position {
@@ -124,7 +133,7 @@ DIGITS = [0-9]+
 LETTER = [A-Za-z]
 STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
 RAWSTR = @\"([ !#-~]|\\n|\\t)*\"
-INTLIT = ~{DIGITS}|{DIGITS}
+INTLIT = (~{DIGITS}|{DIGITS})
 FLOATLIT = ~\?({DIGIT}*\.{DIGITS}|{DIGITS}\.\?)
 CHARLIT = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
@@ -339,7 +348,7 @@ WHITESPACE = (\t|\n)
 	}
 
 //------------------------WHITESPACE----------------------------
-	\n	{
+	\n|\r\n	{
 	 	Pos.incLine();
 		Pos.setColumn(1);
 	}
@@ -350,6 +359,6 @@ WHITESPACE = (\t|\n)
 
 	.	{
 		Pos.setColumn(yycolumn);
-		return new Symbol(sym.error, new CSXToken(Pos));
+		return new Symbol(sym.error, new CSXErrorToken(yytext(), Pos));
 	}
 }
