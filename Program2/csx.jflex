@@ -282,6 +282,13 @@ WHITESPACE = (\t|\n)
 	{IDENTIFIER} {
 		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
 	}
+
+	{SINGLECOMMENT} {
+		Pos.setColumn(yycolumn);
+	}
+	{MULTICOMMENT} {
+		Pos.setColumn(yycolumn);
+	}
 //-------------------------OPERATORS----------------------------
 	"+"	{
 		Pos.setColumn(yycolumn);
