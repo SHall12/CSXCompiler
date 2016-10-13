@@ -131,8 +131,8 @@ WHILE = [wW][hH][iI][lL][eE]
 DIGIT = [0-9]
 DIGITS = [0-9]+
 LETTER = [A-Za-z]
-STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
-RAWSTR = @\"([ !#-~]|\\n|\\t)*\"
+STRLIT = \"([ !#-\[\]-~]|\\.)*\"
+RAWSTR = @\"([ !#-~]|\n|\t|\\.)*\"
 INTLIT = (~{DIGITS}|{DIGITS})
 FLOATLIT = \~?({DIGIT}*\.{DIGITS}|{DIGITS}\.)
 CHARLIT = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
@@ -277,6 +277,7 @@ WHITESPACE = (\t|\n)
 		String val = yytext();
 		val = val.replaceAll("\t", "\\t");
 		val = val.replaceAll("\n", "\\n");
+		val = val.substring(1, val.length());
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos));
 	}
 	{IDENTIFIER} {
