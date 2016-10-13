@@ -1,16 +1,28 @@
+// Reserved words
 IF BOOL BREAK INT CHAR READ CLASS CONST CONTINUE ELSE FALSE FLOAT 
 RETURN TRUE VOID PRINT WHILE
 
+// Numbers
 ~12354 54645 9999999999999999999999999999 ~99999999999999999999999999999999
 1. .1 1.1 
 23213515154654654654654566216351656515465498798798456.2
 ~121654684897984564564132132135454546565465464554654.1
 
+// Symbols
+
 + != ; [ / / ~ ) ! < , ++ >= } || == = * ] && <= -- >
 
+// Strings
 "This is a string" // This is a comment
 ## This is another 
 	comment ## "This is not a string\"
 
 @"THis	Is
 	A different type of @@\" string"
+
+// Characters
+''
+'\'
+'\n'
+'ab'
+'a'

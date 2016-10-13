@@ -275,10 +275,13 @@ WHITESPACE = (\t|\n)
 	}
 	{RAWSTR} {
 		String val = yytext();
-		val = val.replaceAll("\t", "\\t");
-		val = val.replaceAll("\n", "\\n");
+		val = val.replace("\t", "\\t");
+		val = val.replace("\n", "\\n");
 		val = val.substring(1, val.length());
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos));
+	}
+	{CHARLIT} {
+		return new Symbol(sym.CHARLIT, new CSXCharLitToken(yytext().charAt(0), Pos));
 	}
 	{IDENTIFIER} {
 		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
