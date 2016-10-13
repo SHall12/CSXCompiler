@@ -302,10 +302,6 @@ WHITESPACE = (\t|\n)
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.SEMI, new CSXToken(Pos));
 	}
-	"["	{
-		Pos.setColumn(yycolumn);
-		return new Symbol(sym.LBRACKET, new CSXToken(Pos));
-	}
 	"/"	{
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.SLASH, new CSXToken(Pos));
@@ -317,6 +313,10 @@ WHITESPACE = (\t|\n)
 	")"	{
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.RPAREN, new CSXToken(Pos));
+	}
+	"("	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.LPAREN, new CSXToken(Pos));
 	}
 	"!"	{
 		Pos.setColumn(yycolumn);
@@ -340,7 +340,11 @@ WHITESPACE = (\t|\n)
 	}
 	"}"	{
 		Pos.setColumn(yycolumn);
-		return new Symbol(sym.RBRACKET, new CSXToken(Pos));
+		return new Symbol(sym.RBRACE, new CSXToken(Pos));
+	}
+	"{"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.LBRACE, new CSXToken(Pos));
 	}
 	"||"	{
 		Pos.setColumn(yycolumn);
@@ -364,11 +368,11 @@ WHITESPACE = (\t|\n)
 	}
 	"["	{
 		Pos.setColumn(yycolumn);
-		return new Symbol(sym.LBRACE, new CSXToken(Pos));
+		return new Symbol(sym.LBRACKET, new CSXToken(Pos));
 	}
 	"]"	{
 		Pos.setColumn(yycolumn);
-		return new Symbol(sym.RBRACE, new CSXToken(Pos));
+		return new Symbol(sym.RBRACKET, new CSXToken(Pos));
 	}
 	"&&"	{
 		Pos.setColumn(yycolumn);
