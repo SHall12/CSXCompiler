@@ -66,11 +66,11 @@ class CSXStringLitToken extends CSXToken {
 }
 
 class CSXErrorToken extends CSXToken {
-	String unmatachedVal;
+	String errorMessage;
 	
 	CSXErrorToken(String val, Position p){
 		super(p);
-		unmatachedVal = val;
+		errorMessage = val;
 	}
 }
 
@@ -134,7 +134,7 @@ LETTER = [A-Za-z]
 STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
 RAWSTR = @\"([ !#-~]|\\n|\\t)*\"
 INTLIT = (~{DIGITS}|{DIGITS})
-FLOATLIT = ~\?({DIGIT}*\.{DIGITS}|{DIGITS}\.\?)
+FLOATLIT = \~?({DIGIT}*\.{DIGITS}|{DIGITS}\.\?)
 CHARLIT = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 SINGLECOMMENT = \/\/[^\n]*\n
@@ -238,7 +238,7 @@ WHITESPACE = (\t|\n)
         try {
             val = Integer.parseInt(text);
         } catch (Exception e) {
-            System.out.println("Integer overflow");
+            System.out.println("Integer overflow: " + text);
             if (negative) {
                 val = Integer.MIN_VALUE;
             } else {
@@ -247,8 +247,39 @@ WHITESPACE = (\t|\n)
         }
         return new Symbol(sym.INTLIT, new CSXIntLitToken(val, Pos));
     }
-
-
+	{FLOATLIT} {
+		Pos.setColumn(yycolumn);
+        float val = 0;
+        boolean negative = false;
+        String text = yytext();
+        if (text.charAt(0) == '~') {
+            text = "-"+text.substring(1, text.length());
+            negative = true;
+        }
+        try {
+            val = Float.parseFloat(text);
+        } catch (Exception e) {
+            System.out.println("Float overflow: " + text);
+            if (negative) {
+                val = Float.MIN_VALUE;
+            } else {
+                val = Float.MAX_VALUE;
+            }
+        }
+        return new Symbol(sym.FLOATLIT, new CSXFloatLitToken(val, Pos));
+	}
+	{STRLIT} {
+		return new Symbol(sym.STRLIT, new CSXStringLitToken(yytext(), Pos));
+	}
+	{RAWSTR} {
+		String val = yytext();
+		val = val.replaceAll("\t", "\\t");
+		val = val.replaceAll("\n", "\\n");
+		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos));
+	}
+	{IDENTIFIER} {
+		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
+	}
 //-------------------------OPERATORS----------------------------
 	"+"	{
 		Pos.setColumn(yycolumn);
@@ -353,7 +384,7 @@ WHITESPACE = (\t|\n)
 		Pos.setColumn(1);
 	}
 
-	" "	{
+	[ \t]	{
 	 	Pos.setColumn(yycolumn);
 	}
 

@@ -177,12 +177,12 @@ class P2 {
 			System.out.println("\tstring literal(" +
 				((CSXStringLitToken) token.value).stringText + ")");
 			break;
-	        case sym.CHRLIT:
+	        case sym.CHARLIT:
 			System.out.println("\tstring literal(" +
 				((CSXCharLitToken) token.value).charValue + ")");
 			break;
 		case sym.error:
-			System.out.println("Error: " + ((CSXErrorToken)token.value).unmatachedVal + ")");
+			System.out.println("Error: " + ((CSXErrorToken)token.value).errorMessage + ")");
 			break;
 		default:
 			System.out.println("unrecognized token type: " + token.value);
