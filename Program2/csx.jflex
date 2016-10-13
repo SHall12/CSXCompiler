@@ -140,6 +140,8 @@ IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 BADIDENTIFIER = (_|{DIGITS}){IDENTIFIER}
 SINGLECOMMENT = \/\/[^\n]*\n
 MULTICOMMENT = ##(#?[^#])*##
+RUNAWAYSTRING = \"([ !#-\[\]-~]|\\.)*\n
+RUNAWAYCHAR = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)[^\']
 WHITESPACE = (\t|\n)
 
 %type Symbol
@@ -290,6 +292,12 @@ WHITESPACE = (\t|\n)
 	{BADIDENTIFIER} {
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.error, new CSXErrorToken("Invalid Identifier: " + yytext(), Pos));
+	}
+	{RUNAWAYSTRING} {
+		return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + yytext(), Pos));
+	}
+        {RUNAWAYCHAR} {
+		return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
 	}
 	{SINGLECOMMENT} {
 		Pos.setColumn(yycolumn);
