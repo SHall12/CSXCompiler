@@ -2,6 +2,10 @@
 IF BOOL BREAK INT CHAR READ CLASS CONST CONTINUE ELSE FALSE FLOAT 
 RETURN TRUE VOID PRINT WHILE
 
+// Identifiers
+numba1 num i Dude_1
+_BadId1 1BadId 23BadIds 2_BadId
+
 // Numbers
 ~12354 54645 9999999999999999999999999999 ~99999999999999999999999999999999
 1. .1 1.1 
@@ -9,7 +13,6 @@ RETURN TRUE VOID PRINT WHILE
 ~121654684897984564564132132135454546565465464554654.1
 
 // Symbols
-
 + != ; [ / / ~ ) ! < , ++ >= } || == = * ] && <= -- >
 
 // Strings
@@ -21,7 +24,8 @@ RETURN TRUE VOID PRINT WHILE
 	A different type of @@\" string"
 
 // Characters
-''
+' '
+'
 '\'
 '\n'
 'ab'

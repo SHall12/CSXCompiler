@@ -137,6 +137,7 @@ INTLIT = (~{DIGITS}|{DIGITS})
 FLOATLIT = \~?({DIGIT}*\.{DIGITS}|{DIGITS}\.)
 CHARLIT = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
+BADIDENTIFIER = (_|{DIGITS}){IDENTIFIER}
 SINGLECOMMENT = \/\/[^\n]*\n
 MULTICOMMENT = ##(#?[^#])*##
 WHITESPACE = (\t|\n)
@@ -286,7 +287,10 @@ WHITESPACE = (\t|\n)
 	{IDENTIFIER} {
 		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
 	}
-
+	{BADIDENTIFIER} {
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.error, new CSXErrorToken("Invalid Identifier: " + yytext(), Pos));
+	}
 	{SINGLECOMMENT} {
 		Pos.setColumn(yycolumn);
 	}

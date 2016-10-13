@@ -193,7 +193,7 @@ class P2 {
 				((CSXIdentifierToken) token.value).identifierText + ")");
 			break;
 		case sym.error:
-			System.out.println("Error: " + ((CSXErrorToken)token.value).errorMessage + ")");
+			System.out.println("\tError: " + ((CSXErrorToken)token.value).errorMessage + ")");
 			break;
 		default:
 			System.out.println("unrecognized token type: " + token.value);
