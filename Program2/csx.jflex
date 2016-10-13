@@ -288,7 +288,7 @@ WHITESPACE = (\t|\n)
 	{CHARLIT} {
                 Pos.setColumn(yycolumn);
                 String str = yytext();
-                if (str == "'\n") 
+                if (str == "'\n") {
                     return new Symbol(sym.CHARLIT, new CSXCharLitToken('\n', Pos));
                 } else {
                     return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
@@ -307,6 +307,7 @@ WHITESPACE = (\t|\n)
                 String str = yytext();
 		return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos));
 	}
+
         {RUNAWAYCHAR} {
                 Pos.setColumn(yycolumn);
                 return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
