@@ -43,6 +43,57 @@ class P2 {
 		System.out.print( token.value.linenum + ":"
 				+ token.value.colnum + " ");
 		switch (token.sym) {
+		case sym.rw_FLOAT:
+			System.out.println("\tfloat");
+			break;
+		case sym.rw_WHILE:
+			System.out.println("\twhile");
+			break;
+		case sym.rw_BOOL:
+			System.out.println("\tbool");
+			break;
+		case sym.rw_IF:
+			System.out.println("\tif");
+			break;
+		case sym.rw_CONTINUE:
+			System.out.println("\tcontinue");
+			break;
+		case sym.rw_FALSE:
+			System.out.println("\tfalse");
+			break;
+		case sym.rw_PRINT:
+			System.out.println("\tprint");
+			break;
+		case sym.rw_TRUE:
+			System.out.println("\ttrue");
+			break;
+		case sym.rw_VOID:
+			System.out.println("\tvoid");
+			break;
+		case sym.rw_CONST:
+			System.out.println("\tconst");
+			break;
+		case sym.rw_ELSE:
+			System.out.println("\telse");
+			break;
+		case sym.rw_READ:
+			System.out.println("\tread");
+			break;
+		case sym.rw_INT:
+			System.out.println("\tint");
+			break;
+		case sym.rw_CLASS:
+			System.out.println("\tclass");
+			break;
+		case sym.rw_RETURN:
+			System.out.println("\treturn");
+			break;
+		case sym.rw_CHAR:
+			System.out.println("\tchar");
+			break;
+		case sym.rw_BREAK:
+			System.out.println("\tbreak");
+			break;
 		case sym.INTLIT:
 			System.out.println("\tinteger literal(" +
 				((CSXIntLitToken) token.value).intValue + ")");
