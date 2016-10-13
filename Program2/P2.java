@@ -171,9 +171,6 @@ class P2 {
 		case sym.GT:
 			System.out.println("\t>");
 			break;
-        case sym.MINUS:
-			System.out.println("\t-");
-			break;
 		// LITERALS AND IDENTIFIERS
 		case sym.INTLIT:
 			System.out.println("\tinteger literal (" +
