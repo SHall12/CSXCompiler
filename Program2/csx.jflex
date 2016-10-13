@@ -134,7 +134,7 @@ LETTER = [A-Za-z]
 STRLIT = \"([ !#-\[\]-~]|\\n|\\t|\\|\\\")*\"
 RAWSTR = @\"([ !#-~]|\\n|\\t)*\"
 INTLIT = (~{DIGITS}|{DIGITS})
-FLOATLIT = \~?({DIGIT}*\.{DIGITS}|{DIGITS}\.\?)
+FLOATLIT = \~?({DIGIT}*\.{DIGITS}|{DIGITS}\.)
 CHARLIT = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 SINGLECOMMENT = \/\/[^\n]*\n
@@ -238,10 +238,11 @@ WHITESPACE = (\t|\n)
         try {
             val = Integer.parseInt(text);
         } catch (Exception e) {
-            System.out.println("Integer overflow: " + text);
             if (negative) {
+				System.out.println("Integer underflow: " + text);
                 val = Integer.MIN_VALUE;
             } else {
+				System.out.println("Integer overflow: " + text);
                 val = Integer.MAX_VALUE;
             }
         }
@@ -259,10 +260,11 @@ WHITESPACE = (\t|\n)
         try {
             val = Float.parseFloat(text);
         } catch (Exception e) {
-            System.out.println("Float overflow: " + text);
             if (negative) {
+				System.out.println("Float underflow: " + text);
                 val = Float.MIN_VALUE;
             } else {
+				System.out.println("Float overflow: " + text);
                 val = Float.MAX_VALUE;
             }
         }
