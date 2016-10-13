@@ -43,6 +43,7 @@ class P2 {
 		System.out.print( token.value.linenum + ":"
 				+ token.value.colnum + " ");
 		switch (token.sym) {
+		// RESERVED WORDS
 		case sym.rw_FLOAT:
 			System.out.println("\tfloat");
 			break;
@@ -94,15 +95,80 @@ class P2 {
 		case sym.rw_BREAK:
 			System.out.println("\tbreak");
 			break;
-		case sym.INTLIT:
-			System.out.println("\tinteger literal(" +
-				((CSXIntLitToken) token.value).intValue + ")");
-			break;
+		// SYMBOLS
 		case sym.PLUS:
 			System.out.println("\t+");
 			break;
 		case sym.NOTEQ:
 			System.out.println("\t!=");
+			break;
+	 	case sym.SEMI:
+			System.out.println("\t;");
+			break;
+	 	case sym.LBRACKET:
+			System.out.println("\t{");
+			break;
+	 	case sym.SLASH:
+			System.out.println("\t/");
+			break;
+	 	case sym.MINUS:
+			System.out.println("\t-");
+			break;
+	 	case sym.RPAREN:
+			System.out.println("\t)");
+			break;
+	 	case sym.NOT:
+			System.out.println("\t!");
+			break;
+	 	case sym.LT:
+			System.out.println("\t<");
+			break;
+	 	case sym.COMMA:
+			System.out.println("\t,");
+			break;
+	 	case sym.INC:
+			System.out.println("\t++");
+			break;
+	 	case sym.GEQ:
+			System.out.println("\t>=");
+			break;
+	 	case sym.RBRACKET:
+			System.out.println("\t}");
+			break;
+	 	case sym.COR:
+			System.out.println("\t||");
+			break;
+	 	case sym.EQ:
+			System.out.println("\t==");
+			break;
+	 	case sym.ASG:
+			System.out.println("\t=");
+			break;
+	 	case sym.TIMES:
+			System.out.println("\t*");
+			break;
+	 	case sym.COLON:
+			System.out.println("\t:");
+			break;
+	 	case sym.LBRACE:
+			System.out.println("\t{");
+			break;
+	 	case sym.RBRACE:
+			System.out.println("\t}");
+			break;
+	 	case sym.CAND:
+			System.out.println("\t&&");
+			break;
+	 	case sym.LEQ:
+			System.out.println("\t<=");
+			break;
+	 	case sym.DEC:
+			System.out.println("\t--");
+			break;
+		// LITERALS AND IDENTIFIERS
+		case sym.INTLIT:
+			System.out.println("\tinteger literal(" +
+				((CSXIntLitToken) token.value).intValue + ")");
 			break;
 		case sym.error:
 			System.out.println("Error: " + ((CSXErrorToken)token.value).unmatachedVal + ")");
