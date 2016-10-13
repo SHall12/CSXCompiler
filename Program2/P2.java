@@ -117,6 +117,9 @@ class P2 {
 	 	case sym.RPAREN:
 			System.out.println("\t)");
 			break;
+		case sym.LPAREN:
+			System.out.println("\t)");
+			break;
 	 	case sym.NOT:
 			System.out.println("\t!");
 			break;
@@ -177,9 +180,17 @@ class P2 {
 			System.out.println("\tstring literal(" +
 				((CSXStringLitToken) token.value).stringText + ")");
 			break;
-	        case sym.CHRLIT:
+	        case sym.CHARLIT:
 			System.out.println("\tstring literal(" +
 				((CSXCharLitToken) token.value).charValue + ")");
+			break;
+	         case sym.FLOATLIT:
+			System.out.println("\tstring literal(" +
+				((CSXFloatLitToken) token.value).floatValue + ")");
+			break;
+		case sym.IDENTIFIER:
+			System.out.println("\tstring literal(" +
+				((CSXIdentifierToken) token.value).identifierText + ")");
 			break;
 		case sym.error:
 			System.out.println("Error: " + ((CSXErrorToken)token.value).unmatachedVal + ")");
