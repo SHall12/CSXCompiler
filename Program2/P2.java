@@ -181,15 +181,15 @@ class P2 {
 				((CSXStringLitToken) token.value).stringText + ")");
 			break;
 	        case sym.CHARLIT:
-			System.out.println("\tstring literal(" +
+			System.out.println("\tchar literal(" +
 				((CSXCharLitToken) token.value).charValue + ")");
 			break;
 	         case sym.FLOATLIT:
-			System.out.println("\tstring literal(" +
+			System.out.println("\tfloat literal(" +
 				((CSXFloatLitToken) token.value).floatValue + ")");
 			break;
 		case sym.IDENTIFIER:
-			System.out.println("\tstring literal(" +
+			System.out.println("\tidentifier(" +
 				((CSXIdentifierToken) token.value).identifierText + ")");
 			break;
 		case sym.error:
