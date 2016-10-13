@@ -165,6 +165,9 @@ class P2 {
 	 	case sym.DEC:
 			System.out.println("\t--");
 			break;
+		case sym.GT:
+			System.out.println("\t>");
+			break;
 		// LITERALS AND IDENTIFIERS
 		case sym.INTLIT:
 			System.out.println("\tinteger literal(" +
