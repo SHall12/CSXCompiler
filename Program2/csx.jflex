@@ -325,8 +325,7 @@ WHITESPACE = (\t|\n)
 				default:
 					val = str.charAt(2);
 			}
-			System.out.println(str);
-           	return new Symbol(sym.CHARLIT, new CSXCharLitToken(val, Pos));
+			return new Symbol(sym.CHARLIT, new CSXCharLitToken(val, Pos));
 		} else {
             return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
 		}
