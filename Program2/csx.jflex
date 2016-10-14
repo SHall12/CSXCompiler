@@ -332,9 +332,15 @@ WHITESPACE = (\t|\n)
                
 	}
 	{SINGLECOMMENT} {
+		Pos.incLine();
 		Pos.setColumn(yycolumn);
         }
 	{MULTICOMMENT} {
+		String comment = yytext();
+		int numNewLines = comment.split("\r\n|\r|\n").length -1;
+		for (int i = 0; i < numNewLines; ++i) {
+			Pos.incLine();
+		}
 		Pos.setColumn(yycolumn);
         }
 //-------------------------OPERATORS----------------------------
