@@ -176,15 +176,25 @@ class P2 {
 			System.out.println("\tinteger literal (" +
 				((CSXIntLitToken) token.value).intValue + ")");
 			break;
-	        case sym.STRLIT:
+		case sym.STRLIT:
 			System.out.println("\tstring literal (" +
 				((CSXStringLitToken) token.value).stringText + ")");
 			break;
-	        case sym.CHARLIT:
-			System.out.println("\tchar literal (" +
-				((CSXCharLitToken) token.value).charValue + ")");
+		case sym.CHARLIT:
+				//Properly Displays tab and newline characters
+				switch(((CSXCharLitToken) token.value).charValue){
+					case '\n':
+						System.out.println("\tchar literal ('\\n')");
+						break;
+					case '\t':
+						System.out.println("\tchar literal ('\\t')");
+						break;
+						default:
+							System.out.println("\tchar literal ('" +
+								((CSXCharLitToken) token.value).charValue + "')");
+				}
 			break;
-	         case sym.FLOATLIT:
+		case sym.FLOATLIT:
 			System.out.println("\tfloat literal (" +
 				((CSXFloatLitToken) token.value).floatValue + ")");
 			break;
