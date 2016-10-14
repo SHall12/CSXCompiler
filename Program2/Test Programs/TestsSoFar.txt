@@ -13,21 +13,27 @@ _BadId1 1BadId 23BadIds 2_BadId
 ~121654684897984564564132132135454546565465464554654.1
 
 // Symbols
-+ != ; [ / / ~ ) ! < , ++ >= } || == = * ] && <= -- >
+++ + !! != ;; [[ ~~ )) << ,, >= }} || | == = ** ]] && & <= -- - >> \\ \ 
 
 // Strings
 "This is a string" // This is a comment
 ## This is another 
 	comment ## "This is not a string\"
-
+"This is a another string"
 @"THis	Is
 	A different type of @@\" string"
+"This is a runnaway string
+"This is a Third string!"
 
 // Characters
 ' '
 '
 '\'
-'\t' ''
+'\t'
 '\n'
+'\'
 'ab'
 'a'
+'e 
+
+
