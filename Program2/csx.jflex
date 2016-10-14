@@ -339,13 +339,13 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.error, new CSXErrorToken("Invalid Identifier: " + yytext(), Pos));
 	}
 	{RUNAWAYSTRING} {
-    	String str = yytext();
-    	Pos.setColumn(yycolumn);
-    	return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos, 1));
+		String str = yytext();
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos, 1));
 	}
-    {RUNAWAYCHAR} {
-    	Pos.setColumn(yycolumn);
-    	return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
+	{RUNAWAYCHAR} {
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
    	}
 	{SINGLECOMMENT} {
 		Pos.incLine();
