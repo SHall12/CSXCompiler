@@ -147,17 +147,17 @@ WHILE = [wW][hH][iI][lL][eE]
 DIGIT = [0-9]
 DIGITS = [0-9]+
 LETTER = [A-Za-z]
-STRLIT = \"([ !#-\[\]-~]|\\.)*\"
-RAWSTR = @\"([ !#-~]|\n|\t|\\.)*\"
+STRLIT = \"([\040!#-\[\]-~]|\\.)*\"
+RAWSTR = @\"([\040!#-~]|\n|\t|\\.)*\"
 INTLIT = (~{DIGITS}|{DIGITS})
 FLOATLIT = \~?({DIGIT}*\.{DIGITS}|{DIGITS}\.)
-CHARLIT = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
+CHARLIT = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 BADIDENTIFIER = (_|{DIGITS}){IDENTIFIER}
 SINGLECOMMENT = \/\/[^\n]*\n
 MULTICOMMENT = ##(#?[^#])*##
-RUNAWAYSTRING = \"([ !#-\[\]-~]|\\.)*\n
-RUNAWAYCHAR = \'([ -&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
+RUNAWAYSTRING = \"([\040!#-\[\]-~]|\\.)*\n
+RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
 WHITESPACE = (\t|\n)
 
 %type Symbol
