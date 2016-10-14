@@ -63,6 +63,14 @@ class CSXStringLitToken extends CSXToken {
 		super(p);
 		stringText = str;
 	}
+	
+    CSXStringLitToken(String str, Position p, int num){
+		super(p);
+		stringText = str;
+        	for (int i = 0; i < num; i++){
+    		p.incLine();
+    	}
+	}
 }
 
 class CSXErrorToken extends CSXToken {
@@ -71,6 +79,15 @@ class CSXErrorToken extends CSXToken {
 	CSXErrorToken(String val, Position p){
 		super(p);
 		errorMessage = val;
+	}
+        
+    CSXErrorToken(String val, Position p, int num){
+		super(p);
+		errorMessage = val;
+                
+        for (int i = 0; i < num; i++){
+        p.incLine();
+        }
 	}
 }
 
@@ -91,7 +108,7 @@ class Position {
     	
 	void incLine() {
     	++linenum;
-   }
+    }
 }
 
 
@@ -278,17 +295,20 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(yytext(), Pos));
 	}
 	{RAWSTR} {
+                String str = yytext();
+                int numNewLines = str.split("\r\n|\r|\n").length -1;
+		
                 Pos.setColumn(yycolumn);
 		String val = yytext();
 		val = val.replace("\t", "\\t");
 		val = val.replace("\n", "\\n");
 		val = val.substring(1, val.length());
-		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos));
+		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos, numNewLines));
 	}
 	{CHARLIT} {
-        Pos.setColumn(yycolumn);
-        String str = yytext();
-        if (str.charAt(1) == '\\') {
+                Pos.setColumn(yycolumn);
+                String str = yytext();
+                if (str.charAt(1) == '\\') {
 			char val;
 			switch (str.charAt(2)) {
 				case '\\':
@@ -307,11 +327,11 @@ WHITESPACE = (\t|\n)
 					val = str.charAt(2);
 			}
 			System.out.println(str);
-            return new Symbol(sym.CHARLIT, new CSXCharLitToken(val, Pos));
-        } else {
-        	return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
+                        return new Symbol(sym.CHARLIT, new CSXCharLitToken(val, Pos));
+                } else {
+                        return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
+                }
         }
-	}
 	{IDENTIFIER} {
         Pos.setColumn(yycolumn);
 		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
@@ -321,16 +341,15 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.error, new CSXErrorToken("Invalid Identifier: " + yytext(), Pos));
 	}
 	{RUNAWAYSTRING} {
-        Pos.setColumn(yycolumn);
-        String str = yytext();
-		return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos));
+    	String str = yytext();
+    	Pos.setColumn(yycolumn);
+    	return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos, 1));
 	}
 
     {RUNAWAYCHAR} {
-        Pos.setColumn(yycolumn);
-        return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
-               
-	}
+    	Pos.setColumn(yycolumn);
+    	return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
+   	}
 	{SINGLECOMMENT} {
 		Pos.incLine();
 		Pos.setColumn(yycolumn);
@@ -342,7 +361,7 @@ WHITESPACE = (\t|\n)
 			Pos.incLine();
 		}
 		Pos.setColumn(yycolumn);
-        }
+  	}
 //-------------------------OPERATORS----------------------------
 	"+"	{
 		Pos.setColumn(yycolumn);
