@@ -17,7 +17,6 @@ class CSXToken
 		linenum = p.linenum;
 		colnum = p.colnum;
 	}
-
 }
 
 class CSXIntLitToken extends CSXToken {
@@ -119,7 +118,7 @@ class Symbol {
 	public CSXToken value;
 	public Symbol(int tokenType, CSXToken theToken) {
 		sym = tokenType;
-		value = theToken;
+		value = theToken;	
 	}
 }
 
@@ -259,10 +258,10 @@ WHITESPACE = (\t|\n)
             val = Integer.parseInt(text);
         } catch (Exception e) {
             if (negative) {
-				System.out.println("Integer underflow: " + text);
+				System.out.println(Pos.linenum + ":" + Pos.colnum + "\tERROR: Integer underflow: " + text);
                 val = Integer.MIN_VALUE;
             } else {
-				System.out.println("Integer overflow: " + text);
+				System.out.println(Pos.linenum + ":" + Pos.colnum + "\tERROR: Integer overflow: " + text);
                 val = Integer.MAX_VALUE;
             }
         }
@@ -281,24 +280,24 @@ WHITESPACE = (\t|\n)
             val = Float.parseFloat(text);
         } catch (Exception e) {
             if (negative) {
-				System.out.println("Float underflow: " + text);
+				System.out.println(Pos.linenum + ":" + Pos.colnum + "\tERROR: Float underflow: " + text);
                 val = Float.MIN_VALUE;
             } else {
-				System.out.println("Float overflow: " + text);
+				System.out.println(Pos.linenum + ":" + Pos.colnum + "\tERROR: Float overflow: " + text);
                 val = Float.MAX_VALUE;
             }
         }
         return new Symbol(sym.FLOATLIT, new CSXFloatLitToken(val, Pos));
 	}
 	{STRLIT} {
-                Pos.setColumn(yycolumn);
+		Pos.setColumn(yycolumn);
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(yytext(), Pos));
 	}
 	{RAWSTR} {
-                String str = yytext();
-                int numNewLines = str.split("\r\n|\r|\n").length -1;
+		String str = yytext();
+		int numNewLines = str.split("\r\n|\r|\n").length -1;
 		
-                Pos.setColumn(yycolumn);
+  		Pos.setColumn(yycolumn);
 		String val = yytext();
 		val = val.replace("\t", "\\t");
 		val = val.replace("\n", "\\n");
@@ -306,9 +305,9 @@ WHITESPACE = (\t|\n)
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos, numNewLines));
 	}
 	{CHARLIT} {
-                Pos.setColumn(yycolumn);
-                String str = yytext();
-                if (str.charAt(1) == '\\') {
+		Pos.setColumn(yycolumn);
+		String str = yytext();
+		if (str.charAt(1) == '\\') {
 			char val;
 			switch (str.charAt(2)) {
 				case '\\':
@@ -327,11 +326,11 @@ WHITESPACE = (\t|\n)
 					val = str.charAt(2);
 			}
 			System.out.println(str);
-                        return new Symbol(sym.CHARLIT, new CSXCharLitToken(val, Pos));
-                } else {
-                        return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
-                }
-        }
+           	return new Symbol(sym.CHARLIT, new CSXCharLitToken(val, Pos));
+		} else {
+            return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
+		}
+  	}
 	{IDENTIFIER} {
         Pos.setColumn(yycolumn);
 		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
@@ -345,7 +344,6 @@ WHITESPACE = (\t|\n)
     	Pos.setColumn(yycolumn);
     	return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos, 1));
 	}
-
     {RUNAWAYCHAR} {
     	Pos.setColumn(yycolumn);
     	return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
