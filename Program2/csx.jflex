@@ -291,7 +291,9 @@ WHITESPACE = (\t|\n)
 	}
 	{STRLIT} {
 		Pos.setColumn(yycolumn);
-		return new Symbol(sym.STRLIT, new CSXStringLitToken(yytext(), Pos));
+		String val = yytext();
+		val = val.substring(1, val.length()-1); // Remove ""
+		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos));
 	}
 	{RAWSTR} {
 		String str = yytext();
@@ -301,7 +303,7 @@ WHITESPACE = (\t|\n)
 		String val = yytext();
 		val = val.replace("\t", "\\t");
 		val = val.replace("\n", "\\n");
-		val = val.substring(1, val.length());
+		val = val.substring(2, val.length()-1);
 		return new Symbol(sym.STRLIT, new CSXStringLitToken(val, Pos, numNewLines));
 	}
 	{CHARLIT} {
@@ -471,7 +473,7 @@ WHITESPACE = (\t|\n)
 		Pos.setColumn(1);
 	}
 
-	[ \t]	{
+	[\040\t] {
 	 	Pos.setColumn(yycolumn);
 	}
 

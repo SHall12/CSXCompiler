@@ -177,8 +177,8 @@ class P2 {
 				((CSXIntLitToken) token.value).intValue + ")");
 			break;
 		case sym.STRLIT:
-			System.out.println("\tstring literal (" +
-				((CSXStringLitToken) token.value).stringText + ")");
+			System.out.println("\tstring literal (\"" +
+				((CSXStringLitToken) token.value).stringText + "\")");
 			break;
 		case sym.CHARLIT:
 				//Properly Displays tab and newline characters
