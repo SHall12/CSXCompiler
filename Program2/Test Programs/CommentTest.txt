@@ -1,0 +1,10 @@
+// Test Comments
+
+// ## This shouldn't be a multiline comment
+idShouldBeHere
+## idShouldNotBeHere
+
+NeitherShouldThisID ##
+
+// // id
+// Comment doesnt work at EOF BUT IT DOES?!!?!
