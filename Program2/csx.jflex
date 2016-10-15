@@ -378,10 +378,6 @@ WHITESPACE = (\t|\n)
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.SLASH, new CSXToken(Pos));
 	}
-	"~"	{
-		Pos.setColumn(yycolumn);
-		return new Symbol(sym.MINUS, new CSXToken(Pos));
-	}
 	")"	{
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.RPAREN, new CSXToken(Pos));
