@@ -3,15 +3,22 @@
 
 // Good chars
 ' '
-'\'
 '\t'
 '\n'
-'ab'
+'\''
 'a'
-'e 
+'-'
+'}'
+','
+'Z'
+'#'
 
 // Errors
+'ab'
+'sdf"\''
 'badChar'
+'Should be runaway char
 '
 'this is a char runaway
+'e 
 '\'

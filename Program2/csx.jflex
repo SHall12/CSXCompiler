@@ -159,7 +159,7 @@ BADIDENTIFIER = (_|{DIGITS}){IDENTIFIER}
 SINGLECOMMENT = \/\/[^\n]*\n
 MULTICOMMENT = ##(#?[^#])*##
 RUNAWAYSTRING = \"([\040!#-\[\]-~]|\\.)*\n
-RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
+RUNAWAYCHAR = \'(([\040-&(-\[\]-~]|\\.))*\n
 
 %type Symbol
 %column
@@ -359,8 +359,9 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
 		return new Symbol(sym.error, new CSXErrorToken("Runaway String: " + str.substring(0, str.length()-1), Pos, 1));
 	}
 	{RUNAWAYCHAR} {
+		String chr = yytext();
 		Pos.setColumn(yycolumn);
-		return new Symbol(sym.error, new CSXErrorToken("Runaway Char: " + yytext(), Pos));
+		return new Symbol(sym.error, new CSXErrorToken("Runaway Character: " + chr.substring(0, chr.length()-1), Pos, 1));
    	}
 	{SINGLECOMMENT} {
 		Pos.incLine();
