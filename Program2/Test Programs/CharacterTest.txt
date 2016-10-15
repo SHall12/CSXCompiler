@@ -1,0 +1,17 @@
+// Characters
+## Tests chars and char runaways ##
+
+// Good chars
+' '
+'\'
+'\t'
+'\n'
+'ab'
+'a'
+'e 
+
+// Errors
+'badChar'
+'
+'this is a char runaway
+'\'

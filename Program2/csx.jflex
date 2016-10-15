@@ -473,6 +473,6 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
 
 	.	{
 		Pos.setColumn(yycolumn);
-		return new Symbol(sym.error, new CSXErrorToken(yytext(), Pos));
+		return new Symbol(sym.error, new CSXErrorToken("Invalid Symbol: " + yytext(), Pos));
 	}
 }

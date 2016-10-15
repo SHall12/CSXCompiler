@@ -1,0 +1,16 @@
+// Strings
+## Test different types of strings and runaways ##
+
+// Regular String
+"This is a string"
+"This is another \"string\""
+"This is a runnaway string
+"This is also a runnaway string\"
+
+// RawString
+@"This is a raw string"
+@"This has a 
+new line in it"
+@"This has a 	tab in it"
+@"THis	Is
+	A different type of @@\" string"

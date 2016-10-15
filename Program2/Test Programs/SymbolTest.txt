@@ -1,0 +1,7 @@
+// Symbols
+## Tests valid and invalid symbols ##
+// Valid
+++ + !! != ;; [[ )) << ,, >= }} || == = ** ]] && <= -- - >> /
+
+// Invalid
+| & \\ \ ^ ` ~

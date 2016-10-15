@@ -1,0 +1,27 @@
+// Identifiers
+## Tests good identifiers with
+	only letters
+	letters and numbers
+	letters and underscores
+	letters numbers and underscores
+
+  Tests bad identifiers with
+	starting with number or underscore
+	including invalid characters ##
+
+// Good identifiers
+numba numba1 numba_1 
+dude dud3 dud3_
+broken B_roken
+b
+i
+int3 int_3
+n
+
+// Bad identifiers
+_BadId1
+1BadId 
+1b1
+22b 2b2 2b_orNot2b
+_b
+2_BadIdWithIntBefore // Should create int token and invalid ID

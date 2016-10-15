@@ -1,0 +1,22 @@
+// Reserved words
+## Tests each reserved word in
+	UPPERCASE
+	lowercase
+	RAndOMCaSe ##
+IF iF 
+BOOL bOoL 
+BREAK BrEaK 
+INT int iNt 
+CHAR char ChAr
+READ read rEaD
+CLASS class ClASs
+CONST const ConSt
+CONTINUE continue ConTinUe
+ELSE else eLsE
+FALSE false FalSe
+FLOAT float fLoAT
+RETURN return reTUrN
+TRUE true TrUE
+VOID void vOId
+PRINT print PrInT
+WHILE while WhiLE
