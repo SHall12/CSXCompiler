@@ -1,4 +1,4 @@
-/*  Expand this into your solution for project 2 */
+//Author: Long Bui and Shane Hall  
 
 class CSXToken 
 {
@@ -63,6 +63,7 @@ class CSXStringLitToken extends CSXToken {
 		stringText = str;
 	}
 	
+	//Needed new constructor to update line number after a rawstring 
     CSXStringLitToken(String str, Position p, int num){
 		super(p);
 		stringText = str;
@@ -79,7 +80,8 @@ class CSXErrorToken extends CSXToken {
 		super(p);
 		errorMessage = val;
 	}
-        
+    
+	//Needed new constructor to update line number after insertion of a runnaway string 
     CSXErrorToken(String val, Position p, int num){
 		super(p);
 		errorMessage = val;
@@ -248,13 +250,15 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
         int val = 0;
         boolean negative = false;
         String text = yytext();
+		//Detect negative sign
         if (text.charAt(0) == '~') {
             text = "-"+text.substring(1, text.length());
             negative = true;
         }
         try {
             val = Integer.parseInt(text);
-        } catch (Exception e) {
+        //Catches overflow and underflow
+		} catch (Exception e) {
             if (negative) {
 				System.out.println(Pos.linenum + ":" + Pos.colnum + "\tERROR: Integer underflow: " + text);
                 val = Integer.MIN_VALUE;
@@ -270,13 +274,15 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
         float val = 0;
         boolean negative = false;
         String text = yytext();
+		//Tests for negative sign
         if (text.charAt(0) == '~') {
             text = "-"+text.substring(1, text.length());
             negative = true;
         }
         try {
             val = Float.parseFloat(text);
-        } catch (Exception e) {
+         //Catches overflow and underflow
+		} catch (Exception e) {
             if (negative) {
 				System.out.println(Pos.linenum + ":" + Pos.colnum + "\tERROR: Float underflow: " + text);
                 val = Float.MIN_VALUE;
@@ -299,6 +305,7 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
 		
   		Pos.setColumn(yycolumn);
 		String val = yytext();
+		//Replace escaped characters
 		val = val.replace("\t", "\\t");
 		val = val.replace("\n", "\\n");
 		val = val.substring(2, val.length()-1);
@@ -307,6 +314,7 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
 	{CHARLIT} {
 		Pos.setColumn(yycolumn);
 		String str = yytext();
+		//Detect special escaped characters
 		if (str.charAt(1) == '\\') {
 			char val;
 			switch (str.charAt(2)) {
@@ -325,8 +333,10 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
 				default:
 					val = str.charAt(2);
 			}
+			//Returns correct escaped character
 			return new Symbol(sym.CHARLIT, new CSXCharLitToken(val, Pos));
 		} else {
+			//Returns the a normal character
             return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
 		}
   	}
@@ -353,6 +363,7 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
         }
 	{MULTICOMMENT} {
 		String comment = yytext();
+		//Count how many newlines are in the comment to update linenum correctly
 		int numNewLines = comment.split("\r\n|\r|\n").length -1;
 		for (int i = 0; i < numNewLines; ++i) {
 			Pos.incLine();
