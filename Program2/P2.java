@@ -5,6 +5,8 @@ class P2 {
   public static void
   main(String args[]) throws java.io.IOException {
 
+	System.out.println("Scanner by: Long Bui and Shane Hall");
+
 	if (args.length != 1) {
 		System.out.println(
 			"Error: Input file must be named on command line." );
