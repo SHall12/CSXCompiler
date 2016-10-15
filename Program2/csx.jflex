@@ -149,7 +149,6 @@ DIGITS = [0-9]+
 LETTER = [A-Za-z]
 STRLIT = \"([\040!#-\[\]-~]|\\.)*\"
 RAWSTR = @\"([\040!#-~]|\n|\t|\\.)*\"
-INTLIT = (~{DIGITS}|{DIGITS})
 FLOATLIT = \~?({DIGIT}*\.{DIGITS}|{DIGITS}\.)
 CHARLIT = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
@@ -158,7 +157,6 @@ SINGLECOMMENT = \/\/[^\n]*\n
 MULTICOMMENT = ##(#?[^#])*##
 RUNAWAYSTRING = \"([\040!#-\[\]-~]|\\.)*\n
 RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
-WHITESPACE = (\t|\n)
 
 %type Symbol
 %column
