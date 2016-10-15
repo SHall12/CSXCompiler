@@ -153,6 +153,7 @@ STRLIT = \"([\040!#-\[\]-~]|\\.)*\"
 RAWSTR = @\"([\040!#-~]|\n|\t|\\.)*\"
 FLOATLIT = \~?({DIGIT}*\.{DIGITS}|{DIGITS}\.)
 CHARLIT = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)\'
+BADCHAR = \'([\040-&(-\[\]-~]|\\.)*\'
 IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 BADIDENTIFIER = (_|{DIGITS}){IDENTIFIER}
 SINGLECOMMENT = \/\/[^\n]*\n
@@ -340,6 +341,10 @@ RUNAWAYCHAR = \'([\040-&\(-\[\]-~]|\\\'|\\n|\\t|\\\\)
             return new Symbol(sym.CHARLIT, new CSXCharLitToken(str.charAt(1), Pos));
 		}
   	}
+	{BADCHAR} {
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.error, new CSXErrorToken("Invalid Character: " + yytext(), Pos));
+	}
 	{IDENTIFIER} {
         Pos.setColumn(yycolumn);
 		return new Symbol(sym.IDENTIFIER, new CSXIdentifierToken(yytext(), Pos));
