@@ -4,8 +4,9 @@
 // Regular String
 "This is a string"
 "This is another \"string\""
-"This is a runnaway string
-"This is also a runnaway string\"
+"This is a runaway string // Comments show up too
+"This is a runaway string with a	tab
+"This is also a runaway string\"
 
 // RawString
 @"This is a raw string"

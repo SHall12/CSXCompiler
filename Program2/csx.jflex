@@ -158,8 +158,8 @@ IDENTIFIER = {LETTER}({LETTER}|{DIGIT}|_)*
 BADIDENTIFIER = (_|{DIGITS}){IDENTIFIER}
 SINGLECOMMENT = \/\/[^\n]*\n
 MULTICOMMENT = ##(#?[^#])*##
-RUNAWAYSTRING = \"([\040!#-\[\]-~]|\\.)*\n
-RUNAWAYCHAR = \'(([\040-&(-\[\]-~]|\\.))*\n
+RUNAWAYSTRING = \"([\040!#-\[\]-~]|\\.|\t)*\n
+RUNAWAYCHAR = \'(([\040-&(-\[\]-~]|\\.|\t))*\n
 
 %type Symbol
 %column

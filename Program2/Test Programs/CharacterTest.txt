@@ -17,8 +17,10 @@
 'ab'
 'sdf"\''
 'badChar'
+
+// Runaways
 'Should be runaway char
 '
 'this is a char runaway
-'e 
+'This is a runaway char with a 	tab
 '\'
