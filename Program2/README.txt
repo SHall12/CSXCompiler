@@ -29,6 +29,15 @@ Test Files:
 	CharacterTest.txt - Tests the character and runaway char literals
 	CommentTest.txt - Tests the single line and multiline comments
 
+Test Output Files: These are the outputs files when running the Test Files
+	ReservedWordListOutput.txt
+	IdentiferTest.txt
+	NumberTestOutput.txt 
+	SymbolTestOutput.txt
+	StringTestOutput.txt
+	CharacterTestOutput.txt
+	CommentTestOutput.txt
+
 How to Build:
 	java -jar ./tools/JFlex.jar csx.jflex
 	javac Yylex.java
