@@ -1,0 +1,339 @@
+/*************************************************
+ * CSX Project:  Program 3 - Parser              *
+ *    @Authors:  Long Bui and Shane Hall         *
+ *        Date:  11/11/2016                      *
+ ************************************************/
+
+import java_cup.runtime.*;
+parser code {:
+ public void syntax_error(Symbol cur_token)
+     {
+ 	  report_error("CSX syntax error at line "+
+			String.valueOf(((CSXToken)cur_token.value).linenum),
+			null);
+     }
+:};
+init with {:              :};
+scan with {: return Scanner.next_token(); :};
+
+//**************************TERMINALS*************************************
+//-----------------------RESERVED WORDS-----------------------------------
+terminal CSXToken               rw_IF, rw_BOOL, rw_BREAK, rw_INT,
+                                rw_CHAR, rw_READ, rw_CLASS, rw_CONST, 
+                                rw_CONTINUE, rw_ELSE, rw_FALSE, rw_FLOAT,
+                                rw_RETURN, rw_TRUE, rw_VOID, rw_PRINT, rw_WHILE;
+
+//------------------IDENTIFIERS AND LITERALS------------------------------
+terminal CSXIntLitToken         INTLIT; 
+terminal CSXFloatLitToken       FLOATLIT; 
+terminal CSXStringLitToken      STRLIT;
+terminal CSXCharLitToken        CHARLIT;
+terminal CSXIdentifierToken     IDENTIFIER;
+
+//-------------------------OPERATORS--------------------------------------
+terminal CSXToken               PLUS, NOTEQ, SEMI, SLASH, RPAREN, LPAREN, NOT,
+                                LT, COMMA, INC, GEQ, RBRACE, LBRACE, COR, EQ,
+                                ASG, TIMES, COLON, LBRACKET, RBRACKET, CAND,
+                                LEQ, DEC, GT, MINUS;
+
+//-----------------------ERROR TOKENS-------------------------------------
+terminal CSXErrorToken          error;
+
+/***************************NON TERMINALS*********************************
+non terminal classNode          Program;
+non terminal memberDeclsNode    Memberdecls;
+non terminal fieldDeclsNode     Fielddecls;
+non terminal methodDeclsNode    Methoddecls;
+non terminal stmtNode           OptionalSemi;
+non terminal methodDeclNode     Methoddecl;
+non terminal argDeclsNode       Argdecls;
+non terminal argDeclNode        Argdecl;
+non terminal declNode           Fielddecl;
+non terminal stmtsNode          Stmts;
+non terminal stmtNode           Stmt;
+non terminal typeNode           Type;
+non terminal argsNode           Args;
+non terminal stmtNode           Readlist;
+non terminal stmtNode           Printlist;
+non terminal exprNode           Expr;
+non terminal exprNode           Term;
+non terminal exprNode           Factor;
+non terminal exprNode           Pri;
+non terminal exprNode           Unary;
+non terminal exprNode           Unit;
+non terminal nameNode           Name;
+
+
+//----------------------------CSX GRAMMAR---------------------------------
+start with Program; 
+
+Program         ::= rw_CLASS:class IDENTIFIER:id LBRACE Memberdecls:members RBRACE
+                    {: RESULT = new classNode(
+                        new identNode(id.identifierText, id.linenum, id.colnum),
+                        member, class.linenum, class.colnum); 
+                    :}
+                ;
+Memberdecls     ::= Fielddecl:field Memberdecls:members
+                    
+                |   Methoddecls:methods
+                    
+                ;
+Fielddecls      ::= 
+                
+                |
+                
+                ;
+Fielddecls      ::= 
+
+                |
+                    
+                ;
+Methoddecls     ::= 
+                    
+                |
+                    
+                ;
+OptionalSemi    ::= 
+                    
+                |
+                    
+                ;
+Methoddecl      ::= 
+
+
+                |   
+
+
+                |   
+
+
+                | 
+
+  
+                ;
+Argdecls        ::= 
+                
+
+                |   
+                
+
+                ;
+Argdecl         ::= 
+
+
+                |   
+
+
+                ;
+Fielddecl       ::= 
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                ;
+Stmts           ::= 
+                
+
+                |   
+                    
+                ;
+Stmt            ::= 
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |  
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                ;
+Type            ::= 
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                ;
+
+Args            ::= 
+
+
+                |   
+
+
+                ;
+Readlist        ::= 
+
+
+                |   
+
+
+                ;
+Printlist       ::= 
+
+
+                |   
+
+
+                ;
+Expr            ::= 
+
+
+                |   
+
+
+                |   
+
+                ;
+Term            ::= 
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                ;
+Factor          ::= 
+
+
+                |   
+
+
+                |   
+
+                ;
+Pri             ::= 
+
+
+                |   
+
+
+                |   
+                
+
+                ;
+Unary           ::= 
+
+
+                |   
+
+
+                |   
+
+
+                ;
+
+Unit            ::= 
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                |   
+
+
+                ;
+
+Name            ::= 
+
+
+                |   
+
+
+                ;
