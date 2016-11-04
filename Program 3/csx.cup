@@ -1,8 +1,8 @@
-/*************************************************
- * CSX Project:  Program 3 - Parser              *
- *    @Authors:  Long Bui and Shane Hall         *
- *        Date:  11/11/2016                      *
- ************************************************/
+/****
+ * CSX Project: Program 3: Parser
+ * @Authors:  Long Bui and Shane Hall  
+ *
+ ***/
 
 import java_cup.runtime.*;
 parser code {:
@@ -67,82 +67,73 @@ non terminal nameNode           Name;
 //----------------------------CSX GRAMMAR---------------------------------
 start with Program; 
 
-Program         ::= rw_CLASS:class IDENTIFIER:id LBRACE Memberdecls:members RBRACE
-                    {: RESULT = new classNode(
-                        new identNode(id.identifierText, id.linenum, id.colnum),
-                        member, class.linenum, class.colnum); 
+Program         ::= rw_CLASS:class IDENTIFIER:id LBRACE Memberdecls:member RBRACE
+                    {: RESULT= new classNode(id, members, class.linenum, class.colnum); :}
+                ;
+Memberdecls     ::= Fielddecl:f Memberdecls:member
+                    {: RESULT= new memberDeclsNode(field, member, f.linenum, f.colnum); :}
+
+                |   Methoddecls:m
+                    {: RESULT= new memberDeclsNode(fieldDeclsNode.NULL, m, m.linenum, m.colnum); :}
+                ;
+Fielddecls      ::= Fielddecl:f1 Fielddecls:f2
+                    {: RESULT= new fieldDeclsNode(f1, f2, f1.linenum, f1.colnum); :}
+                |
+                    {: RESULT= fieldDeclsNode.NULL; :}
+                ;
+Methoddecls     ::= Methoddecl:m1 Methoddecls:m2
+                    {: RESULT= new methodDeclsNode(m1, m2, m1.linenum, f1.colnum); :}
+                |
+                    {: RESULT= new methodDeclsNode.NULL) :}
+                ;
+OptionalSemi    ::= SEMI:s
+                    {: RESULT= stmtNode.NULL; :}
+                |
+                    {: RESULT= stmtNode.NULL; :}
+                ;
+Methoddecl      ::= rw_VOID:v IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
+                    {: RESULT= new methodDeclNode(id, argDeclsNode.NULL, 
+                        new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
                     :}
-                ;
-Memberdecls     ::= Fielddecl:field Memberdecls:members
-                    
-                |   Methoddecls:methods
-                    
-                ;
-Fielddecls      ::= 
+                |   rw_VOID:v IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
+                    {: RESULT= new methodDeclNode(id, a, 
+                        new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
+                    :}
+                |   Type:t IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
+                    {: RESULT= new methodDeclNode(id, argDeclsNode.NULL, t, f, s, t.linenum, t.colnum); :}
                 
-                |
-                
+                |   Type:t IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
+                    {: RESULT= new methodDeclNode(id, a, t, f, s, t.linenum, t.colnum); :}
                 ;
-Fielddecls      ::= 
+Argdecls        ::= Argdecl:a1 Argdecls:a2
+                    {: RESULT= new argDeclsNode(a1, a2, a1.linenum, a1.colnum); :}
 
-                |
-                    
+                |   Argdecl:a
+                    {: RESULT= new argDeclsNode(a, argDeclsNode.NULL, a.linenum, a.colnum); :}
                 ;
-Methoddecls     ::= 
-                    
-                |
-                    
+Argdecl         ::= Type:t IDENTIFIER:id
+                    {: RESULT= new valArgDeclNode(id, t, t.linenum, t.colnum); :}
+
+                |   Type:t IDENTIFIER:id LBRACKET RBRACKET
+                    {: RESULT= new valArgDeclNode(id, t, t.linenum, t.colnum); :}   
                 ;
-OptionalSemi    ::= 
-                    
-                |
-                    
+Fielddecl       ::= Type:t IDENTIFIER:id SEMI
+                    {: RESULT= new varDeclNode(id, t, exprNode.NULL, t.linenum, t.colnum; :}
+
+                |   Type:t IDENTIFIER:id ASG Expr:e SEMI
+                    {: RESULT= new varDeclNode(id, t, e, t.linenum, t.colnum; :}
+
+                |   Type:t IDENTIFIER:id LBRACKET INTLIT RBRACKET SEMI
+                    {: RESULT= new varDeclNode(id, t, exprNode.NULL, t.linenum, t.colnum; :}
+
+                |   rw_CONST:c IDENTIFIER:id Expr:e SEMI
+                    {: RESULT= new constDeclNode(id, e, c.linenum, c.colnum; :}
                 ;
-Methoddecl      ::= 
+Stmts           ::= Stmt:s1 Stmts:s2
+                    {: RESULT= new stmtsNode(s1, s2, s1.linenum, s1.colnum; :}
 
-
-                |   
-
-
-                |   
-
-
-                | 
-
-  
-                ;
-Argdecls        ::= 
-                
-
-                |   
-                
-
-                ;
-Argdecl         ::= 
-
-
-                |   
-
-
-                ;
-Fielddecl       ::= 
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                ;
-Stmts           ::= 
-                
-
-                |   
-                    
+                |   Stmt:s
+                    {: RESULT= new stmtsNode(s, stmtsNode.NULL, s.linenum, s.colnum; :}
                 ;
 Stmt            ::= 
 
@@ -157,21 +148,6 @@ Stmt            ::=
 
 
                 |  
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
 
 
                 |   
