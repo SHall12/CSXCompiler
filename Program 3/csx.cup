@@ -176,36 +176,32 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmt:s
                 |   rw_CONTINUE:c IDENTIFIER:id SEMI
 					{: RESULT= new continueNode(id, c.linenum, c.colnum); :}
 
-                |   
+                |   LBRACE:l Fielddecls:f Stmts:s OptionalSemi
+					{: RESULT= new methodDeclNode(iDentNode.NULL, argDeclsNode.NULL, typeNode.NULL, f, s, l.linenum, l.colnum); :}
+				;
+Type            ::= rw_INT:i
+					{: RESULT= new intTypeNode(i.linenum, i.colnum); :}
 
+                |  	rw_CHAR:c
+					{: RESULT= new charTypeNode(c.linenum, c.colnum); :} 
 
+                |   rw_FLOAT:f
+					{: RESULT= new floatTypeNode(f.linenum, f.colnum); :}
+
+                |  	rw_BOOL:b
+					{: RESULT= new boolTypeNode(b.linenum, b.colnum); :} 
                 ;
-Type            ::= 
+Args            ::= Expr:e COMMA Args:a
+					{: RESULT= new argsNode(e, a, e.linenum, e.colnum); :}
 
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
+                |   Expr:e
+					{: RESULT= new argsNode(e, argsNode.NULL, e.linenum, e.colnum): :}
                 ;
-
-Args            ::= 
-
-
-                |   
-
-
-                ;
-Readlist        ::= 
-
-
-                |   
-
+Readlist        ::= Name:n COMMA Readlist:r
+					{: RESULT= new readNode(n, r, n.linenum, n.colnum); :}
+	
+    			| Name:n    
+					{: RESULT= new readNode(n, readNode.NULL, n.linenum, n.colnum); :}
 
                 ;
 Printlist       ::= 
