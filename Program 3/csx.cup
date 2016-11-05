@@ -35,6 +35,8 @@ terminal CSXToken               PLUS, NOTEQ, SEMI, SLASH, RPAREN, LPAREN, NOT,
                                 LT, COMMA, INC, GEQ, RBRACE, LBRACE, COR, EQ,
                                 ASG, TIMES, COLON, LBRACKET, RBRACKET, CAND,
                                 LEQ, DEC, GT, MINUS;
+//----------------------NEW OPERATORS-------------------------------------
+terminal CSXToken				ENDIF, READ, PRINT;
 
 //-----------------------ERROR TOKENS-------------------------------------
 terminal CSXErrorToken          error;
@@ -118,61 +120,61 @@ Argdecl         ::= Type:t IDENTIFIER:id
                     {: RESULT= new valArgDeclNode(id, t, t.linenum, t.colnum); :}   
                 ;
 Fielddecl       ::= Type:t IDENTIFIER:id SEMI
-                    {: RESULT= new varDeclNode(id, t, exprNode.NULL, t.linenum, t.colnum; :}
+                    {: RESULT= new varDeclNode(id, t, exprNode.NULL, t.linenum, t.colnum); :}
 
                 |   Type:t IDENTIFIER:id ASG Expr:e SEMI
-                    {: RESULT= new varDeclNode(id, t, e, t.linenum, t.colnum; :}
+                    {: RESULT= new varDeclNode(id, t, e, t.linenum, t.colnum); :}
 
                 |   Type:t IDENTIFIER:id LBRACKET INTLIT RBRACKET SEMI
-                    {: RESULT= new varDeclNode(id, t, exprNode.NULL, t.linenum, t.colnum; :}
+                    {: RESULT= new varDeclNode(id, t, exprNode.NULL, t.linenum, t.colnum); :}
 
                 |   rw_CONST:c IDENTIFIER:id Expr:e SEMI
-                    {: RESULT= new constDeclNode(id, e, c.linenum, c.colnum; :}
+                    {: RESULT= new constDeclNode(id, e, c.linenum, c.colnum); :}
                 ;
 Stmts           ::= Stmt:s1 Stmts:s2
-                    {: RESULT= new stmtsNode(s1, s2, s1.linenum, s1.colnum; :}
+                    {: RESULT= new stmtsNode(s1, s2, s1.linenum, s1.colnum); :}
 
                 |   Stmt:s
-                    {: RESULT= new stmtsNode(s, stmtsNode.NULL, s.linenum, s.colnum; :}
+                    {: RESULT= new stmtsNode(s, stmtsNode.NULL, s.linenum, s.colnum); :}
                 ;
-Stmt            ::= 
+Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmt:s
+					{: RESULT= new ifThenNode(e, s, ENDIFNODEHERE, i.linenum, i.colnum); :}
+				
+                |	rw_IF:i LPAREN Expr:e RPAREN Stmt:s rw_ELSE Stmt:s2
+					{: RESULT= new ifThenNode(e, s, s2, i.linenum, i.colnum); :}
 
+                |   rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
+					{: RESULT= new whileNode(exprNode.NULL, e, s, w.linenum, w.colnum); :}
+			
+                |   IDENTIFIER:id COLON rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
+					{: RESULT= new whileNode(id, e, s, w.linenum, w.colnum); :}
 
-                |   
+                |	Name:n ASG Expr:e SEMI
+					{: RESULT= new asgNode(n, e, n.linenum.n.colnum); :}
 
+                |   read:read LPAREN Readlist:r RPAREN SEMI
+					{: RESULT= new readNode(read, r, read.linenum, read.colnum); :} 
+	
+                |   print:print LPAREN Printlist:p RPAREN SEMI
+					{: RESULT= new readNode(print, r, print.linenum, print.colnum); :} 
 
-                |   
+                |   IDENTIFIER:id LPAREN RPAREN SEMI
+					{: RESULT= new callNode(id, argsNode.NULL, id.linenum, id.colnum); :}
+					
+                |   IDENTIFIER:id LPAREN Args:a RPAREN SEMI
+					{: RESULT= new callNode(id, a, id.linenum, id.colnum); :}
 
+                |   rw_RETURN:r SEMI
+					{: RESULT= stmtNode.NULL; :}
 
-                |   
+                |   rw_RETURN:r Expr:e SEMI
+					{: RESULT= new returnNode(e, r.linenum, r.colnum); :}
 
+                |   rw_BREAK:b IDENTIFIER:id SEMI
+					{: RESULT= new breakNode(id, b.linenum, b.colnum); :}
 
-                |  
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
+                |   rw_CONTINUE:c IDENTIFIER:id SEMI
+					{: RESULT= new continueNode(id, c.linenum, c.colnum); :}
 
                 |   
 
