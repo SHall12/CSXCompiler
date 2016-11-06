@@ -200,114 +200,110 @@ Args            ::= Expr:e COMMA Args:a
 Readlist        ::= Name:n COMMA Readlist:r
 					{: RESULT= new readNode(n, r, n.linenum, n.colnum); :}
 	
-    			| Name:n    
+    			|	Name:n    
 					{: RESULT= new readNode(n, readNode.NULL, n.linenum, n.colnum); :}
+                ;
+Printlist       ::= Expr:e COMMA Printlist:p
+					{: RESULT= new printNode(e, p, e.linenum, e.colnum); :} 					
+
+                |   Expr:e
+					{: RESULT= new printNode(e, printNode.NULL, e.linenum, e.colnum); :}
+                ;
+Expr            ::= Expr:e COR:c Term:t
+					{: RESULT= new binaryOpNode(e, sym.COR, t, c.linenum, c.colnum); :}
+
+                |   Expr:e CAND:c Term:t
+					{: RESULT= new binaryOpNode(e, sym.CAND, t, c.linenum, c.colnum); :}
+
+                |   Term:t
+					{: RESULT= new binaryOpNode(exprNode.NULL, exprNode.NULL, t, t.linenum, t.colnum); :}
+                ;
+Term            ::= Factor:f1 LT:op Factor:f2
+					{: RESULT= new binaryOpNode(f1, sym.LT, f2, op.linenum, op.colnum); :}
+
+                |   Factor:f1 GT:op Factor:f2
+					{: RESULT= new binaryOpNode(f1, sym.GT, f2, op.linenum, op.colnum); :}
+
+                |   Factor:f1 LEQ:op Factor:f2
+					{: RESULT= new binaryOpNode(f1, sym.LEQ, f2, op.linenum, op.colnum); :}
+
+                |   Factor:f1 GEQ:op Factor:f2
+					{: RESULT= new binaryOpNode(f1, sym.GEQ, f2, op.linenum, op.colnum); :}
+
+                |   Factor:f1 EQ:op Factor:f2
+					{: RESULT= new binaryOpNode(f1, sym.EQ, f2, op.linenum, op.colnum); :}
+
+                |   Factor:f1 NOTEQ:op Factor:f2
+					{: RESULT= new binaryOpNode(f1, sym.NOTEQ, f2, op.linenum, op.colnum); :}
+
+
+                |   Factor:f1 
+					{: RESULT= new unaryNode(f1, NULL, f1.linenum, f1.colnum); :}
+
 
                 ;
-Printlist       ::= 
+Factor          ::= Factor:f PLUS:op Pri:p
+					{: RESULT= new binaryOpNode(f1, sym.PLUS, op.linenum, op.colnum); :}
 
+                |   Factor:f MINUS:op Pri:p
+					{: RESULT= new binaryOpNode(f1, sym.MINUS, op.linenum, op.colnum); :}
 
-                |   
-
-
+                |   Pri:p
+					{: RESULT= new unaryNode(p, NULL, p.linenum, p.colnum); :}
                 ;
-Expr            ::= 
+Pri             ::= Pri:p TIMES:op Unary:u
+					{: RESULT= new binaryOpNode(p, sym.TIMES, u, op.linenum, op.colnum); :}
 
+                |   Pri:p SLASH:op Unary:u
+					{: RESULT= new binaryOpNode(p, sym.SLASH, u, op.linenum, op.colnum); :}
 
-                |   
-
-
-                |   
-
-                ;
-Term            ::= 
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                ;
-Factor          ::= 
-
-
-                |   
-
-
-                |   
-
-                ;
-Pri             ::= 
-
-
-                |   
-
-
-                |   
+                |   Unary:u
+					{: RESULT= new unaryOpNode(u, NULL, u.linenum, u.colnum); :}
                 
 
                 ;
-Unary           ::= 
+Unary           ::= NOT:op Unary:u
+					{: RESULT= new binaryOpNode(u, sym.NOT, op.linenum, op.colnum); :}
 
+                |   LPAREN:l Type:t RPAREN Unary:u 
+					{: RESULT= new castNode(t, u, l.linenum, c.colnul); :}
 
-                |   
+                |   Unit:u	
+					{: RESULT= u; :}
+                ;	
+Unit            ::= Name:n
+					{: RESULT= new nameNode(identNode.NULL, n, n.linenum, n.colnum); :}
 
+                |   IDENTIFIER:id LPAREN RPAREN
+					{: RESULT= new identNode(id, id.linenum, id.colnum); :}
+	
+                |   IDENTIFIER:id LPAREN Args:a RPAREN
+					{: RESULT= new callNode(id, a, id.linenum, id.colnum); :}
 
-                |   
+                |   INTLIT:l
+					{: RESULT= new intLitNode(l, l.linenum, l.colnum); :}
 
+                |   CHARLIT:l
+					{: RESULT= new charLitNode(l, l.linenum, l.colnum); :}
 
+                |   FLOATLIT:l
+					{: RESULT= new floatLitNode(l, l.linenum, l.colnum); :}
+
+                |   STRLIT:l
+					{: RESULT= new strLitNode(l, l.linenum, l.colnum); :}
+
+                |   TRUE:l
+					{: RESULT= new trueNodE(l, l.linenum, l.colnum); :}
+
+                |   FALSE:l
+					{: RESULT= new falseNodE(l, l.linenum, l.colnum); :}
+
+                |   LPAREN:l Expr:e RPAREN
+					{: RESULT= new argsNode(e, argsNode.NULL, 1.linenum, 1.colnum); :}
                 ;
+Name            ::= IDENTIFIER:id
+					{: RESULT= new nameNode(id, exprNode.NULL, id.linenum, id.colnum); :}
 
-Unit            ::= 
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                ;
-
-Name            ::= 
-
-
-                |   
-
-
-                ;
+                |   IDENTIFIER:id LBRACKET Expr:e RBRACKET
+					{: RESULT= new nameNode(id, e, id.linenum, id.colnum); :}
+				;
