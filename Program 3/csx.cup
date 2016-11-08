@@ -41,7 +41,7 @@ terminal CSXToken				ENDIF, READ, PRINT;
 //-----------------------ERROR TOKENS-------------------------------------
 terminal CSXErrorToken          error;
 
-/***************************NON TERMINALS*********************************
+//***************************NON TERMINALS*********************************
 non terminal classNode          Program;
 non terminal memberDeclsNode    Memberdecls;
 non terminal fieldDeclsNode     Fielddecls;
@@ -204,74 +204,54 @@ Readlist        ::= Name:n COMMA Readlist:r
 					{: RESULT= new readNode(n, readNode.NULL, n.linenum, n.colnum); :}
 
                 ;
-Printlist       ::= 
-
-
-                |   
-
-
+Printlist       ::= Expr:e COMMA Printlist:pl
+					{: RESULT = new printNode(e, pl,  n.linenum, n.colnum); :}
+                | Expr:e
+					{: RESULT = new printNode(e, printNode.NULL, n.linenum, n.colnum); :}
                 ;
-Expr            ::= 
-
-
-                |   
-
-
-                |   
-
+Expr            ::= Expr:e COR Term:t
+					{: RESULT = new binaryOpNode(e, sym.COR, t, n.linenum, n.colnum); :}
+                | Expr:e COR Term:t
+					{: RESULT = new binaryOpNode(e, sym.CAND, t, n.linenum, n.colnum); :}
+                | Term:t
+					{: RESULT = new unaryOpNode(/* */, t, n.linenum, n.colnum); :} // Not sure if correct
                 ;
-Term            ::= 
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
-                |   
-
-
+Term            ::= Factor:f1 LT Factor:f2
+					{: RESULT = new binaryOpNode(f1, sym.LT, f2, n.linenum, n.colnum); :}
+                |   Factor:f1 GT Factor:f2
+					{: RESULT = new binaryOpNode(f1, sym.GT, f2, n.linenum, n.colnum); :}
+                |   Factor:f1 LEQ Factor:f2
+					{: RESULT = new binaryOpNode(f1, sym.LEQ, f2, n.linenum, n.colnum); :}
+                |   Factor:f1 GEQ Factor:f2
+					{: RESULT = new binaryOpNode(f1, sym.GEQ, f2, n.linenum, n.colnum); :}
+                |   Factor:f1 EQ Factor:f2
+					{: RESULT = new binaryOpNode(f1, sym.EQ, f2, n.linenum, n.colnum); :}
+                |   Factor:f1 NOTEQ Factor:f2
+					{: RESULT = new binaryOpNode(f1, sym.NOTEQ, f2, n.linenum, n.colnum); :}
+                |   Factor:f1
+					{: RESULT = new unaryOpNode(/* */, sym., f2, n.linenum, n.colnum); :} // No idea
                 ;
-Factor          ::= 
-
-
-                |   
-
-
-                |   
-
+Factor          ::= Factor:f PLUS Pri:p
+					{: RESULT = new binaryOpNode(f, sym.PLUS, p, n.linenum, n.colnum); :}
+                |   Factor:f MINUS Pri:p
+					{: RESULT = new binaryOpNode(f, sym.MINUS, p, n.linenum, n.colnum); :}
+                |   Factor:f 
+					{: RESULT = new unaryOpNode(/* */, sym., f, n.linenum, n.colnum); :} // No idea
                 ;
-Pri             ::= 
-
-
-                |   
-
-
-                |   
-                
-
+Pri             ::= Pri:p TIMES Unary:u
+					{: RESULT = new binaryOpNode(p, sym.TIMES, u, n.linenum, n.colnum); :}
+                |   Pri:p SLASH Unary:u
+					{: RESULT = new binaryOpNode(p, sym.SLASH, u, n.linenum, n.colnum); :}
+                |   Unary:u 
+					{: RESULT = new unaryOpNode(/* */, sym., u, n.linenum, n.colnum); :} // No idea
                 ;
-Unary           ::= 
-
-
-                |   
-
-
-                |   
-
-
+Unary           ::= NOT Unary:u
+					{: RESULT = new unaryOpNode(sym.NOT, u, n.linenum, n.colnum); :}
+                | LPAREN Type:t RPAREN Unary:u
+					{: RESULT = new castNode(t, u, n.linenum, n.colnum); :}
+                | Unit
+					{: RESULT = new unaryOpNode(/* */, sym., u, n.linenum, n.colnum); :}
                 ;
-
 Unit            ::= 
 
 
