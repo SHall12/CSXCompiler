@@ -103,7 +103,7 @@ Methoddecl      ::= rw_VOID:v IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f St
                 |   Type:t IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
                     {: RESULT= new methodDeclNode(id, argDeclsNode.NULL, t, f, s, t.linenum, t.colnum); :}
                 
-                |   Type:t IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
+                |   Type:t IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
                     {: RESULT= new methodDeclNode(id, a, t, f, s, t.linenum, t.colnum); :}
                 ;
 Argdecls        ::= Argdecl:a1 Argdecls:a2
@@ -137,7 +137,7 @@ Stmts           ::= Stmt:s1 Stmts:s2
                     {: RESULT= new stmtsNode(s1, stmtsNode.NULL, s1.linenum, s1.colnum); :}
                 ;
 Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmt:s
-                    {: RESULT= new ifThenNode(e, s, ENDIFNODEHERE, i.linenum, i.colnum); :}
+                    {: RESULT= new ifThenNode(e, s, stmtNode.NULL, i.linenum, i.colnum); :}
 				
                 |   rw_IF:i LPAREN Expr:e RPAREN Stmt:s rw_ELSE Stmt:s2
                     {: RESULT= new ifThenNode(e, s, s2, i.linenum, i.colnum); :}
