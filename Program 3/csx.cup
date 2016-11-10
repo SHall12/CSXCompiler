@@ -56,8 +56,8 @@ non terminal stmtsNode          Stmts;
 non terminal stmtNode           Stmt;
 non terminal typeNode           Type;
 non terminal argsNode           Args;
-non terminal stmtNode           Readlist;
-non terminal stmtNode           Printlist;
+non terminal readNode           Readlist;
+non terminal printNode          Printlist;
 non terminal exprNode           Expr;
 non terminal exprNode           Term;
 non terminal exprNode           Factor;
@@ -224,8 +224,8 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
 			
                 |   IDENTIFIER:id COLON rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
                     {: 
-                        RESULT= new whileNode(new identNode(
-                            id.identifierText, id.linenum,id.colnum),
+                        RESULT= new whileNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
                             e, s, w.linenum, w.colnum); 
                     :}
 
@@ -234,14 +234,21 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
                         RESULT= new asgNode(n, e, n.linenum, n.colnum); 
                     :}
 
-                |   rw_READ:r LPAREN Readlist:rl RPAREN SEMI
+                |   rw_READ:r LPAREN Name:n COMMA Readlist:rl RPAREN SEMI
                     {: 
-                        RESULT= new readNode(nameNode.NULL, rl, r.linenum, r.colnum); 
+                        RESULT= new readNode(n, rl, r.linenum, r.colnum); 
                     :} 
-	
-                |   rw_PRINT:p LPAREN Printlist:pl RPAREN SEMI
+	            |   rw_READ:r LPAREN Name:n RPAREN SEMI
                     {: 
-                        RESULT= new printNode(nameNode.NULL, pl, p.linenum, p.colnum); 
+                        RESULT= new readNode(n, readNode.NULL, r.linenum, r.colnum); 
+                    :} 
+                |   rw_PRINT:p LPAREN Expr:e RPAREN SEMI
+                    {: 
+                        RESULT= new printNode(e, printNode.NULL, p.linenum, p.colnum); 
+                    :} 
+                |   rw_PRINT:p LPAREN Expr:e COMMA Printlist:pl RPAREN SEMI
+                    {: 
+                        RESULT= new printNode(e, pl, p.linenum, p.colnum); 
                     :} 
 
                 |   IDENTIFIER:id LPAREN RPAREN SEMI
@@ -463,7 +470,7 @@ Unary           ::= NOT:n Unary:u
                 ;
 Unit            ::= Name:n
                     {: 
-                        RESULT= new nameNode(identNode.NULL, n, n.linenum, n.colnum); 
+                        RESULT = new unaryOpNode(-1, n, n.linenum, n.colnum); 
                     :}
 
                 |   IDENTIFIER:id LPAREN RPAREN
