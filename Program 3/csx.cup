@@ -190,7 +190,7 @@ Stmts           ::= Stmt:s1 Stmts:s2
                 ;
 Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmt:s ENDIF
                     {: 
-                        RESULT= new new ifThenNode(e, s, stmtNode.NULL, i.linenum, i.colnum);
+                        RESULT= new ifThenNode(e, s, stmtNode.NULL, i.linenum, i.colnum);
                     :}
                 |   rw_IF:i LPAREN Expr:e RPAREN Stmt:s1 rw_ELSE Stmt:s2 ENDIF
                     {: 
@@ -287,7 +287,7 @@ Args            ::= Expr:e COMMA Args:a
 
                 |   Expr:e
                     {: 
-                        RESULT= new argsNode(e, argsNode.NULL, e.linenum, e.colnum): 
+                        RESULT= new argsNode(e, argsNode.NULL, e.linenum, e.colnum);
                     :}
                 ;
 Readlist        ::= Name:n COMMA Readlist:r
@@ -452,7 +452,7 @@ Unit            ::= Name:n
 
                 |   LPAREN:l Expr:e RPAREN
                     {: 
-                        RESULT= new argsNode(e, argsNode.NULL, 1.linenum, 1.colnum); 
+                        RESULT= new argsNode(e, argsNode.NULL, l.linenum, l.colnum); 
                     :}
                 ;
 Name            ::= IDENTIFIER:id
