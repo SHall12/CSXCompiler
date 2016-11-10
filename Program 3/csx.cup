@@ -35,10 +35,11 @@ terminal CSXToken               PLUS, NOTEQ, SEMI, SLASH, RPAREN, LPAREN, NOT,
                                 LT, COMMA, GEQ, RBRACE, LBRACE, COR, EQ,
                                 ASG, TIMES, COLON, LBRACKET, RBRACKET, CAND,
                                 LEQ, GT, MINUS;
-//terminal CSXToken             INC, DEC;
+terminal CSXToken             INC, DEC;
 
 //----------------------NEW OPERATORS-------------------------------------
 terminal CSXToken		ENDIF;
+terminal CSXToken		CONDEXPR;
 
 
 //***************************NON TERMINALS*********************************
@@ -46,7 +47,7 @@ non terminal classNode          Program;
 non terminal memberDeclsNode    Memberdecls;
 non terminal fieldDeclsNode     Fielddecls;
 non terminal methodDeclsNode    Methoddecls;
-non terminal stmtNode           OptionalSemi;
+non terminal semicolonNode      OptionalSemi;
 non terminal methodDeclNode     Methoddecl;
 non terminal argDeclsNode       Argdecls;
 non terminal argDeclNode        Argdecl;
@@ -64,7 +65,6 @@ non terminal exprNode           Pri;
 non terminal exprNode           Unary;
 non terminal exprNode           Unit;
 non terminal nameNode           Name;
-
 
 //----------------------------CSX GRAMMAR---------------------------------
 start with Program; 
@@ -106,11 +106,11 @@ Methoddecls     ::= Methoddecl:m1 Methoddecls:m2
                 ;
 OptionalSemi    ::= SEMI:s
                     {: 
-                       RESULT= stmtNode.NULL; 
+                       RESULT= new semicolonNode(s.linenum, s.colnum); 
                     :}
                 |
                     {: 
-                        RESULT= stmtNode.NULL; 
+                        RESULT= semicolonNode.NULL; 
                     :}
                 ;
 Methoddecl      ::= rw_VOID:v IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi
@@ -188,16 +188,13 @@ Stmts           ::= Stmt:s1 Stmts:s2
                         RESULT= new stmtsNode(s, stmtsNode.NULL, s.linenum, s.colnum); 
                     :}
                 ;
-Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmt:s ENDIF
+Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
                     {: 
                         RESULT= new ifThenNode(e, s, stmtNode.NULL, i.linenum, i.colnum);
                     :}
-                |   rw_IF:i LPAREN Expr:e RPAREN Stmt:s1 rw_ELSE Stmt:s2 ENDIF
+                |   rw_IF:i LPAREN Expr:e RPAREN Stmts:s1 rw_ELSE Stmts:s2 ENDIF
                     {: 
-                        RESULT= new ifThenNode(e,
-                        s1,
-                        s2,
-                        i.linenum,  i.colnum);
+                        RESULT= new ifThenNode(e, s1, s2, i.linenum,  i.colnum);
                     :}
                 |   rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
                     {: 
@@ -254,11 +251,30 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmt:s ENDIF
                         RESULT= new continueNode(id, c.linenum, c.colnum); 
                     :}
 
-                
                 |   LBRACE:l Fielddecls:f Stmts:s RBRACE OptionalSemi
                     {: 
                         RESULT= new blockNode(f, s,l.linenum, l.colnum); 
                     :}
+                |   INC:i IDENTIFIER:id SEMI
+                    {: 
+                        RESULT= new preIncrementNode(id, i.linenum, i.colnum);
+                    :}
+                |   IDENTIFIER:id INC SEMI
+                    {: 
+                        RESULT= new postIncrementNode(id, id.linenum, id.colnum);
+                    :}
+                |   DEC:d IDENTIFIER:id SEMI
+                    {: 
+                        RESULT= new preDecrementNode(id, d.linenum, d.colnum);
+                    :}
+                |   IDENTIFIER:id DEC SEMI
+                    {: 
+                        RESULT= new postDecrementNode(id, id.linenum, id.colnum);
+                    :}
+//not working   //|   LPAREN:l Expr:e1 CONDEXPR Expr:e2 MINUS COLON Expr:e3 PLUS COLON Expr:e4 RPAREN
+//conditonalexp //    {: 
+                //        RESULT= new condExprNode(e1, e2, e3, e4, l.linenum, l.colnum); 
+                //    :}
                 ;
 Type            ::= rw_INT:t
                     {: 
@@ -287,7 +303,7 @@ Args            ::= Expr:e COMMA Args:a
 
                 |   Expr:e
                     {: 
-                        RESULT= new argsNode(e, argsNode.NULL, e.linenum, e.colnum);
+                        RESULT= new argsNode(e, argsNode.NULL, e.linenum, e.colnum); 
                     :}
                 ;
 Readlist        ::= Name:n COMMA Readlist:r
@@ -323,16 +339,17 @@ Expr            ::= Expr:e COR Term:t
                 |   Term:t
                     {: 
                         RESULT = new unaryOpNode(-1, t, t.linenum, t.colnum); 
-                    :} 
+                    :}
+ 
                 ;
 Term            ::= Factor:f1 LT Factor:f2
                     {: 
-                        RESULT = new binaryOpNode(f1, sym.LT, f2, f1.linenum, f1.colnum); 
+                        RESULT= new binaryOpNode(f1, sym.LT, f2, f1.linenum, f1.colnum); 
                     :}
 
                 |   Factor:f1 GT Factor:f2
                     {: 
-                        RESULT = new binaryOpNode(f1, sym.GT, f2, f1.linenum, f1.colnum); 
+                        RESULT= new binaryOpNode(f1, sym.GT, f2, f1.linenum, f1.colnum); 
                     :}
 
                 |   Factor:f1 LEQ Factor:f2
@@ -465,4 +482,3 @@ Name            ::= IDENTIFIER:id
                         RESULT= new nameNode(id, e, id.linenum, id.colnum); 
                     :}
                 ;
-
