@@ -987,6 +987,7 @@ class falseNode extends exprNode {
 } // class falseNode 
 
 class semicolonNode extends exprNode {
+	semicolonNode() {}
 	semicolonNode(int line, int col) {
 		super(line, col);
 	}
@@ -994,7 +995,16 @@ class semicolonNode extends exprNode {
 		genIndent(indent);
 		System.out.print(";");	
 	}
+	static nullSemicolonNode NULL = new nullSemicolonNode();
 } // class semicolonNode 
+
+class nullSemicolonNode extends semicolonNode {
+	nullSemicolonNode() {}
+	boolean isNull() {
+		return true;
+	}
+	void Unparse(int indent) {}
+} // class nullSemicolonNode
 
 class condExprNode extends stmtNode {
 	condExprNode(exprNode e1, returnNode e2, returnNode e3, returnNode e4, int line, int col) {
