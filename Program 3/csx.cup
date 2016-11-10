@@ -37,7 +37,7 @@ terminal CSXToken               PLUS, NOTEQ, SEMI, SLASH, RPAREN, LPAREN, NOT,
                                 LEQ, GT, MINUS;
 terminal CSXToken             INC, DEC;
 
-//----------------------NEW OPERATORS-------------------------------------
+//----------------------NEW OPERATORS-----------y-------------------------
 terminal CSXToken		ENDIF;
 terminal CSXToken		CONDEXPR;
 
@@ -71,14 +71,16 @@ start with Program;
 
 Program         ::= rw_CLASS:cl IDENTIFIER:id LBRACE Memberdecls:m RBRACE
                     {: 
-                        RESULT= new classNode(id, m, cl.linenum, cl.colnum); 
+                        RESULT= new classNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                            m, cl.linenum, cl.colnum); 
                     :}
                 ;
 Memberdecls     ::= Fielddecl:f Memberdecls:m
                     {:  
                         RESULT= new memberDeclsNode(
-                        new fieldDeclsNode(f, m.fields, f.linenum,f.colnum), 
-                        m.methods, f.linenum, f.colnum); 
+                            new fieldDeclsNode(f, m.fields, f.linenum,f.colnum), 
+                            m.methods, f.linenum, f.colnum); 
                     :}
 
                 |   Methoddecls:m
@@ -115,25 +117,33 @@ OptionalSemi    ::= SEMI:s
                 ;
 Methoddecl      ::= rw_VOID:v IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi
                     {: 
-                        RESULT= new methodDeclNode(id, argDeclsNode.NULL, 
-                        new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
+                        RESULT= new methodDeclNode(
+                            new identNode(id.identifierText, id.linenum, id.colnum),
+                            argDeclsNode.NULL, 
+                            new voidTypeNode(v.linenum, v.colnum),
+                            f, s, v.linenum, v.colnum); 
                     :}
                 
                 |   rw_VOID:v IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
                     {: 
-                        RESULT= new methodDeclNode(id, a, 
-                        new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
+                        RESULT= new methodDeclNode(
+                            new identNode(id.identifierText, id.linenum, id.colnum), a, 
+                            new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
                     :}
                
                 |   Type:t IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
                     {: 
-                        RESULT= new methodDeclNode(id, argDeclsNode.NULL, t, f, s, t.linenum, t.colnum); 
+                        RESULT= new methodDeclNode(
+                            new identNode(id.identifierText, id.linenum, id.colnum), 
+                            argDeclsNode.NULL, t, f, s, t.linenum, t.colnum); 
                     :}
 
                
                 |   Type:t IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
                     {: 
-                        RESULT= new methodDeclNode(id, a, t, f, s, t.linenum, t.colnum); 
+                        RESULT= new methodDeclNode(
+                            new identNode(id.identifierText, id.linenum, id.colnum), 
+                            a, t, f, s, t.linenum, t.colnum); 
                     :}
                 ;
 Argdecls        ::= Argdecl:a1 COMMA Argdecls:a2
@@ -148,34 +158,45 @@ Argdecls        ::= Argdecl:a1 COMMA Argdecls:a2
                 ;
 Argdecl         ::= Type:t IDENTIFIER:id
                     {: 
-                        RESULT= new valArgDeclNode(id, t, t.linenum, t.colnum); 
+                        RESULT= new valArgDeclNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            t, t.linenum, t.colnum); 
                     :}
 
                 |   Type:t IDENTIFIER:id LBRACKET RBRACKET
                     {: 
-                        RESULT= new arrayArgDeclNode(id, t, t.linenum, t.colnum); 
+                        RESULT= new arrayArgDeclNode(
+                            new identNode(id.identifierText, id.linenum, id.colnum), 
+                            t, t.linenum, t.colnum); 
                     :}   
                 ;
 Fielddecl       ::= Type:t IDENTIFIER:id SEMI
                     {: 
-                        RESULT= new varDeclNode(id, t, exprNode.NULL, t.linenum, t.colnum); 
+                        RESULT= new varDeclNode(new identNode(id.identifierText, id.linenum,id.colnum),
+                            t, exprNode.NULL, t.linenum, t.colnum); 
                     :}
 
                 |   Type:t IDENTIFIER:id ASG Expr:e SEMI
                     {: 
-                        RESULT= new varDeclNode(id, t, e, t.linenum, t.colnum); 
+                        RESULT= new varDeclNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            t, e, t.linenum, t.colnum); 
                     :}
 
                 |   Type:t IDENTIFIER:id LBRACKET INTLIT:i RBRACKET SEMI
                     {: 
-                        RESULT= new arrayDeclNode(id, t, 
-                        new intLitNode(i.intValue, t.linenum, t.colnum),
-                        t.linenum, t.colnum); 
+                        RESULT= new arrayDeclNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                            t, 
+                            new intLitNode(i.intValue, t.linenum, t.colnum),
+                            t.linenum, t.colnum); 
                     :}
 
                 |   rw_CONST:c IDENTIFIER:id ASG Expr:e SEMI
                     {: 
-                        RESULT= new constDeclNode(id, e, c.linenum, c.colnum); 
+                        RESULT= new constDeclNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                             e, c.linenum, c.colnum); 
                     :}
                 ;
 Stmts           ::= Stmt:s1 Stmts:s2
@@ -203,7 +224,9 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
 			
                 |   IDENTIFIER:id COLON rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
                     {: 
-                        RESULT= new whileNode(id, e, s, w.linenum, w.colnum); 
+                        RESULT= new whileNode(new identNode(
+                            id.identifierText, id.linenum,id.colnum),
+                            e, s, w.linenum, w.colnum); 
                     :}
 
                 |   Name:n ASG Expr:e SEMI
@@ -223,12 +246,16 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
 
                 |   IDENTIFIER:id LPAREN RPAREN SEMI
                     {: 
-                        RESULT= new callNode(id, argsNode.NULL, id.linenum, id.colnum); 
+                        RESULT= new callNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            argsNode.NULL, id.linenum, id.colnum); 
                     :}
 					
                 |   IDENTIFIER:id LPAREN Args:a RPAREN SEMI
                     {: 
-                        RESULT= new callNode(id, a, id.linenum, id.colnum); 
+                        RESULT= new callNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                            a, id.linenum, id.colnum); 
                     :}
 
                 |   rw_RETURN:r SEMI
@@ -243,12 +270,16 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
 
                 |   rw_BREAK:b IDENTIFIER:id SEMI
                     {: 
-                        RESULT= new breakNode(id, b.linenum, b.colnum); 
+                        RESULT= new breakNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                            b.linenum, b.colnum); 
                     :}
 
                 |   rw_CONTINUE:c IDENTIFIER:id SEMI
                     {: 
-                        RESULT= new continueNode(id, c.linenum, c.colnum); 
+                        RESULT= new continueNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                            c.linenum, c.colnum); 
                     :}
 
                 |   LBRACE:l Fielddecls:f Stmts:s RBRACE OptionalSemi
@@ -257,19 +288,27 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
                     :}
                 |   INC:i IDENTIFIER:id SEMI
                     {: 
-                        RESULT= new preIncrementNode(id, i.linenum, i.colnum);
+                        RESULT= new preIncrementNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                            i.linenum, i.colnum);
                     :}
                 |   IDENTIFIER:id INC SEMI
                     {: 
-                        RESULT= new postIncrementNode(id, id.linenum, id.colnum);
+                        RESULT= new postIncrementNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            id.linenum, id.colnum);
                     :}
                 |   DEC:d IDENTIFIER:id SEMI
                     {: 
-                        RESULT= new preDecrementNode(id, d.linenum, d.colnum);
+                        RESULT= new preDecrementNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            d.linenum, d.colnum);
                     :}
                 |   IDENTIFIER:id DEC SEMI
                     {: 
-                        RESULT= new postDecrementNode(id, id.linenum, id.colnum);
+                        RESULT= new postDecrementNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            id.linenum, id.colnum);
                     :}
 //not working   //|   LPAREN:l Expr:e1 CONDEXPR Expr:e2 MINUS COLON Expr:e3 PLUS COLON Expr:e4 RPAREN
 //conditonalexp //    {: 
@@ -429,12 +468,16 @@ Unit            ::= Name:n
 
                 |   IDENTIFIER:id LPAREN RPAREN
                     {: 
-                        RESULT= new fctCallNode(id, argsNode.NULL, id.linenum, id.colnum); 
+                        RESULT= new fctCallNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            argsNode.NULL, id.linenum, id.colnum); 
                     :}
 	
                 |   IDENTIFIER:id LPAREN Args:a RPAREN
                     {: 
-                        RESULT= new fctCallNode(id, a, id.linenum, id.colnum); 
+                        RESULT= new fctCallNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                            a, id.linenum, id.colnum); 
                     :}
 
                 |   INTLIT:l
@@ -474,11 +517,15 @@ Unit            ::= Name:n
                 ;
 Name            ::= IDENTIFIER:id
                     {: 
-                        RESULT= new nameNode(new identNode(id.identifierText, id.linenum,id.colnum), exprNode.NULL, id.linenum,id.colnum);
+                        RESULT= new nameNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            exprNode.NULL, id.linenum,id.colnum);
                     :}
 
                 |   IDENTIFIER:id LBRACKET Expr:e RBRACKET
                     {: 
-                        RESULT= new nameNode(new identNode(id.identifierText, id.linenum,id.colnum), exprNode.NULL, id.linenum,id.colnum); 
+                        RESULT= new nameNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum), 
+                            exprNode.NULL, id.linenum,id.colnum); 
                     :}
                 ;
