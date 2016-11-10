@@ -985,3 +985,89 @@ class falseNode extends exprNode {
 		System.out.print("false");	
 	}
 } // class falseNode 
+
+class semicolonNode extends exprNode {
+	semicolonNode(int line, int col) {
+		super(line, col);
+	}
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print(";");	
+	}
+} // class semicolonNode 
+
+class condExprNode extends stmtNode {
+	condExprNode(exprNode e1, returnNode e2, returnNode e3, returnNode e4, int line, int col) {
+		super(line, col);
+		condition1 = e1;
+		condition2 = e2;
+		condition3 = e3;
+       	condition4 = e4;
+	}
+
+	void Unparse(int indent) {
+		
+	}
+
+	private final exprNode condition1;
+	private final returnNode condition2;
+	private final returnNode condition3;
+	private final returnNode condition4;
+} // class condExprNode 
+
+class preIncrementNode extends stmtNode {
+	preIncrementNode(identNode i, int line, int col) {
+		super(line, col);
+		idName = i;
+	}
+
+	void Unparse(int indent) {
+		
+	}
+
+	private final identNode idName;
+	
+} // class preIncrementNode 
+
+class postIncrementNode extends stmtNode {
+	postIncrementNode(identNode i, int line, int col) {
+		super(line, col);
+		idName = i;
+	}
+
+	void Unparse(int indent) {
+		
+	}
+
+	private final identNode idName;
+	
+} // class postIncrementNode 
+
+class preDecrementNode extends stmtNode {
+	preDecrementNode(identNode i, int line, int col) {
+		super(line, col);
+		idName = i;
+	}
+
+	void Unparse(int indent) {
+		
+	}
+
+	private final identNode idName;
+	
+} // class preDecrementNode 
+
+class postDecrementNode extends stmtNode {
+	postDecrementNode(identNode i, int line, int col) {
+		super(line, col);
+		idName = i;
+	}
+
+	void Unparse(int indent) {
+		
+	}
+
+	private final identNode idName;
+	
+} // class postDecrementNode 
+

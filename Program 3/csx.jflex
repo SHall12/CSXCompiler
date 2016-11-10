@@ -477,6 +477,11 @@ RUNAWAYCHAR = \'(([\040-&(-\[\]-~]|\\.|\t))*\n
 		Pos.setColumn(yycolumn);
 		return new Symbol(sym.MINUS, new CSXToken(Pos));
 	}
+	"?"	{
+		Pos.setColumn(yycolumn);
+		return new Symbol(sym.CONDEXPR, new CSXToken(Pos));
+	}
+	
 
 //------------------------WHITESPACE----------------------------
 	\n|\r\n	{
