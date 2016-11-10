@@ -46,7 +46,7 @@ non terminal classNode          Program;
 non terminal memberDeclsNode    Memberdecls;
 non terminal fieldDeclsNode     Fielddecls;
 non terminal methodDeclsNode    Methoddecls;
-//non terminal stmtNode           OptionalSemi;
+non terminal stmtNode           OptionalSemi;
 non terminal methodDeclNode     Methoddecl;
 non terminal argDeclsNode       Argdecls;
 non terminal argDeclNode        Argdecl;
@@ -69,16 +69,16 @@ non terminal nameNode           Name;
 //----------------------------CSX GRAMMAR---------------------------------
 start with Program; 
 
-Program         ::= rw_CLASS:class IDENTIFIER:id LBRACE Memberdecls:member RBRACE
+Program         ::= rw_CLASS:class IDENTIFIER:id LBRACE Memberdecls:m RBRACE
                     {: 
-                        RESULT= new classNode(id, members, class.linenum, class.colnum); 
+                        RESULT= new classNode(id, m, class.linenum, class.colnum); 
                     :}
                 ;
 Memberdecls     ::= Fielddecl:f Memberdecls:m
                     {:  
                         RESULT= new memberDeclsNode(
-                        new fieldDeclsNode(f,m.fields, f.linenum,f.colnum), 
-                        m, f.linenum, f.colnum); 
+                        new fieldDeclsNode(f, m.fields, f.linenum,f.colnum), 
+                        m.methods, f.linenum, f.colnum); 
                     :}
 
                 |   Methoddecls:m
@@ -104,52 +104,34 @@ Methoddecls     ::= Methoddecl:m1 Methoddecls:m2
                         RESULT= methodDeclsNode.NULL;
                     :}
                 ;
-//OptionalSemi  ::= SEMI:s
-//                  {: 
-//                        RESULT= stmtNode.NULL; 
-//                  :}
-//              |
-//                  {: 
-//                        RESULT= stmtNode.NULL; 
-//                  :}
-//              ;
-Methoddecl      ::= rw_VOID:v IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE SEMI 
+OptionalSemi    ::= SEMI:s
+                    {: 
+                       RESULT= stmtNode.NULL; 
+                    :}
+                |
+                    {: 
+                        RESULT= stmtNode.NULL; 
+                    :}
+                ;
+Methoddecl      ::= rw_VOID:v IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi
                     {: 
                         RESULT= new methodDeclNode(id, argDeclsNode.NULL, 
                         new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
                     :}
-
-                |   rw_VOID:v IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE  
-                    {: 
-                        RESULT= new methodDeclNode(id, argDeclsNode.NULL, 
-                        new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
-                    :}
-                |   rw_VOID:v IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE SEMI 
+                
+                |   rw_VOID:v IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
                     {: 
                         RESULT= new methodDeclNode(id, a, 
                         new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
                     :}
-                |   rw_VOID:v IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE  
-                    {: 
-                        RESULT= new methodDeclNode(id, a, 
-                        new voidTypeNode(v.linenum, v.colnum), f, s, v.linenum, v.colnum); 
-                    :}
-                |   Type:t IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE SEMI 
-                    {: 
-                        RESULT= new methodDeclNode(id, argDeclsNode.NULL, t, f, s, t.linenum, t.colnum); 
-                    :} 
- 
-                |   Type:t IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE  
+               
+                |   Type:t IDENTIFIER:id LPAREN RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
                     {: 
                         RESULT= new methodDeclNode(id, argDeclsNode.NULL, t, f, s, t.linenum, t.colnum); 
                     :}
 
-                |   Type:t IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE SEMI 
-                    {: 
-                        RESULT= new methodDeclNode(id, a, t, f, s, t.linenum, t.colnum); 
-                    :}
-
-                |   Type:t IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE  
+               
+                |   Type:t IDENTIFIER:id LPAREN Argdecls:a RPAREN LBRACE Fielddecls:f Stmts:s RBRACE OptionalSemi 
                     {: 
                         RESULT= new methodDeclNode(id, a, t, f, s, t.linenum, t.colnum); 
                     :}
@@ -208,15 +190,13 @@ Stmts           ::= Stmt:s1 Stmts:s2
                 ;
 Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmt:s ENDIF
                     {: 
-                        RESULT= new new ifThenNode(e,
-                        new stmtsNode(stmtNode.NULL, s, i.linenum, i.colnum),
-                        stmtNode.NULL, i.linenum, i.colnum);
+                        RESULT= new new ifThenNode(e, s, stmtNode.NULL, i.linenum, i.colnum);
                     :}
                 |   rw_IF:i LPAREN Expr:e RPAREN Stmt:s1 rw_ELSE Stmt:s2 ENDIF
                     {: 
                         RESULT= new ifThenNode(e,
-                        new stmtsNode(stmtNode.NULL, s1,i.linenum,i.colnum),
-                        new stmtsNode(stmtNode.NULL, s2,i.linenum,i.colnum),
+                        s1,
+                        s2,
                         i.linenum,  i.colnum);
                     :}
                 |   rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
@@ -274,14 +254,10 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmt:s ENDIF
                         RESULT= new continueNode(id, c.linenum, c.colnum); 
                     :}
 
-                |   LBRACE:l Fielddecls:f Stmts:s SEMI
+                
+                |   LBRACE:l Fielddecls:f Stmts:s RBRACE OptionalSemi
                     {: 
-                        RESULT= new blockNode(f, s,lb.linenum, lb.colnum); 
-                    :}
-
-                |   LBRACE:l Fielddecls:f Stmts:s 
-                    {: 
-                        RESULT= new blockNode(f, s,lb.linenum, lb.colnum); 
+                        RESULT= new blockNode(f, s,l.linenum, l.colnum); 
                     :}
                 ;
 Type            ::= rw_INT:t
