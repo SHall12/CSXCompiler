@@ -482,22 +482,22 @@ Unit            ::= Name:n
 
                 |   INTLIT:l
                     {: 
-                        RESULT= new intLitNode(l, l.linenum, l.colnum); 
+                        RESULT= new intLitNode(l.intValue, l.linenum, l.colnum); 
                     :}
 
                 |   CHARLIT:l
                     {: 
-                        RESULT= new charLitNode(l, l.linenum, l.colnum); 
+                        RESULT= new charLitNode(l.charValue, l.linenum, l.colnum); 
                     :}
 
                 |   FLOATLIT:l
                     {: 
-                        RESULT= new floatLitNode(l, l.linenum, l.colnum); 
+                        RESULT= new floatLitNode(l.floatValue, l.linenum, l.colnum); 
                     :}
 
                 |   STRLIT:l
                     {: 
-                        RESULT= new strLitNode(l, l.linenum, l.colnum); 
+                        RESULT= new strLitNode(l.stringText, l.linenum, l.colnum); 
                     :}
 
                 |   rw_TRUE:l
