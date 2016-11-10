@@ -69,9 +69,9 @@ non terminal nameNode           Name;
 //----------------------------CSX GRAMMAR---------------------------------
 start with Program; 
 
-Program         ::= rw_CLASS:class IDENTIFIER:id LBRACE Memberdecls:m RBRACE
+Program         ::= rw_CLASS:cl IDENTIFIER:id LBRACE Memberdecls:m RBRACE
                     {: 
-                        RESULT= new classNode(id, m, class.linenum, class.colnum); 
+                        RESULT= new classNode(id, m, cl.linenum, cl.colnum); 
                     :}
                 ;
 Memberdecls     ::= Fielddecl:f Memberdecls:m
@@ -442,27 +442,27 @@ Unit            ::= Name:n
 
                 |   rw_TRUE:l
                     {: 
-                        RESULT= new trueNode(l, l.linenum, l.colnum); 
+                        RESULT= new trueNode(l.linenum, l.colnum); 
                     :}
 
                 |   rw_FALSE:l
                     {: 
-                        RESULT= new falseNode(l, l.linenum, l.colnum); 
+                        RESULT= new falseNode(l.linenum, l.colnum); 
                     :}
 
                 |   LPAREN:l Expr:e RPAREN
                     {: 
-                        RESULT= new argsNode(e, argsNode.NULL, l.linenum, l.colnum); 
+                        RESULT= new unaryOpNode(-1, e, l.linenum, l.colnum); 
                     :}
                 ;
 Name            ::= IDENTIFIER:id
                     {: 
-                        RESULT= new nameNode(id, exprNode.NULL, id.linenum, id.colnum); 
+                        RESULT= new nameNode(new identNode(id.identifierText, id.linenum,id.colnum), exprNode.NULL, id.linenum,id.colnum);
                     :}
 
                 |   IDENTIFIER:id LBRACKET Expr:e RBRACKET
                     {: 
-                        RESULT= new nameNode(id, e, id.linenum, id.colnum); 
+                        RESULT= new nameNode(new identNode(id.identifierText, id.linenum,id.colnum), exprNode.NULL, id.linenum,id.colnum); 
                     :}
                 ;
 
