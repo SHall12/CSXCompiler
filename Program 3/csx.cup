@@ -211,7 +211,7 @@ Stmts           ::= Stmt:s1 Stmts:s2
                 ;
 Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
                     {: 
-                        RESULT= new ifThenNode(e, s, stmtNode.NULL, i.linenum, i.colnum);
+                        RESULT= new ifThenNode(e, s, stmtsNode.NULL, i.linenum, i.colnum);
                     :}
                 |   rw_IF:i LPAREN Expr:e RPAREN Stmts:s1 rw_ELSE Stmts:s2 ENDIF
                     {: 
@@ -231,7 +231,7 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
 
                 |   Name:n ASG Expr:e SEMI
                     {: 
-                        RESULT= new asgNode(n, e, n.linenum.n.colnum); 
+                        RESULT= new asgNode(n, e, n.linenum, n.colnum); 
                     :}
 
                 |   rw_READ:r LPAREN Readlist:rl RPAREN SEMI

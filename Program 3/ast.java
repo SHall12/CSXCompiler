@@ -465,7 +465,7 @@ class asgNode extends stmtNode {
 } // class asgNode 
 
 class ifThenNode extends stmtNode {
-	ifThenNode(exprNode e, stmtNode s1, stmtNode s2, int line, int col) {
+	ifThenNode(exprNode e, stmtsNode s1, stmtsNode s2, int line, int col) {
 		super(line, col);
 		condition = e;
 		thenPart = s1;
@@ -489,8 +489,8 @@ class ifThenNode extends stmtNode {
 	}
 
 	private final exprNode condition;
-	private final stmtNode thenPart;
-	private final stmtNode elsePart;
+	private final stmtsNode thenPart;
+	private final stmtsNode elsePart;
 } // class ifThenNode 
 
 class whileNode extends stmtNode {
