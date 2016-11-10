@@ -997,12 +997,12 @@ class semicolonNode extends exprNode {
 } // class semicolonNode 
 
 class condExprNode extends stmtNode {
-	condExprNode(exprNode e1, exprNode e2, exprNode e3, exprNode e4, int line, int col) {
+	condExprNode(exprNode e1, returnNode e2, returnNode e3, returnNode e4, int line, int col) {
 		super(line, col);
 		condition1 = e1;
 		condition2 = e2;
 		condition3 = e3;
-                condition4 = e4;
+       	condition4 = e4;
 	}
 
 	void Unparse(int indent) {
@@ -1010,9 +1010,9 @@ class condExprNode extends stmtNode {
 	}
 
 	private final exprNode condition1;
-	private final exprNode condition2;
-	private final exprNode condition3;
-        private final exprNode condition4;
+	private final returnNode condition2;
+	private final returnNode condition3;
+	private final returnNode condition4;
 } // class condExprNode 
 
 class preIncrementNode extends stmtNode {
