@@ -69,6 +69,17 @@ class classNode extends ASTNode {
 		members = memb;
 	} // classNode
 
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("class ");
+		className.Unparse(0);
+		System.out.println(" {");
+		members.Unparse(indent+1);
+		genIndent(indent);
+		System.out.println("} EOF");
+	} // Unparse()
+
 	private final identNode className;
 	private final memberDeclsNode members;
 } // class classNode
@@ -79,6 +90,10 @@ class memberDeclsNode extends ASTNode {
 		fields = f;
 		methods = m;
 	}
+	void Unparse(int indent) {
+		fields.Unparse(indent);
+		methods.Unparse(indent);
+	} // Unparse()
 	fieldDeclsNode fields;
 	final methodDeclsNode methods;
 } // class memberDeclsNode
@@ -92,6 +107,10 @@ class fieldDeclsNode extends ASTNode {
 		thisField = d;
 		moreFields = f;
 	}
+	void Unparse(int indent) {
+		thisField.Unparse(indent);
+		moreFields.Unparse(indent);
+	} // Unparse()
 	static nullFieldDeclsNode NULL = new nullFieldDeclsNode();
 	private declNode thisField;
 	private fieldDeclsNode moreFields;
@@ -122,6 +141,18 @@ class varDeclNode extends declNode {
 		varType = t;
 		initValue = e;
 	}
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		varName.Unparse(0);
+		System.out.print(" ");
+		varType.Unparse(0);
+		if (!initValue.isNull()) {
+			System.out.print(" = ");
+			initValue.Unparse(indent);
+		}
+		System.out.println(";");
+	} // Unparse()
 
 	private final identNode varName;
 	private final typeNode varType;
@@ -134,7 +165,15 @@ class constDeclNode extends declNode {
 		constName = id;
 		constValue = e;
 	}
-
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("const ");
+		constName.Unparse(0);
+		System.out.print(" = ");
+		constValue.Unparse(0);
+		System.out.println(";");
+	} // Unparse()
 	private final identNode constName;
 	private final exprNode constValue;
 } // class constDeclNode
@@ -146,7 +185,16 @@ class arrayDeclNode extends declNode {
 		elementType = t;
 		arraySize = lit;
 	}
-
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		elementType.Unparse(0);
+		System.out.print(" ");
+		arrayName.Unparse(0);
+		System.out.print("[");
+		arraySize.Unparse(0);
+		System.out.print("];");
+	} // Unparse()
 	private final identNode arrayName;
 	private final typeNode elementType;
 	private final intLitNode arraySize;
@@ -175,30 +223,50 @@ class intTypeNode extends typeNode {
 	intTypeNode(int line, int col) {
 		super(line, col);
 	}
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("int");
+	} // Unparse()
 } // class intTypeNode
 
 class floatTypeNode extends typeNode {
 	floatTypeNode(int line, int col) {
 		super(line, col);
 	}
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("float");
+	} // Unparse()
 } // class floatTypeNode
 
 class boolTypeNode extends typeNode {
 	boolTypeNode(int line, int col) {
 		super(line, col);
 	}
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("bool");
+	} // Unparse()
 } // class boolTypeNode
 
 class charTypeNode extends typeNode {
 	charTypeNode(int line, int col) {
 		super(line, col);
 	}
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("char");
+	} // Unparse()
 } // class charTypeNode
 
 class voidTypeNode extends typeNode {
 	voidTypeNode(int line, int col) {
 		super(line, col);
 	}
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("void");
+	} // Unparse()
 } // class voidTypeNode
 
 class methodDeclsNode extends ASTNode {
@@ -211,6 +279,12 @@ class methodDeclsNode extends ASTNode {
 		thisDecl = m;
 	 moreDecls = ms;
 	}
+
+	void Unparse(int indent) {
+		thisDecl.Unparse(indent);
+		moreDecls.Unparse(indent);
+	} // Unparse()
+
 	static nullMethodDeclsNode NULL = new nullMethodDeclsNode();
 	private methodDeclNode thisDecl;
 	private methodDeclsNode moreDecls;
@@ -232,7 +306,20 @@ class methodDeclNode extends ASTNode {
 		decls = f;
 		stmts = s;
 	}
-
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		returnType.Unparse(0);
+		System.out.print(" ");
+		name.Unparse(0);
+		System.out.print("(");
+		args.Unparse(0);
+		System.out.println(") {");
+		decls.Unparse(indent+1);
+		stmts.Unparse(indent+1);
+		genIndent(indent);
+		System.out.println("}");
+	} // Unparse()
 	private final identNode name;
 	private final argDeclsNode args;
 	private final typeNode returnType;
@@ -260,6 +347,11 @@ class argDeclsNode extends ASTNode {
 	}
 	static nullArgDeclsNode NULL = new nullArgDeclsNode();
 
+	void Unparse(int indent) {
+		thisDecl.Unparse(indent);
+		moreDecls.Unparse(indent);
+	} // Unparse()
+
 	private argDeclNode thisDecl;
 	private argDeclsNode moreDecls;
 } // class argDeclsNode 
@@ -277,6 +369,15 @@ class arrayArgDeclNode extends argDeclNode {
 		elementType = t;
 	}
 
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		elementType.Unparse(0);
+		System.out.print(" ");
+		argName.Unparse(0);
+		System.out.println("[];");
+	} // Unparse()
+
 	private final identNode argName;
 	private final typeNode elementType;
 } // class arrayArgDeclNode 
@@ -287,6 +388,15 @@ class valArgDeclNode extends argDeclNode {
 		argName = id;
 		argType = t;
 	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		argType.Unparse(0);
+		System.out.print(" ");
+		argName.Unparse(0);
+		System.out.println(";");
+	} // Unparse()
 
 	private final identNode argName;
 	private final typeNode argType;
@@ -367,9 +477,15 @@ class ifThenNode extends stmtNode {
 		genIndent(indent);
 		System.out.print("if (");
 		condition.Unparse(0);
-		System.out.println(")");
+		System.out.println(") {");
 		thenPart.Unparse(indent+1);
-		// No else parts in CSX-lite
+		if (!elsePart.isNull()) {
+			genIndent(indent);
+			System.out.println("else {");
+			elsePart.Unparse(indent+1);
+		}
+		genIndent(indent);
+		System.out.println ("}");
 	}
 
 	private final exprNode condition;
@@ -385,6 +501,21 @@ class whileNode extends stmtNode {
 	 loopBody = s;
 	}
 
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		if(!label.isNull()) {
+			label.Unparse(0);
+			System.out.print(": ");
+		}
+		System.out.print("while (");
+		condition.Unparse(0);
+		System.out.println(") {");
+		loopBody.Unparse(indent+1);
+		genIndent(indent);
+		System.out.println ("}");
+	}
+
 	private final exprNode label;
 	private final exprNode condition;
 	private final stmtNode loopBody;
@@ -396,6 +527,27 @@ class readNode extends stmtNode {
 		super(line, col);
 		 targetVar = n;
 		 moreReads = rn;
+	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("read(");
+		targetVar.Unparse(0);
+		readNode child = moreReads.getReadList();
+		while (!child.isNull()) {
+			System.out.print(", ");
+			child.getTargetVar().Unparse(0);
+			child = child.getReadList();
+		}
+		System.out.println(");");
+	}
+
+	readNode getReadList() {
+		return moreReads;
+	}
+	nameNode getTargetVar() {
+		return targetVar;
 	}
 
 	static nullReadNode NULL = new nullReadNode();
@@ -416,8 +568,29 @@ class printNode extends stmtNode {
 		outputValue = val;
 		morePrints = pn;
 	}
-	static nullPrintNode NULL = new nullPrintNode();
 
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("print(");
+		outputValue.Unparse(0);
+		printNode child = morePrints.getPrintList();
+		while (!child.isNull()) {
+			System.out.print(", ");
+			child.getValue().Unparse(0);
+			child = child.getPrintList();
+		}
+		System.out.println(");");
+	}
+
+	printNode getPrintList() {
+		return morePrints;
+	}
+	exprNode getValue() {
+		return outputValue;
+	}
+
+	static nullPrintNode NULL = new nullPrintNode();
 	private exprNode outputValue;
 	private printNode morePrints;
 } // class printNode 
@@ -435,6 +608,15 @@ class callNode extends stmtNode {
 		args = a;
 	}
 
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		methodName.Unparse(0);
+		System.out.print("(");
+		args.Unparse(0);
+		System.out.println(");");
+	}
+
 	private final identNode methodName;
 	private final argsNode args;
 } // class callNode 
@@ -443,6 +625,14 @@ class returnNode extends stmtNode {
 	returnNode(exprNode e, int line, int col) {
 		super(line, col);
 		returnVal = e;
+	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("return ");
+		returnVal.Unparse(0);
+		System.out.println(";");
 	}
 
 	private final exprNode returnVal;
@@ -455,6 +645,16 @@ class blockNode extends stmtNode {
 		stmts = s;
 	}
 
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("{");
+		decls.Unparse(indent+1);
+		stmts.Unparse(indent+1);
+		genIndent(indent);
+		System.out.println("}");
+	}
+
 	private final fieldDeclsNode decls;
 	private final stmtsNode stmts;
 } // class blockNode 
@@ -463,6 +663,14 @@ class breakNode extends stmtNode {
 	breakNode(identNode i, int line, int col) {
 		super(line, col);
 		label = i;
+	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("break");
+		label.Unparse(0);
+		System.out.println(";");
 	}
 
 	private final identNode label;
@@ -474,6 +682,14 @@ class continueNode extends stmtNode {
 		label = i;
 	}
 
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("continue");
+		label.Unparse(0);
+		System.out.println(";");
+	}
+
 	private final identNode label;
 } // class continueNode 
 
@@ -483,6 +699,16 @@ class argsNode extends ASTNode {
 		super(line, col);
 		argVal = e;
 		moreArgs = a;
+	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		argVal.Unparse(0);
+		if(!moreArgs.isNull()) {
+			System.out.print(", ");
+			moreArgs.Unparse(0);
+		}
 	}
 
 	static nullArgsNode NULL = new nullArgsNode();
@@ -502,6 +728,11 @@ class strLitNode extends exprNode {
 	strLitNode(String stringval, int line, int col) {
 		super(line, col);
 		strval = stringval;
+	}
+
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print(strval);
 	}
 
 	private final String strval;
@@ -542,12 +773,43 @@ class binaryOpNode extends exprNode {
 			case sym.MINUS:
 				System.out.print(" - ");
 				break;
+			case sym.LT:
+				System.out.print(" < ");
+				break;
+			case sym.LEQ:
+				System.out.print(" <= ");
+				break;
+			case sym.GT:
+				System.out.print(" > ");
+				break;
+			case sym.GEQ:
+				System.out.print(" >= ");
+				break;
+			case sym.EQ:
+				System.out.print(" == ");
+				break;
+			case sym.NOTEQ:
+				System.out.print(" != ");
+				break;
+			case sym.COR:
+				System.out.print(" || ");
+				break;
+			case sym.CAND:
+				System.out.print(" && ");
+				break;
+			case sym.TIMES:
+				System.out.print(" * ");
+				break;
+			case sym.SLASH:
+				System.out.print(" / ");
+				break;
 			default:
 				throw new Error("printOp: case not found");
 		}
 	}
 
 	void Unparse(int indent) {
+		genIndent(indent);
 		System.out.print("(");
 		leftOperand.Unparse(0);
 		printOp(operatorCode);
@@ -567,6 +829,24 @@ class unaryOpNode extends exprNode {
 		operatorCode = op;
 	}
 
+	static void printOp(int op) {
+		switch (op) {
+			case sym.NOT:
+				System.out.print("!");
+				break;
+			case -1:
+				break;
+			default:
+				throw new Error("printOp: case not found");
+		}
+	}
+
+	void Unparse(int indent) {
+		genIndent(indent);
+		printOp(operatorCode);
+		operand.Unparse(0);
+	}
+
 	private final exprNode operand;
 	private final int operatorCode; // Token code of the operator
 } // class unaryOpNode 
@@ -576,6 +856,14 @@ class castNode extends exprNode {
 		super(line, col);
 		operand = e;
 		resultType = t;
+	}
+
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("(");
+		resultType.Unparse(0);
+		System.out.print(")");
+		operand.Unparse(0);
 	}
 
 	private final exprNode operand;
@@ -589,6 +877,14 @@ class fctCallNode extends exprNode {
 		methodArgs = a;
 	}
 
+	void Unparse(int indent) {
+		genIndent(indent);
+		methodName.Unparse(0);
+		System.out.print("(");
+		methodArgs.Unparse(0);
+		System.out.println(")");
+	}
+
 	private final identNode methodName;
 	private final argsNode methodArgs;
 } // class fctCallNode 
@@ -600,6 +896,7 @@ class identNode extends exprNode {
 	}
 
 	void Unparse(int indent) {
+		genIndent(indent);
 		System.out.print(idname);
 	}
 
@@ -614,7 +911,13 @@ class nameNode extends exprNode {
 	}
 
 	void Unparse(int indent) {
-		varName.Unparse(0); // Subscripts not allowed in CSX Lite
+		genIndent(indent);
+		varName.Unparse(0);
+		if(!subscriptVal.isNull()) {
+			System.out.print("[");
+			subscriptVal.Unparse(0);
+			System.out.print("]");
+		}		
 	}
 
 	private final identNode varName;
@@ -627,6 +930,11 @@ class intLitNode extends exprNode {
 		intval = val;
 	}
 
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print(intval);	
+	}
+
 	private final int intval;
 } // class intLitNode
 
@@ -634,6 +942,11 @@ class floatLitNode extends exprNode {
 	floatLitNode(float val, int line, int col) {
 		super(line, col);
 		floatval = val;
+	}
+
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print(floatval);	
 	}
 
 	private final float floatval;
@@ -645,6 +958,11 @@ class charLitNode extends exprNode {
 		charval = val;
 	}
 
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print(charval);	
+	}
+
 	private final char charval;
 } // class charLitNode 
 
@@ -652,10 +970,18 @@ class trueNode extends exprNode {
 	trueNode(int line, int col) {
 		super(line, col);
 	}
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("true");	
+	}
 } // class trueNode 
 
 class falseNode extends exprNode {
 	falseNode(int line, int col) {
 		super(line, col);
+	}
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("false");	
 	}
 } // class falseNode 
