@@ -521,34 +521,6 @@ class whileNode extends stmtNode {
 	private final stmtNode loopBody;
 } // class whileNode 
 
-class whileCondExprNode extends stmtNode {
-	whileCondExprNode(exprNode i, exprNode e, stmtNode s, int line, int col) {
-		super(line, col);
-	 label = i;
-	 condition = e;
-	 loopBody = s;
-	}
-
-	void Unparse(int indent) {
-		System.out.print(linenum + ":");
-		genIndent(indent);
-		if(!label.isNull()) {
-			label.Unparse(0);
-			System.out.print(": ");
-		}
-		System.out.print("while ");
-		condition.Unparse(0);
-		System.out.println(" {");
-		loopBody.Unparse(indent+1);
-		genIndent(indent);
-		System.out.println ("}");
-	}
-
-	private final exprNode label;
-	private final exprNode condition;
-	private final stmtNode loopBody;
-} // class whileCondExprNode 
-
 class readNode extends stmtNode {
 	readNode() {}
 	readNode(nameNode n, readNode rn, int line, int col) {
