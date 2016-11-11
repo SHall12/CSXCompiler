@@ -481,7 +481,7 @@ class ifThenNode extends stmtNode {
 		thenPart.Unparse(indent+1);
 		if (!elsePart.isNull()) {
 			genIndent(indent);
-			System.out.println("else {");
+			System.out.println("} else {");
 			elsePart.Unparse(indent+1);
 		}
 		genIndent(indent);
@@ -534,11 +534,13 @@ class readNode extends stmtNode {
 		genIndent(indent);
 		System.out.print("read(");
 		targetVar.Unparse(0);
-		readNode child = moreReads.getReadList();
-		while (!child.isNull()) {
-			System.out.print(", ");
-			child.getTargetVar().Unparse(0);
-			child = child.getReadList();
+		if(!moreReads.isNull()) {
+			readNode child = moreReads.getReadList();
+			while (!child.isNull()) {
+				System.out.print(", ");
+				child.getTargetVar().Unparse(0);
+				child = child.getReadList();
+			}
 		}
 		System.out.println(");");
 	}
@@ -574,11 +576,13 @@ class printNode extends stmtNode {
 		genIndent(indent);
 		System.out.print("print(");
 		outputValue.Unparse(0);
-		printNode child = morePrints.getPrintList();
-		while (!child.isNull()) {
-			System.out.print(", ");
-			child.getValue().Unparse(0);
-			child = child.getPrintList();
+		if(!morePrints.isNull()) {
+			printNode child = morePrints.getPrintList();
+			while (!child.isNull()) {
+				System.out.print(", ");
+				child.getValue().Unparse(0);
+				child = child.getPrintList();
+			}
 		}
 		System.out.println(");");
 	}
@@ -648,7 +652,7 @@ class blockNode extends stmtNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
-		System.out.print("{");
+		System.out.println("{");
 		decls.Unparse(indent+1);
 		stmts.Unparse(indent+1);
 		genIndent(indent);
@@ -1032,7 +1036,10 @@ class preIncrementNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
-		
+		genIndent(indent);
+		System.out.print("++");
+		idName.Unparse(0);
+		System.out.println(";");	
 	}
 
 	private final identNode idName;
@@ -1046,7 +1053,9 @@ class postIncrementNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
-		
+		genIndent(indent);
+		idName.Unparse(0);
+		System.out.println("++;");	
 	}
 
 	private final identNode idName;
@@ -1060,7 +1069,9 @@ class preDecrementNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
-		
+		genIndent(indent);
+		idName.Unparse(0);
+		System.out.println("++;");	
 	}
 
 	private final identNode idName;
@@ -1074,7 +1085,10 @@ class postDecrementNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
-		
+		genIndent(indent);
+		System.out.print("--");
+		idName.Unparse(0);
+		System.out.println(";");	
 	}
 
 	private final identNode idName;
