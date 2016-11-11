@@ -1,7 +1,8 @@
 /***************************************************************************
  * CSX Project: Program 3: Parser
- * @Authors:  Long Bui and Shane Hall  
-  ***************************************************************************/
+ * @Authors:  Long Bui and Shane Hall           11/11/2016
+ * FileName:  csx.cup
+ ***************************************************************************/
 
 import java_cup.runtime.*;
 parser code {:
@@ -33,15 +34,13 @@ terminal CSXIdentifierToken     IDENTIFIER;
 terminal CSXToken               PLUS, NOTEQ, SEMI, SLASH, RPAREN, LPAREN, NOT,
                                 LT, COMMA, GEQ, RBRACE, LBRACE, COR, EQ,
                                 ASG, TIMES, COLON, LBRACKET, RBRACKET, CAND,
-                                LEQ, GT, MINUS;
-terminal CSXToken             	INC, DEC;
+                                LEQ, GT, MINUS, INC, DEC;
 
-//----------------------NEW OPERATORS-----------y-------------------------
+//----------------------NEW OPERATORS------------------------------------
 terminal CSXToken		ENDIF;
 terminal CSXToken		CONDEXPR;
 terminal CSXToken		MINUSCOLON;
 terminal CSXToken		PLUSCOLON;
-
 
 //***************************NON TERMINALS*********************************
 non terminal classNode          Program;
@@ -402,11 +401,13 @@ Expr            ::= Expr:e COR Term:t
                     {: 
                         RESULT = new unaryOpNode(-1, t, t.linenum, t.colnum); 
                     :}
+                //Conditional Expression
                 |   CondExpr:c
                     {: 
                         RESULT= c; 
                     :}
                 ;
+//New Conditional Expression non terminal!
 CondExpr        ::= LPAREN:l Expr:e1 CONDEXPR Expr:e2 MINUSCOLON Expr:e3 PLUSCOLON Expr:e4 RPAREN
                     {: 
                         RESULT= new condExprNode(e1, e2, e3, e4, l.linenum, l.colnum); 
