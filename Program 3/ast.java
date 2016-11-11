@@ -144,12 +144,12 @@ class varDeclNode extends declNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
-		varName.Unparse(0);
-		System.out.print(" ");
 		varType.Unparse(0);
+		System.out.print(" ");
+		varName.Unparse(0);
 		if (!initValue.isNull()) {
 			System.out.print(" = ");
-			initValue.Unparse(indent);
+			initValue.Unparse(0);
 		}
 		System.out.println(";");
 	} // Unparse()
@@ -454,9 +454,9 @@ class asgNode extends stmtNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
-		target.Unparse(0);
-		System.out.print(" = ");
 		source.Unparse(0);
+		System.out.print(" = ");
+		target.Unparse(0);
 		System.out.println(";");
 	}
 
@@ -1036,6 +1036,7 @@ class preIncrementNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
+		System.out.print(linenum + ":");
 		genIndent(indent);
 		System.out.print("++");
 		idName.Unparse(0);
@@ -1053,6 +1054,7 @@ class postIncrementNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
+		System.out.print(linenum + ":");
 		genIndent(indent);
 		idName.Unparse(0);
 		System.out.println("++;");	
@@ -1069,6 +1071,7 @@ class preDecrementNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
+		System.out.print(linenum + ":");
 		genIndent(indent);
 		idName.Unparse(0);
 		System.out.println("++;");	
@@ -1085,6 +1088,7 @@ class postDecrementNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
+		System.out.print(linenum + ":");
 		genIndent(indent);
 		System.out.print("--");
 		idName.Unparse(0);
