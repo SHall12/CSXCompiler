@@ -454,9 +454,9 @@ class asgNode extends stmtNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
-		source.Unparse(0);
-		System.out.print(" = ");
 		target.Unparse(0);
+		System.out.print(" = ");
+		source.Unparse(0);
 		System.out.println(";");
 	}
 
@@ -493,6 +493,35 @@ class ifThenNode extends stmtNode {
 	private final stmtsNode elsePart;
 } // class ifThenNode 
 
+class ifCondExprNode extends stmtNode {
+	ifCondExprNode(exprNode e, stmtsNode s1, stmtsNode s2, int line, int col) {
+		super(line, col);
+		condition = e;
+		thenPart = s1;
+		elsePart = s2;
+	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("if ");
+		condition.Unparse(0);
+		System.out.println(" {");
+		thenPart.Unparse(indent+1);
+		if (!elsePart.isNull()) {
+			genIndent(indent);
+			System.out.println("} else {");
+			elsePart.Unparse(indent+1);
+		}
+		genIndent(indent);
+		System.out.println ("}");
+	}
+
+	private final exprNode condition;
+	private final stmtsNode thenPart;
+	private final stmtsNode elsePart;
+} // class ifCondExprNode 
+
 class whileNode extends stmtNode {
 	whileNode(exprNode i, exprNode e, stmtNode s, int line, int col) {
 		super(line, col);
@@ -520,6 +549,34 @@ class whileNode extends stmtNode {
 	private final exprNode condition;
 	private final stmtNode loopBody;
 } // class whileNode 
+
+class whileCondExprNode extends stmtNode {
+	whileCondExprNode(exprNode i, exprNode e, stmtNode s, int line, int col) {
+		super(line, col);
+	 label = i;
+	 condition = e;
+	 loopBody = s;
+	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		if(!label.isNull()) {
+			label.Unparse(0);
+			System.out.print(": ");
+		}
+		System.out.print("while ");
+		condition.Unparse(0);
+		System.out.println(" {");
+		loopBody.Unparse(indent+1);
+		genIndent(indent);
+		System.out.println ("}");
+	}
+
+	private final exprNode label;
+	private final exprNode condition;
+	private final stmtNode loopBody;
+} // class whileCondExprNode 
 
 class readNode extends stmtNode {
 	readNode() {}
@@ -1082,8 +1139,9 @@ class preDecrementNode extends stmtNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
+                System.out.print("--");
 		idName.Unparse(0);
-		System.out.println("++;");	
+		System.out.println(";");	
 	}
 
 	private final identNode idName;
@@ -1099,9 +1157,8 @@ class postDecrementNode extends stmtNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
-		System.out.print("--");
 		idName.Unparse(0);
-		System.out.println(";");	
+                System.out.println("--;");	
 	}
 
 	private final identNode idName;
