@@ -1,3 +1,9 @@
+/***************************************************************************
+ * CSX Project: Program 3: Parser
+ * @Authors:  Long Bui and Shane Hall           11/11/2016
+ * FileName:  P3.Java
+ ***************************************************************************/
+
 import java.io.*;
 import java_cup.runtime.*;
 
