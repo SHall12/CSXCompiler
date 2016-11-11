@@ -1,3 +1,9 @@
+/***************************************************************************
+ * CSX Project: Program 3: Parser
+ * @Authors:  Long Bui and Shane Hall           11/11/2016
+ * FileName:  ast.java
+ ***************************************************************************/
+
 abstract class ASTNode {
 // abstract superclass; only subclasses are actually created
 
