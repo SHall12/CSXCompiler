@@ -66,6 +66,7 @@ non terminal exprNode           Pri;
 non terminal exprNode           Unary;
 non terminal exprNode           Unit;
 non terminal nameNode           Name;
+non terminal condExprNode       CondExpr;
 
 //----------------------------CSX GRAMMAR---------------------------------
 start with Program; 
@@ -210,9 +211,17 @@ Stmts           ::= Stmt:s1 Stmts:s2
                         RESULT= new stmtsNode(s, stmtsNode.NULL, s.linenum, s.colnum); 
                     :}
                 ;
-Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
+Stmt            ::=   rw_IF:i CondExpr:c Stmts:s ENDIF
+                    {: 
+                        RESULT= new ifCondExprNode(c, s, stmtsNode.NULL, i.linenum, i.colnum);
+                    :}
+                |    rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
                     {: 
                         RESULT= new ifThenNode(e, s, stmtsNode.NULL, i.linenum, i.colnum);
+                    :}
+                |   rw_IF:i CondExpr:c Stmts:s1 rw_ELSE Stmts:s2 ENDIF
+                    {: 
+                        RESULT= new ifCondExprNode(c, s1, s2, i.linenum,  i.colnum);
                     :}
                 |   rw_IF:i LPAREN Expr:e RPAREN Stmts:s1 rw_ELSE Stmts:s2 ENDIF
                     {: 
@@ -222,12 +231,22 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
                     {: 
                         RESULT= new whileNode(exprNode.NULL, e, s, w.linenum, w.colnum); 
                     :}
+                |   rw_WHILE:w CondExpr:c Stmt:s
+                    {: 
+                        RESULT= new whileCondExprNode(exprNode.NULL, c, s, w.linenum, w.colnum); 
+                    :}
 			
                 |   IDENTIFIER:id COLON rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
                     {: 
                         RESULT= new whileNode(
                             new identNode(id.identifierText, id.linenum,id.colnum),
                             e, s, w.linenum, w.colnum); 
+                    :}
+                |   IDENTIFIER:id COLON rw_WHILE:w CondExpr:c Stmt:s
+                    {: 
+                        RESULT= new whileCondExprNode(
+                            new identNode(id.identifierText, id.linenum,id.colnum),
+                            c, s, w.linenum, w.colnum); 
                     :}
 
                 |   Name:n ASG Expr:e SEMI
@@ -318,11 +337,7 @@ Stmt            ::= rw_IF:i LPAREN Expr:e RPAREN Stmts:s ENDIF
                             new identNode(id.identifierText, id.linenum,id.colnum), 
                             id.linenum, id.colnum);
                     :}
-		|   LPAREN:l Expr:e1 CONDEXPR Expr:e2 MINUSCOLON Expr:e3 PLUSCOLON Expr:e4 RPAREN
-    			{: 
-                        RESULT= new condExprNode(e1, e2, e3, e4, l.linenum, l.colnum); 
-                    :}
-                ;
+		;
 Type            ::= rw_INT:t
                     {: 
                         RESULT= new intTypeNode(t.linenum, t.colnum); 
@@ -387,7 +402,12 @@ Expr            ::= Expr:e COR Term:t
                     {: 
                         RESULT = new unaryOpNode(-1, t, t.linenum, t.colnum); 
                     :}
-                |   LPAREN:l Expr:e1 CONDEXPR Expr:e2 MINUSCOLON Expr:e3 PLUSCOLON Expr:e4 RPAREN
+                |   CondExpr:c
+                    {: 
+                        RESULT= c; 
+                    :}
+                ;
+CondExpr        ::= LPAREN:l Expr:e1 CONDEXPR Expr:e2 MINUSCOLON Expr:e3 PLUSCOLON Expr:e4 RPAREN
                     {: 
                         RESULT= new condExprNode(e1, e2, e3, e4, l.linenum, l.colnum); 
                     :}
