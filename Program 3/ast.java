@@ -493,35 +493,6 @@ class ifThenNode extends stmtNode {
 	private final stmtsNode elsePart;
 } // class ifThenNode 
 
-class ifCondExprNode extends stmtNode {
-	ifCondExprNode(exprNode e, stmtsNode s1, stmtsNode s2, int line, int col) {
-		super(line, col);
-		condition = e;
-		thenPart = s1;
-		elsePart = s2;
-	}
-
-	void Unparse(int indent) {
-		System.out.print(linenum + ":");
-		genIndent(indent);
-		System.out.print("if ");
-		condition.Unparse(0);
-		System.out.println(" {");
-		thenPart.Unparse(indent+1);
-		if (!elsePart.isNull()) {
-			genIndent(indent);
-			System.out.println("} else {");
-			elsePart.Unparse(indent+1);
-		}
-		genIndent(indent);
-		System.out.println ("}");
-	}
-
-	private final exprNode condition;
-	private final stmtsNode thenPart;
-	private final stmtsNode elsePart;
-} // class ifCondExprNode 
-
 class whileNode extends stmtNode {
 	whileNode(exprNode i, exprNode e, stmtNode s, int line, int col) {
 		super(line, col);
@@ -1047,6 +1018,11 @@ class falseNode extends exprNode {
 	}
 } // class falseNode 
 
+/**************************************************************************
+***********************NEW AUXILIARY CLASSES ******************************
+**************************************************************************/
+
+//Created to hold optional semicolons
 class semicolonNode extends exprNode {
 	semicolonNode() {}
 	semicolonNode(int line, int col) {
@@ -1067,6 +1043,7 @@ class nullSemicolonNode extends semicolonNode {
 	void Unparse(int indent) {}
 } // class nullSemicolonNode
 
+//Node to hold conditional expressions.
 class condExprNode extends exprNode {
 	condExprNode(exprNode e1, exprNode  e2, exprNode  e3, exprNode  e4, int line, int col) {
 		super(line, col);
@@ -1095,6 +1072,7 @@ class condExprNode extends exprNode {
 	private final exprNode  condition4;
 } // class condExprNode 
 
+//Node for preincrement statement.
 class preIncrementNode extends stmtNode {
 	preIncrementNode(identNode i, int line, int col) {
 		super(line, col);
@@ -1113,6 +1091,7 @@ class preIncrementNode extends stmtNode {
 	
 } // class preIncrementNode 
 
+//Node for postincrement statement.
 class postIncrementNode extends stmtNode {
 	postIncrementNode(identNode i, int line, int col) {
 		super(line, col);
@@ -1130,6 +1109,7 @@ class postIncrementNode extends stmtNode {
 	
 } // class postIncrementNode 
 
+//Node for predecrement statement.
 class preDecrementNode extends stmtNode {
 	preDecrementNode(identNode i, int line, int col) {
 		super(line, col);
@@ -1148,6 +1128,7 @@ class preDecrementNode extends stmtNode {
 	
 } // class preDecrementNode 
 
+//Node for post decrement statement.
 class postDecrementNode extends stmtNode {
 	postDecrementNode(identNode i, int line, int col) {
 		super(line, col);
@@ -1165,3 +1146,61 @@ class postDecrementNode extends stmtNode {
 	
 } // class postDecrementNode 
 
+//This class is needed for IF statements using the Conditional Expression
+class ifCondExprNode extends stmtNode {
+	ifCondExprNode(exprNode e, stmtsNode s1, stmtsNode s2, int line, int col) {
+		super(line, col);
+		condition = e;
+		thenPart = s1;
+		elsePart = s2;
+	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		System.out.print("if ");
+		condition.Unparse(0);
+		System.out.println(" {");
+		thenPart.Unparse(indent+1);
+		if (!elsePart.isNull()) {
+			genIndent(indent);
+			System.out.println("} else {");
+			elsePart.Unparse(indent+1);
+		}
+		genIndent(indent);
+		System.out.println ("}");
+	}
+
+	private final exprNode condition;
+	private final stmtsNode thenPart;
+	private final stmtsNode elsePart;
+} // class ifCondExprNode
+
+//This class is needed to use Conditional Expressions with while statements.
+class whileCondExprNode extends stmtNode {
+	whileCondExprNode(exprNode i, exprNode e, stmtNode s, int line, int col) {
+		super(line, col);
+	 label = i;
+	 condition = e;
+	 loopBody = s;
+	}
+
+	void Unparse(int indent) {
+		System.out.print(linenum + ":");
+		genIndent(indent);
+		if(!label.isNull()) {
+			label.Unparse(0);
+			System.out.print(": ");
+		}
+		System.out.print("while ");
+		condition.Unparse(0);
+		System.out.println(" {");
+		loopBody.Unparse(indent+1);
+		genIndent(indent);
+		System.out.println ("}");
+	}
+
+	private final exprNode label;
+	private final exprNode condition;
+	private final stmtNode loopBody;
+} // class whileCondExprNode 
