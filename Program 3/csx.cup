@@ -388,7 +388,10 @@ Expr            ::= Expr:e COR Term:t
                     {: 
                         RESULT = new unaryOpNode(-1, t, t.linenum, t.colnum); 
                     :}
- 
+                |   LPAREN:l Expr:e1 CONDEXPR Expr:e2 MINUSCOLON Expr:e3 PLUSCOLON Expr:e4 RPAREN
+                    {: 
+                        RESULT= new condExprNode(e1, e2, e3, e4, l.linenum, l.colnum); 
+                    :}
                 ;
 Term            ::= Factor:f1 LT Factor:f2
                     {: 
