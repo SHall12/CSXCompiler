@@ -1020,7 +1020,16 @@ class condExprNode extends stmtNode {
 	}
 
 	void Unparse(int indent) {
-		
+		genIndent(indent);
+		System.out.print("(");
+		condition1.Unparse(0);
+		System.out.print(" ? ");
+		condition2.Unparse(0);
+		System.out.print(" -: ");
+		condition3.Unparse(0);
+		System.out.print(" +: ");
+		condition4.Unparse(0);
+		System.out.print(")");	
 	}
 
 	private final exprNode condition1;
