@@ -149,7 +149,7 @@ class varDeclNode extends declNode {
 		varName.Unparse(0);
 		if (!initValue.isNull()) {
 			System.out.print(" = ");
-			initValue.Unparse(indent);
+			initValue.Unparse(0);
 		}
 		System.out.println(";");
 	} // Unparse()
