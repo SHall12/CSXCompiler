@@ -1,5 +1,7 @@
 //Author: Long Bui and Shane Hall  
 
+import java_cup.runtime.*;
+
 class CSXToken 
 {
 	int linenum;
@@ -115,14 +117,14 @@ class Position {
 
 //This class is used by the scanner to return token information that is useful for the parser
 //This class will be replaced in our parser project by the java_cup.runtime.Symbol class
-class Symbol { 
+/*class Symbol { 
 	public int sym;
 	public CSXToken value;
 	public Symbol(int tokenType, CSXToken theToken) {
 		sym = tokenType;
 		value = theToken;	
 	}
-}
+}*/
 
 %%
 
@@ -144,6 +146,7 @@ TRUE = [tT][rR][uU][eE]
 VOID = [vV][oO][iI][dD]
 PRINT = [pP][rR][iI][nN][tT]
 WHILE = [wW][hH][iI][lL][eE]
+ENDIF = [eE][nN][dD][iI][fF]
 
 //---------------------------Other macros-------------------------------
 DIGIT = [0-9]
@@ -244,6 +247,10 @@ RUNAWAYCHAR = \'(([\040-&(-\[\]-~]|\\.|\t))*\n
     {WHILE} {
         Pos.setColumn(yycolumn);
         return new Symbol(sym.rw_WHILE, new CSXToken(Pos));
+    }
+    {ENDIF} {
+        Pos.setColumn(yycolumn);
+        return new Symbol(sym.ENDIF, new CSXToken(Pos));
     }
 //------------------IDENTIFIERS AND LITERALS--------------------
     "~"?{DIGIT}+ {
