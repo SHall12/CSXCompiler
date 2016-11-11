@@ -1,9 +1,21 @@
+//Tests: IF, WHILE, INC, DEC, and CondExpressions
 class test {
-//test prog for scanner & parser --
-//may not type-check or execute correctly 
+    int main(){
+        
+        if (A ? B -: C +: D)
+            i++;
 
-   int i = 0;
-   f(int i) {
-       i=i+1;
-   };
+            if (A)
+                ++i;
+            else
+                --i;
+            endif
+        else
+            i--;
+        endif
+
+        while (a+2 ? 2 -: 4 +: c){
+            i = (a ? b -: c +: d); 
+        }    
+    }
 }
