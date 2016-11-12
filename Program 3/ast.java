@@ -1021,35 +1021,6 @@ class nullSemicolonNode extends semicolonNode {
 	void Unparse(int indent) {}
 } // class nullSemicolonNode
 
-//Node to hold conditional expressions.
-class condExprNode extends exprNode {
-	condExprNode(exprNode e1, exprNode  e2, exprNode  e3, exprNode  e4, int line, int col) {
-		super(line, col);
-		condition1 = e1;
-		condition2 = e2;
-		condition3 = e3;
-                condition4 = e4;
-	}
-
-	void Unparse(int indent) {
-		genIndent(indent);
-		System.out.print("(");
-		condition1.Unparse(0);
-		System.out.print(" ? ");
-		condition2.Unparse(0);
-		System.out.print(" -: ");
-		condition3.Unparse(0);
-		System.out.print(" +: ");
-		condition4.Unparse(0);
-		System.out.print(")");	
-	}
-
-	private final exprNode  condition1;
-	private final exprNode  condition2;
-	private final exprNode  condition3;
-	private final exprNode  condition4;
-} // class condExprNode 
-
 //Node for preincrement statement.
 class preIncrementNode extends stmtNode {
 	preIncrementNode(identNode i, int line, int col) {
@@ -1123,6 +1094,35 @@ class postDecrementNode extends stmtNode {
 	private final identNode idName;
 	
 } // class postDecrementNode 
+
+//Node to hold conditional expressions.
+class condExprNode extends exprNode {
+	condExprNode(exprNode e1, exprNode  e2, exprNode  e3, exprNode  e4, int line, int col) {
+		super(line, col);
+		condition1 = e1;
+		condition2 = e2;
+		condition3 = e3;
+                condition4 = e4;
+	}
+
+	void Unparse(int indent) {
+		genIndent(indent);
+		System.out.print("(");
+		condition1.Unparse(0);
+		System.out.print(" ? ");
+		condition2.Unparse(0);
+		System.out.print(" -: ");
+		condition3.Unparse(0);
+		System.out.print(" +: ");
+		condition4.Unparse(0);
+		System.out.print(")");	
+	}
+
+	private final exprNode  condition1;
+	private final exprNode  condition2;
+	private final exprNode  condition3;
+	private final exprNode  condition4;
+} // class condExprNode 
 
 //This class is needed for IF statements using the Conditional Expression
 class ifCondExprNode extends stmtNode {
