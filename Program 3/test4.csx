@@ -1,4 +1,4 @@
-//Test4: Expressions
+//Test4: Dangling else
 
 class Test4 {
     void main(){
@@ -10,7 +10,8 @@ class Test4 {
         return false;
         ENDIF
 
-        while (2<=2){
+		// Throw in conditional here too
+        while (7 ? 8 -: 6+5 +: ~5){
             while (2>=2){
                 a++;
             }
@@ -20,9 +21,12 @@ class Test4 {
             if (a != b)
                 if (a+b*c-!(d*e))
                     a = (a ? b -: c +: d);
+                else
                     a = (7 ? 8 -: 6+5 +: ~5);
                 ENDIF
             ENDIF
+            else
+                a = jk;
         ENDIF
     }
 }
