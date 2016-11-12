@@ -678,7 +678,7 @@ class breakNode extends stmtNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
-		System.out.print("break");
+		System.out.print("break ");
 		label.Unparse(0);
 		System.out.println(";");
 	}
@@ -695,7 +695,7 @@ class continueNode extends stmtNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
-		System.out.print("continue");
+		System.out.print("continue ");
 		label.Unparse(0);
 		System.out.println(";");
 	}
