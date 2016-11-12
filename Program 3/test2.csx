@@ -15,6 +15,7 @@ class Test {
             print(a,b);
             id();
             id(1);
+            id(1,2,3);
             return;
             return a;
             break abc;
