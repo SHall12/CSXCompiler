@@ -14,7 +14,7 @@ Files:
 How to compile:
 	java -jar ./tools/java-cup-10l.jar csx.cup
     java -jar ./tools/JFlex.jar csx.jflex
-    javac -cp tools/java-cup-10l.jar:. Sym.java
+    javac -cp tools/java-cup-10l.jar:. sym.java
     javac -cp tools/java-cup-10l.jar:. Scanner.java
     javac -cp tools/java-cup-10l.jar:. ast.java
     javac -cp tools/java-cup-10l.jar:. Yylex.java
