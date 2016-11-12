@@ -540,21 +540,21 @@ class readNode extends stmtNode {
 		genIndent(indent);
 		System.out.print("read(");
 		targetVar.Unparse(0);
-		if(!moreReads.isNull()) {
-			readNode child = moreReads.getReadList();
-			while (!child.isNull()) {
-				System.out.print(", ");
-				child.getTargetVar().Unparse(0);
-				child = child.getReadList();
-			}
-		}
+
+        // Print out the whole read list
+        readNode child = moreReads;
+        while (!child.isNull()) {
+            System.out.print(", ");
+            child.getTargetVar().Unparse(0);
+            child = child.getReadList();
+        }
 		System.out.println(");");
 	}
 
-	readNode getReadList() {
+	public readNode getReadList() {
 		return moreReads;
 	}
-	nameNode getTargetVar() {
+	public nameNode getTargetVar() {
 		return targetVar;
 	}
 
@@ -582,21 +582,22 @@ class printNode extends stmtNode {
 		genIndent(indent);
 		System.out.print("print(");
 		outputValue.Unparse(0);
-		if(!morePrints.isNull()) {
-			printNode child = morePrints.getPrintList();
-			while (!child.isNull()) {
-				System.out.print(", ");
-				child.getValue().Unparse(0);
-				child = child.getPrintList();
-			}
+
+        // Print out the whole print list
+		printNode child = morePrints;
+		while (!child.isNull()) {
+			System.out.print(", ");
+			child.getValue().Unparse(0);
+            child = child.getPrintList();
 		}
+
 		System.out.println(");");
 	}
 
-	printNode getPrintList() {
+	public printNode getPrintList() {
 		return morePrints;
 	}
-	exprNode getValue() {
+	public exprNode getValue() {
 		return outputValue;
 	}
 
