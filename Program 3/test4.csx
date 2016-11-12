@@ -1,11 +1,11 @@
 //Test4: Expressions
 
-class Test3 {
+class Test4 {
     void main(){
         if (1<2)
         return true;
         ENDIF
-        
+
         if (2>1)
         return false;
         ENDIF
@@ -20,8 +20,9 @@ class Test3 {
             if (a != b)
                 if (a+b*c-!(d*e))
                     a = (a ? b -: c +: d);
+                    a = (7 ? 8 -: 6+5 +: ~5);
                 ENDIF
             ENDIF
-        ENDIF 
+        ENDIF
     }
 }

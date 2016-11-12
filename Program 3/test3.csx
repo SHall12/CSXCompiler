@@ -1,12 +1,29 @@
-//Test3: Empty blocks are not in grammar, crashes
+//Test3: Test fielddecl and member decls
 
 class Test3 {
-    void main(){
+    int i = 0;
+    bool se7en = false;
+
+    void main(char args[]){
         int i = 0;
         //Empty function
-        someStatement = 15;
-
+        { int i = 15; someStatement = i; {difStatement = i;}}
+        return 0;
     };
+
+    void main() {
+        return (z && k) || (x && !p);
+    }
+
+    bool isTrue(bool val){
+        return val;
+    }
+
+    int getRandInt() {
+        return 4;
+    }
+
+
 
 
 }
