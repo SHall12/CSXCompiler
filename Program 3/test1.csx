@@ -1,7 +1,7 @@
 //Tests: IF, WHILE, INC, DEC, and CondExpressions
 class test {
-    int main(){
-        
+    int main(int i, bool yay[]){
+
         if (A ? B -: C +: D)
             i++;
 
@@ -15,7 +15,7 @@ class test {
         endif
 
         while (a+2 ? 2 -: 4 +: c){
-            i = (a ? b -: c +: d); 
-        }    
+            i = (a ? b -: c +: d);
+        }
     }
 }
