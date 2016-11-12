@@ -22,6 +22,6 @@ class Test3 {
                     a = (a ? b -: c +: d);
                 ENDIF
             ENDIF
-        ENDIF
+        ENDIF 
     }
 }
