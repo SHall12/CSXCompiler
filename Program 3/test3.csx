@@ -2,8 +2,8 @@
 
 class Test3 {
     void main(){
+        int i = 0;
         //Empty function
+        someStatement = 15;
     }
-    
-
 }
