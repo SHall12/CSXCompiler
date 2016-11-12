@@ -51,12 +51,12 @@ class nullNode extends ASTNode {
 } // class nullNode
 
 class csxLiteNode extends ASTNode {
-// This node is used to root CSX lite programs 
-	
+// This node is used to root CSX lite programs
+
 	csxLiteNode(stmtsNode stmts, int line, int col) {
 		super(line, col);
 		progStmts = stmts;
-	} // csxLiteNode() 
+	} // csxLiteNode()
 
 	void Unparse(int indent) {
 		System.out.println(linenum + ":" + " {");
@@ -294,13 +294,13 @@ class methodDeclsNode extends ASTNode {
 	static nullMethodDeclsNode NULL = new nullMethodDeclsNode();
 	private methodDeclNode thisDecl;
 	private methodDeclsNode moreDecls;
-} // class methodDeclsNode 
+} // class methodDeclsNode
 
 class nullMethodDeclsNode extends methodDeclsNode {
 	nullMethodDeclsNode() {}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
-} // class nullMethodDeclsNode 
+} // class nullMethodDeclsNode
 
 class methodDeclNode extends ASTNode {
 	methodDeclNode(identNode id, argDeclsNode a, typeNode t,
@@ -331,7 +331,7 @@ class methodDeclNode extends ASTNode {
 	private final typeNode returnType;
 	private final fieldDeclsNode decls;
 	private final stmtsNode stmts;
-} // class methodDeclNode 
+} // class methodDeclNode
 
 // abstract superclass; only subclasses are actually created
 abstract class argDeclNode extends ASTNode {
@@ -354,19 +354,22 @@ class argDeclsNode extends ASTNode {
 	static nullArgDeclsNode NULL = new nullArgDeclsNode();
 
 	void Unparse(int indent) {
-		thisDecl.Unparse(indent);
-		moreDecls.Unparse(indent);
+		thisDecl.Unparse(0);
+        if (!moreDecls.isNull()) {
+            System.out.print(", ");
+            moreDecls.Unparse(0);
+        }
 	} // Unparse()
 
 	private argDeclNode thisDecl;
 	private argDeclsNode moreDecls;
-} // class argDeclsNode 
+} // class argDeclsNode
 
 class nullArgDeclsNode extends argDeclsNode {
 	nullArgDeclsNode() {}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
-} // class nullArgDeclsNode 
+} // class nullArgDeclsNode
 
 class arrayArgDeclNode extends argDeclNode {
 	arrayArgDeclNode(identNode id, typeNode t, int line, int col) {
@@ -376,17 +379,16 @@ class arrayArgDeclNode extends argDeclNode {
 	}
 
 	void Unparse(int indent) {
-		System.out.print(linenum + ":");
 		genIndent(indent);
 		elementType.Unparse(0);
 		System.out.print(" ");
 		argName.Unparse(0);
-		System.out.println("[];");
+		System.out.print("[]");
 	} // Unparse()
 
 	private final identNode argName;
 	private final typeNode elementType;
-} // class arrayArgDeclNode 
+} // class arrayArgDeclNode
 
 class valArgDeclNode extends argDeclNode {
 	valArgDeclNode(identNode id, typeNode t, int line, int col) {
@@ -396,17 +398,15 @@ class valArgDeclNode extends argDeclNode {
 	}
 
 	void Unparse(int indent) {
-		System.out.print(linenum + ":");
 		genIndent(indent);
 		argType.Unparse(0);
 		System.out.print(" ");
 		argName.Unparse(0);
-		System.out.println(";");
 	} // Unparse()
 
 	private final identNode argName;
 	private final typeNode argType;
-} // class valArgDeclNode 
+} // class valArgDeclNode
 
 // abstract superclass; only subclasses are actually created
 abstract class stmtNode extends ASTNode {
@@ -423,7 +423,7 @@ class nullStmtNode extends stmtNode {
 	nullStmtNode() {}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
-} // class nullStmtNode 
+} // class nullStmtNode
 
 class stmtsNode extends ASTNode {
 	stmtsNode(stmtNode stmt, stmtsNode stmts, int line, int col) {
@@ -436,19 +436,19 @@ class stmtsNode extends ASTNode {
 	void Unparse(int indent) {
 		thisStmt.Unparse(indent);
 		moreStmts.Unparse(indent);
-	} 
+	}
 
 	static nullStmtsNode NULL = new nullStmtsNode();
 	private stmtNode thisStmt;
 	private stmtsNode moreStmts;
-} // class stmtsNode 
+} // class stmtsNode
 
 class nullStmtsNode extends stmtsNode {
 	nullStmtsNode() {}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
 
-} // class nullStmtsNode 
+} // class nullStmtsNode
 
 class asgNode extends stmtNode {
 	asgNode(nameNode n, exprNode e, int line, int col) {
@@ -468,7 +468,7 @@ class asgNode extends stmtNode {
 
 	private final nameNode target;
 	private final exprNode source;
-} // class asgNode 
+} // class asgNode
 
 class ifThenNode extends stmtNode {
 	ifThenNode(exprNode e, stmtsNode s1, stmtsNode s2, int line, int col) {
@@ -497,7 +497,7 @@ class ifThenNode extends stmtNode {
 	private final exprNode condition;
 	private final stmtsNode thenPart;
 	private final stmtsNode elsePart;
-} // class ifThenNode 
+} // class ifThenNode
 
 class whileNode extends stmtNode {
 	whileNode(exprNode i, exprNode e, stmtNode s, int line, int col) {
@@ -525,7 +525,7 @@ class whileNode extends stmtNode {
 	private final exprNode label;
 	private final exprNode condition;
 	private final stmtNode loopBody;
-} // class whileNode 
+} // class whileNode
 
 class readNode extends stmtNode {
 	readNode() {}
@@ -561,13 +561,13 @@ class readNode extends stmtNode {
 	static nullReadNode NULL = new nullReadNode();
 	private nameNode targetVar;
 	private readNode moreReads;
-} // class readNode 
+} // class readNode
 
 class nullReadNode extends readNode {
 	nullReadNode() {}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
-} // class nullReadNode 
+} // class nullReadNode
 
 class printNode extends stmtNode {
 	printNode() {}
@@ -603,7 +603,7 @@ class printNode extends stmtNode {
 	static nullPrintNode NULL = new nullPrintNode();
 	private exprNode outputValue;
 	private printNode morePrints;
-} // class printNode 
+} // class printNode
 
 class nullPrintNode extends printNode {
 	nullPrintNode() {}
@@ -629,7 +629,7 @@ class callNode extends stmtNode {
 
 	private final identNode methodName;
 	private final argsNode args;
-} // class callNode 
+} // class callNode
 
 class returnNode extends stmtNode {
 	returnNode(exprNode e, int line, int col) {
@@ -646,7 +646,7 @@ class returnNode extends stmtNode {
 	}
 
 	private final exprNode returnVal;
-} // class returnNode 
+} // class returnNode
 
 class blockNode extends stmtNode {
 	blockNode(fieldDeclsNode f, stmtsNode s, int line, int col) {
@@ -667,7 +667,7 @@ class blockNode extends stmtNode {
 
 	private final fieldDeclsNode decls;
 	private final stmtsNode stmts;
-} // class blockNode 
+} // class blockNode
 
 class breakNode extends stmtNode {
 	breakNode(identNode i, int line, int col) {
@@ -684,7 +684,7 @@ class breakNode extends stmtNode {
 	}
 
 	private final identNode label;
-} // class breakNode 
+} // class breakNode
 
 class continueNode extends stmtNode {
 	continueNode(identNode i, int line, int col) {
@@ -701,7 +701,7 @@ class continueNode extends stmtNode {
 	}
 
 	private final identNode label;
-} // class continueNode 
+} // class continueNode
 
 class argsNode extends ASTNode {
 	argsNode() {}
@@ -724,7 +724,7 @@ class argsNode extends ASTNode {
 	static nullArgsNode NULL = new nullArgsNode();
 	private exprNode argVal;
 	private argsNode moreArgs;
-} // class argsNode 
+} // class argsNode
 
 class nullArgsNode extends argsNode {
 	nullArgsNode() {
@@ -732,7 +732,7 @@ class nullArgsNode extends argsNode {
 	}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
-} // class nullArgsNode 
+} // class nullArgsNode
 
 class strLitNode extends exprNode {
 	strLitNode(String stringval, int line, int col) {
@@ -746,7 +746,7 @@ class strLitNode extends exprNode {
 	}
 
 	private final String strval;
-} // class strLitNode 
+} // class strLitNode
 
 // abstract superclass; only subclasses are actually created
 abstract class exprNode extends ASTNode {
@@ -765,7 +765,7 @@ class nullExprNode extends exprNode {
 	}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
-} // class nullExprNode 
+} // class nullExprNode
 
 class binaryOpNode extends exprNode {
 	binaryOpNode(exprNode e1, int op, exprNode e2, int line, int col) {
@@ -830,7 +830,7 @@ class binaryOpNode extends exprNode {
 	private final exprNode leftOperand;
 	private final exprNode rightOperand;
 	private final int operatorCode; // Token code of the operator
-} // class binaryOpNode 
+} // class binaryOpNode
 
 class unaryOpNode extends exprNode {
 	unaryOpNode(int op, exprNode e, int line, int col) {
@@ -859,7 +859,7 @@ class unaryOpNode extends exprNode {
 
 	private final exprNode operand;
 	private final int operatorCode; // Token code of the operator
-} // class unaryOpNode 
+} // class unaryOpNode
 
 class castNode extends exprNode {
 	castNode(typeNode t, exprNode e, int line, int col) {
@@ -878,7 +878,7 @@ class castNode extends exprNode {
 
 	private final exprNode operand;
 	private final typeNode resultType;
-} // class castNode 
+} // class castNode
 
 class fctCallNode extends exprNode {
 	fctCallNode(identNode id, argsNode a, int line, int col) {
@@ -897,7 +897,7 @@ class fctCallNode extends exprNode {
 
 	private final identNode methodName;
 	private final argsNode methodArgs;
-} // class fctCallNode 
+} // class fctCallNode
 
 class identNode extends exprNode {
 	identNode(String identname, int line, int col) {
@@ -911,7 +911,7 @@ class identNode extends exprNode {
 	}
 
 	private final String idname;
-} // class identNode 
+} // class identNode
 
 class nameNode extends exprNode {
 	nameNode(identNode id, exprNode expr, int line, int col) {
@@ -927,12 +927,12 @@ class nameNode extends exprNode {
 			System.out.print("[");
 			subscriptVal.Unparse(0);
 			System.out.print("]");
-		}		
+		}
 	}
 
 	private final identNode varName;
 	private final exprNode subscriptVal;
-} // class nameNode 
+} // class nameNode
 
 class intLitNode extends exprNode {
 	intLitNode(int val, int line, int col) {
@@ -942,7 +942,7 @@ class intLitNode extends exprNode {
 
 	void Unparse(int indent) {
 		genIndent(indent);
-		System.out.print(intval);	
+		System.out.print(intval);
 	}
 
 	private final int intval;
@@ -956,7 +956,7 @@ class floatLitNode extends exprNode {
 
 	void Unparse(int indent) {
 		genIndent(indent);
-		System.out.print(floatval);	
+		System.out.print(floatval);
 	}
 
 	private final float floatval;
@@ -970,11 +970,11 @@ class charLitNode extends exprNode {
 
 	void Unparse(int indent) {
 		genIndent(indent);
-		System.out.print(charval);	
+		System.out.print(charval);
 	}
 
 	private final char charval;
-} // class charLitNode 
+} // class charLitNode
 
 class trueNode extends exprNode {
 	trueNode(int line, int col) {
@@ -982,9 +982,9 @@ class trueNode extends exprNode {
 	}
 	void Unparse(int indent) {
 		genIndent(indent);
-		System.out.print("true");	
+		System.out.print("true");
 	}
-} // class trueNode 
+} // class trueNode
 
 class falseNode extends exprNode {
 	falseNode(int line, int col) {
@@ -992,9 +992,9 @@ class falseNode extends exprNode {
 	}
 	void Unparse(int indent) {
 		genIndent(indent);
-		System.out.print("false");	
+		System.out.print("false");
 	}
-} // class falseNode 
+} // class falseNode
 
 /**************************************************************************
 ***********************NEW AUXILIARY CLASSES ******************************
@@ -1008,10 +1008,10 @@ class semicolonNode extends exprNode {
 	}
 	void Unparse(int indent) {
 		genIndent(indent);
-		System.out.print(";");	
+		System.out.print(";");
 	}
 	static nullSemicolonNode NULL = new nullSemicolonNode();
-} // class semicolonNode 
+} // class semicolonNode
 
 class nullSemicolonNode extends semicolonNode {
 	nullSemicolonNode() {}
@@ -1033,12 +1033,12 @@ class preIncrementNode extends stmtNode {
 		genIndent(indent);
 		System.out.print("++");
 		idName.Unparse(0);
-		System.out.println(";");	
+		System.out.println(";");
 	}
 
 	private final identNode idName;
-	
-} // class preIncrementNode 
+
+} // class preIncrementNode
 
 //Node for postincrement statement.
 class postIncrementNode extends stmtNode {
@@ -1051,12 +1051,12 @@ class postIncrementNode extends stmtNode {
 		System.out.print(linenum + ":");
 		genIndent(indent);
 		idName.Unparse(0);
-		System.out.println("++;");	
+		System.out.println("++;");
 	}
 
 	private final identNode idName;
-	
-} // class postIncrementNode 
+
+} // class postIncrementNode
 
 //Node for predecrement statement.
 class preDecrementNode extends stmtNode {
@@ -1070,12 +1070,12 @@ class preDecrementNode extends stmtNode {
 		genIndent(indent);
                 System.out.print("--");
 		idName.Unparse(0);
-		System.out.println(";");	
+		System.out.println(";");
 	}
 
 	private final identNode idName;
-	
-} // class preDecrementNode 
+
+} // class preDecrementNode
 
 //Node for post decrement statement.
 class postDecrementNode extends stmtNode {
@@ -1088,12 +1088,12 @@ class postDecrementNode extends stmtNode {
 		System.out.print(linenum + ":");
 		genIndent(indent);
 		idName.Unparse(0);
-                System.out.println("--;");	
+                System.out.println("--;");
 	}
 
 	private final identNode idName;
-	
-} // class postDecrementNode 
+
+} // class postDecrementNode
 
 //Node to hold conditional expressions.
 class condExprNode extends exprNode {
@@ -1115,14 +1115,14 @@ class condExprNode extends exprNode {
 		condition3.Unparse(0);
 		System.out.print(" +: ");
 		condition4.Unparse(0);
-		System.out.print(")");	
+		System.out.print(")");
 	}
 
 	private final exprNode  condition1;
 	private final exprNode  condition2;
 	private final exprNode  condition3;
 	private final exprNode  condition4;
-} // class condExprNode 
+} // class condExprNode
 
 //This class is needed for IF statements using the Conditional Expression
 class ifCondExprNode extends stmtNode {
@@ -1181,4 +1181,4 @@ class whileCondExprNode extends stmtNode {
 	private final exprNode label;
 	private final exprNode condition;
 	private final stmtNode loopBody;
-} // class whileCondExprNode 
+} // class whileCondExprNode
