@@ -641,7 +641,7 @@ class returnNode extends stmtNode {
 		System.out.print(linenum + ":");
 		genIndent(indent);
 		if (returnVal == exprNode.NULL)
-                    System.out.print("return");    
+                    System.out.print("return");
                 else
                     System.out.print("return ");
 		returnVal.Unparse(0);
@@ -715,7 +715,6 @@ class argsNode extends ASTNode {
 	}
 
 	void Unparse(int indent) {
-		System.out.print(linenum + ":");
 		genIndent(indent);
 		argVal.Unparse(0);
 		if(!moreArgs.isNull()) {
