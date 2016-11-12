@@ -895,7 +895,7 @@ class fctCallNode extends exprNode {
 		methodName.Unparse(0);
 		System.out.print("(");
 		methodArgs.Unparse(0);
-		System.out.println(")");
+		System.out.print(")");
 	}
 
 	private final identNode methodName;
