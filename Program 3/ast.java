@@ -640,7 +640,10 @@ class returnNode extends stmtNode {
 	void Unparse(int indent) {
 		System.out.print(linenum + ":");
 		genIndent(indent);
-		System.out.print("return ");
+		if (returnVal == exprNode.NULL)
+                    System.out.print("return");    
+                else
+                    System.out.print("return ");
 		returnVal.Unparse(0);
 		System.out.println(";");
 	}
