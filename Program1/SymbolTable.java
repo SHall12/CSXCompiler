@@ -3,8 +3,8 @@ import java.util.*;
 
 class SymbolTable {
     private LinkedList<Hashtable<String, Symb>> symbolTable;
-    private Hashtable<String, Symb> currentScope;  
-    
+    private Hashtable<String, Symb> currentScope;
+
     SymbolTable() {
         symbolTable = new LinkedList<Hashtable<String, Symb>>();
         currentScope = null;
@@ -28,19 +28,19 @@ class SymbolTable {
     public void insert(Symb s) throws DuplicateException, EmptySTException {
         if (symbolTable.size() > 0) {
             // Check if symbol already in table
-            if(currentScope.get(s.name()) == null) {
-                currentScope.put(s.name(), s);
+            if(currentScope.get(s.name().toLowerCase()) == null) {
+                currentScope.put(s.name().toLowerCase(), s);
             } else {
                 throw new DuplicateException();
             }
         } else {
-            throw new EmptySTException();        
+            throw new EmptySTException();
         }
     }
 
     public Symb localLookup(String s) {
         if (!symbolTable.isEmpty()) {
-            return currentScope.get(s); // Search current scope
+            return currentScope.get(s.toLowerCase()); // Search current scope
         } else {
             return null;
         }
@@ -52,7 +52,7 @@ class SymbolTable {
         Iterator<Hashtable<String, Symb>> scopes = symbolTable.descendingIterator();
         while(scopes.hasNext() && symbol == null) {
             currentScope = scopes.next();      // Set currentScope = next level
-            symbol = localLookup(s);           // Use currentScope to find 
+            symbol = localLookup(s.toLowerCase());   // Use currentScope to find
         }
         currentScope = symbolTable.peekLast(); // Return currentScope back to top scope
         return symbol;

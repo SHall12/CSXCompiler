@@ -3,11 +3,11 @@ import java.util.Scanner;
 
 class P1 {
     public static void main(String args[]){
-     
+
     Scanner scan = new Scanner(System.in);
     SymbolTable table = new SymbolTable();
     Symb symb;
-    
+
     int num;
     String input = "";
     String menu = "Enter any of the following commands:\n"+
@@ -22,18 +22,18 @@ class P1 {
         "menu (displays menu\n";
 
     System.out.println(menu);
- 
+
     while (input != "quit"){
 	input = scan.next();
-        
+
         switch (input.toLowerCase()){
-            case "open":   
+            case "open":
                 table.openScope();
-                           
+
                 System.out.println("New scope opened!");
                 break;
-			   
-	    case "close":  
+
+	    case "close":
                 try {
                     table.closeScope();
                     System.out.println("Scope closed!");
@@ -42,14 +42,14 @@ class P1 {
                     System.out.println("No scope found!");
                 }
 	        break;
-			   
-	    case "insert": 
+
+	    case "insert":
                 System.out.printf("Enter Symbol: ");
                 input = scan.next();
                 System.out.printf("Enter associated integer: ");
                 num = Integer.parseInt(scan.next());
-		TestSym symbl = new TestSym(input.toLowerCase(), num);
-                           
+		TestSym symbl = new TestSym(input, num);
+
 		try {
                     table.insert(symbl);
                     System.out.println(symbl + " entered into symbol table.");
@@ -61,52 +61,52 @@ class P1 {
                     System.out.println(input + " already entered into top scope.");
 		}
 		break;
-                
-	    case "lookup": 
+
+	    case "lookup":
 		System.out.printf("Enter a symbol for local lookup: ");
                 input = scan.next();
-		symb = table.localLookup(input.toLowerCase() );
+		symb = table.localLookup(input);
 
 		if (symb == null)
                     System.out.println(input + " not found in top scope.");
-		else 
+		else
                     System.out.println(symb + " found in top scope.");
-                
+
 		break;
-                
-            case "global": 
+
+            case "global":
                 System.out.printf("Enter a symbol for global lookup: ");
                 input = scan.next();
-                symb = table.globalLookup(input.toLowerCase());
+                symb = table.globalLookup(input);
 		if (symb == null)
                     System.out.println(input + " not found in any scope.");
-		else 
+		else
                     System.out.println(symb + " found in symbol table");
-		
+
                 break;
-                           
-            case "dump":   
+
+            case "dump":
                 System.out.println("Dumping contents............");
                 table.dump(System.out);
                 break;
-                           
-            case "menu":   
+
+            case "menu":
                 System.out.println(menu);
                 break;
-                           
-            case "quit":   
-                input = "quit";            
+
+            case "quit":
+                input = "quit";
                 break;
-                           
-            default:       
-                System.out.println("Invalid Command!"); 
+
+            default:
+                System.out.println("Invalid Command!");
                 break;
         }
-    } 
-      
+    }
+
     System.out.println("Testing Done!");
     System.exit(0);
-         
+
       // Complete this
     } // main
 } // class P1
