@@ -3,8 +3,7 @@ import java_cup.runtime.*;
 
 class P4 {
 
-	public static void
-	main(String args[]) throws java.io.IOException,  Exception {
+	public static void main(String args[]) throws java.io.IOException,  Exception {
 
 		if (args.length != 1) {
 			System.out.println("Error: Input file must be named on command line." );
@@ -31,11 +30,11 @@ class P4 {
 			System.exit(0);
 		}
 
-		final boolean ok = ((csxLiteNode)root.value).isTypeCorrect();
+		/*final boolean ok = ((classNode)root.value).isTypeCorrect();
 		if (ok) {
 			System.out.println("No CSX type errors detected.");
 		} else {
 			System.out.println("\nCSX compilation halted due to type errors.");
-		}
+		}*/
 	} // main
 } // class P4
