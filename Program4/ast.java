@@ -188,7 +188,7 @@ class fieldDeclsNode extends ASTNode {
 		moreFields.Unparse(indent);
 	} // Unparse()
     void checkTypes() {
-        //thisField.checkTypes();
+        thisField.checkTypes();
         moreFields.checkTypes();
     } // checkTypes
 	static nullFieldDeclsNode NULL = new nullFieldDeclsNode();
@@ -212,6 +212,7 @@ abstract class declNode extends ASTNode {
 	declNode(int l, int c) {
 		super(l, c);
 	}
+    void checkType() {}
 } // class declNode
 
 class varDeclNode extends declNode {
@@ -302,10 +303,26 @@ class arrayDeclNode extends declNode {
 		arraySize.Unparse(0);
 		System.out.print("];");
 	} // Unparse()
+
     void checkTypes() {
-        // If in scope already -> throw error
-        // Check if init value has same type as varType
-        // add to scope
+        SymbolInfo id;
+		id = (SymbolInfo) st.localLookup(arrayName.idname);
+		if (id == null) {
+			id = new SymbolInfo(arrayName.idname, new Kinds(Kinds.Array), elementType.type);
+			arrayName.type = elementType.type;
+			try {
+				st.insert(id);
+			} catch (DuplicateException d) {
+				/* can't happen */
+			} catch (EmptySTException e) {
+				/* can't happen */
+			}
+			arrayName.idinfo = id;
+		} else {
+			System.out.println(error() + id.name() + " is already declared.");
+			typeErrors++;
+			arrayName.type = new Types(Types.Error);
+		} // id != null
     } // checkTypes
 	private final identNode arrayName;
 	private final typeNode elementType;
