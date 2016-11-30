@@ -52,6 +52,10 @@ abstract class ASTNode {
 	void Unparse(int indent) {
 		// This routine is normally redefined in a subclass
 	} // Unparse()
+        
+        void checkTypes() {
+            // This will normally need to be redefined in a subclass
+        }
 } // class ASTNode
 
 class nullNode extends ASTNode {
@@ -81,7 +85,7 @@ class csxLiteNode extends ASTNode {
 		System.out.println(linenum + ":" + " } EOF");
 	} // Unparse()
 
-    void checkTypes() {
+        void checkTypes() {
 		progStmts.checkTypes();
 	} // checkTypes
 
@@ -120,6 +124,27 @@ class classNode extends ASTNode {
 	} // isTypeCorrect
 
     void checkTypes() {
+        SymbolInfo id;
+        id = (SymbolInfo) st.localLookup(className.idname);
+        
+        if (id == null) {
+            id = new SymbolInfo(className.idname, new Kinds(Kinds.Other), 
+                                new Types(Types.Unknown));
+            className.type = new Types(Types.Unknown);
+            try {
+		st.insert(id);
+            } catch (DuplicateException d) {
+                /* can't happen */
+            } catch (EmptySTException e) {
+		/* can't happen */
+            }
+            className.idinfo = id;
+        } else {    
+            System.out.println(error() + id.name() + " is already declared.");
+            typeErrors++;
+            className.type = new Types(Types.Error);
+        }
+        
         className.checkTypes();
         members.checkTypes();
     } // checkTypes
@@ -1012,31 +1037,33 @@ class fctCallNode extends exprNode {
 } // class fctCallNode
 
 class identNode extends exprNode {
-	identNode(String identname, int line, int col) {
-		super(line, col);
-		idname   = identname;
-	}
+    identNode(String identname, int line, int col) {
+        super(line,col,new Types(Types.Unknown), new Kinds(Kinds.Var));
+        idname   = identname;
+    }
 
-	void Unparse(int indent) {
-		genIndent(indent);
-		System.out.print(idname);
-	}
+    void Unparse(int indent) {
+        genIndent(indent);
+	System.out.print(idname);
+    }
 
     void checkTypes() {
-		/*SymbolInfo id;
-		mustBe(kind.val == Kinds.Var); //In CSX-lite all IDs should be vars!
-		id = (SymbolInfo) st.localLookup(idname);
-		if (id == null) {
-			System.out.println(error() + idname + " is not declared.");
-			typeErrors++;
-			type = new Types(Types.Error);
-		} else {
-			type = id.type;
-			idinfo = id; // Save ptr to correct symbol table entry
-		} // id != null*/
-	} // checkTypes
+        SymbolInfo id;
+        mustBe(kind.val == Kinds.Var); //In CSX-lite all IDs should be vars!
+        id = (SymbolInfo) st.localLookup(idname);
+        if (id == null) {
+            System.out.println(error() + idname + " is not declared.");
+            typeErrors++;
+            type = new Types(Types.Error);
+        } else {
+            type = id.type;
+            idinfo = id; // Save ptr to correct symbol table entry
+	} // id != null*/
+    } // checkTypes
 
-	public final String idname;
+    public String idname;
+    public SymbolInfo idinfo; // symbol table entry for this ident
+
 } // class identNode
 
 class nameNode extends exprNode {
