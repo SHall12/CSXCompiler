@@ -18,7 +18,7 @@ abstract class ASTNode {
 		}
 	} // mustBe
 
-	static void typeMustBe(int testType,int requiredType,String errorMsg) {
+	static void typeMustBe(int testType, int requiredType, String errorMsg) {
 		if ((testType != Types.Error) && (testType != requiredType)) {
 			System.out.println(errorMsg);
 			typeErrors++;
@@ -211,24 +211,24 @@ class varDeclNode extends declNode {
 	} // Unparse()
 
     void checkTypes() {
-		/*SymbolInfo id;
+		SymbolInfo id;
 		id = (SymbolInfo) st.localLookup(varName.idname);
 		if (id == null) {
-			id = new SymbolInfo(varName.idname, new Kinds(Kinds.Var),varType.type);
+			id = new SymbolInfo(varName.idname, new Kinds(Kinds.Var), varType.type);
 			varName.type = varType.type;
 			try {
 				st.insert(id);
 			} catch (DuplicateException d) {
-				/* can't happen
+				/* can't happen */
 			} catch (EmptySTException e) {
-				/* can't happen
+				/* can't happen */
 			}
 			varName.idinfo = id;
 		} else {
 			System.out.println(error() + id.name() + " is already declared.");
 			typeErrors++;
 			varName.type = new Types(Types.Error);
-		} // id != null */
+		} // id != null
 	} // checkTypes
 
 	private final identNode varName;
@@ -289,13 +289,13 @@ class arrayDeclNode extends declNode {
 
 abstract class typeNode extends ASTNode {
 // abstract superclass; only subclasses are actually created
-	typeNode() {
-		super();
-	}
-	typeNode(int l, int c) {
-		super(l, c);
-	}
-	static nullTypeNode NULL = new nullTypeNode();
+    typeNode() {super();}
+    typeNode(int l,int c, Types t) {
+        super(l,c);
+        type = t;
+    }
+    static nullTypeNode NULL = new nullTypeNode();
+    Types type; // Used for typechecking -- the type of this typeNode
 } // class typeNode
 
 class nullTypeNode extends typeNode {
@@ -308,7 +308,7 @@ class nullTypeNode extends typeNode {
 
 class intTypeNode extends typeNode {
 	intTypeNode(int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Integer));
 	}
 	void Unparse(int indent) {
 		genIndent(indent);
@@ -318,7 +318,7 @@ class intTypeNode extends typeNode {
 
 class floatTypeNode extends typeNode {
 	floatTypeNode(int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Real));
 	}
 	void Unparse(int indent) {
 		genIndent(indent);
@@ -328,7 +328,7 @@ class floatTypeNode extends typeNode {
 
 class boolTypeNode extends typeNode {
 	boolTypeNode(int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Boolean));
 	}
 	void Unparse(int indent) {
 		genIndent(indent);
@@ -338,7 +338,7 @@ class boolTypeNode extends typeNode {
 
 class charTypeNode extends typeNode {
 	charTypeNode(int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Character));
 	}
 	void Unparse(int indent) {
 		genIndent(indent);
@@ -348,7 +348,7 @@ class charTypeNode extends typeNode {
 
 class voidTypeNode extends typeNode {
 	voidTypeNode(int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Void));
 	}
 	void Unparse(int indent) {
 		genIndent(indent);
@@ -867,8 +867,17 @@ abstract class exprNode extends ASTNode {
 	}
 	exprNode(int l, int c) {
 		super(l, c);
+        type = new Types();
+        kind = new Kinds();
 	}
+    exprNode(int l,int c, Types t, Kinds k) {
+		super(l,c);
+		type = t;
+		kind = k;
+	} // exprNode
 	static nullExprNode NULL = new nullExprNode();
+    protected Types type; // Used for typechecking: the type of this node
+    protected Kinds kind; // Used for typechecking: the kind of this node
 }
 
 class nullExprNode extends exprNode {
@@ -1013,9 +1022,20 @@ class fctCallNode extends exprNode {
 
 class identNode extends exprNode {
 	identNode(String identname, int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Unknown), new Kinds(Kinds.Var));
 		idname   = identname;
+        nullFlag = false;
 	}
+
+    identNode(boolean flag) {
+        super(0,0,new Types(Types.Unknown), new Kinds(Kinds.Var));
+        idname = "";
+        nullFlag = flag;
+    } // identNode
+
+    boolean isNull() {return nullFlag;} // Is this node null?
+
+    static identNode NULL = new identNode(true);
 
 	void Unparse(int indent) {
 		genIndent(indent);
@@ -1023,8 +1043,8 @@ class identNode extends exprNode {
 	}
 
     void checkTypes() {
-		/*SymbolInfo id;
-		mustBe(kind.val == Kinds.Var); //In CSX-lite all IDs should be vars!
+		SymbolInfo id;
+		mustBe(kind.val != Kinds.Other);
 		id = (SymbolInfo) st.localLookup(idname);
 		if (id == null) {
 			System.out.println(error() + idname + " is not declared.");
@@ -1033,10 +1053,12 @@ class identNode extends exprNode {
 		} else {
 			type = id.type;
 			idinfo = id; // Save ptr to correct symbol table entry
-		} // id != null*/
+		} // id != null
 	} // checkTypes
 
 	public final String idname;
+    public SymbolInfo idinfo; // symbol table entry for this ident
+	private final boolean nullFlag;
 } // class identNode
 
 class nameNode extends exprNode {
