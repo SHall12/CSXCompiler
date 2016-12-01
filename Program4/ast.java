@@ -946,7 +946,7 @@ class callNode extends stmtNode {
             SymbolInfo id;
             id = (SymbolInfo) st.globalLookup(methodName.idname);
 
-            if (id != null) {
+            if (id == null) {
                 System.out.println(error() + id.name() + " is not declared.");
                 typeErrors++;
                 methodName.type = new Types(Types.Error);
