@@ -1067,10 +1067,17 @@ class breakNode extends stmtNode {
             label.checkTypes();
 
             SymbolInfo id;
-            id = (SymbolInfo) st.globalLookup(label.idname);
+            id = (SymbolInfo) st.localLookup(label.idname);
 
             if (id == null) {
-                System.out.println(error() + id.name() + " is not declared.");
+                id = (SymbolInfo) st.globalLookup(label.idname);
+                
+                if (id == null){
+                    System.out.println(error() + id.name() + "is not declared.");
+                }else {
+                    System.out.println(error() + id.name() + "is declared out of scope.")
+                }
+                    
                 typeErrors++;
                 label.type = new Types(Types.Error);
             }
@@ -1097,10 +1104,17 @@ class continueNode extends stmtNode {
             label.checkTypes();
 
             SymbolInfo id;
-            id = (SymbolInfo) st.globalLookup(label.idname);
+            id = (SymbolInfo) st.localLookup(label.idname);
 
             if (id == null) {
-                System.out.println(error() + id.name() + " is not declared.");
+                id = (SymbolInfo) st.globalLookup(label.idname);
+                
+                if (id == null){
+                    System.out.println(error() + id.name() + "is not declared.");
+                }else {
+                    System.out.println(error() + id.name() + "is declared out of scope.")
+                }
+                    
                 typeErrors++;
                 label.type = new Types(Types.Error);
             }
@@ -1190,8 +1204,8 @@ class nullExprNode extends exprNode {
 } // class nullExprNode
 
 class binaryOpNode extends exprNode {
-	binaryOpNode(exprNode e1, int op, exprNode e2, int line, int col) {
-		super(line, col);
+	binaryOpNode(exprNode e1, int op, exprNode e2, int line, int col, Types type) {
+		super(line, col, type, new Kinds(Kinds.Value));
 		operatorCode = op;
 		leftOperand = e1;
 		rightOperand = e2;
@@ -1248,6 +1262,17 @@ class binaryOpNode extends exprNode {
 		rightOperand.Unparse(0);
 		System.out.print(")");
 	}
+        
+        void checkTypes(){
+            //Check types of each side.
+            leftOperand.checkTypes();
+            rightOperand.checkTypes();
+            
+            switch(operatorCode){
+                
+            }
+            
+        }
 
 	private final exprNode leftOperand;
 	private final exprNode rightOperand;
