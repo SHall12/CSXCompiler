@@ -795,8 +795,8 @@ class whileNode extends stmtNode {
             SymbolInfo id;
             id = (SymbolInfo) st.localLookup(label.idname);
             if (id == null) {
-                id = new SymbolInfo(label.idname, new Kinds(Kinds.Label), Type.Void);
-                label.type = Type.Void;
+                id = new SymbolInfo(label.idname, new Kinds(Kinds.Label), new Types(Types.Void));
+                label.type = new Types(Types.Void);
                 try {
     				st.insert(id);
     			} catch (DuplicateException d) {
@@ -812,10 +812,14 @@ class whileNode extends stmtNode {
             } // id != null
         }
         loopBody.checkTypes();
-        st.closeScope();
+        try {
+            st.closeScope();
+        } catch (EmptySTException e) {
+            System.out.println("Closing scope of empty symbol table.");
+        }
     }
 
-	private final exprNode label;
+	private final identNode label;
 	private final exprNode condition;
 	private final stmtNode loopBody;
 } // class whileNode
@@ -1497,7 +1501,7 @@ class ifCondExprNode extends stmtNode {
 
 //This class is needed to use Conditional Expressions with while statements.
 class whileCondExprNode extends stmtNode {
-	whileCondExprNode(identNode e, exprNode e, stmtNode s, int line, int col) {
+	whileCondExprNode(identNode i, exprNode e, stmtNode s, int line, int col) {
 		super(line, col);
 	 label = i;
 	 condition = e;
