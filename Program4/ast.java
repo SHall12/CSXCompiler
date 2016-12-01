@@ -854,6 +854,14 @@ class readNode extends stmtNode {
 		System.out.println(");");
 	}
 
+    void checkTypes() {
+        if(!targetVar.isNull()) {
+            targetVar.checkTypes();
+            mustBe(targetVar.kind.val == Kinds.Var); // Not sure if correct
+            moreReads.checkTypes();
+        }
+    }
+
 	public readNode getReadList() {
 		return moreReads;
 	}
@@ -1272,10 +1280,19 @@ class nameNode extends exprNode {
 		}
 	}
 
-        void checkTypes(){
-            varName.checkTypes();
-            type = varName.type;
+    void checkTypes(){
+        varName.checkTypes();
+        if (subscriptVal.isNull()) {
+            // Must be a variable
+            mustBe(varName.kind.val == Kinds.Var);
+        } else {
+            // Must be an array with int subscript
+            subscriptVal.checkTypes();
+            mustBe(varName.kind.val == Kinds.Array);
+            typeMustBe(subscriptVal.type.val, Types.Integer, error() + " subscript must be an integer");
         }
+        type = varName.type;
+    }
 
 	private final identNode varName;
 	private final exprNode subscriptVal;
