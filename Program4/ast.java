@@ -973,6 +973,10 @@ class returnNode extends stmtNode {
 		returnVal.Unparse(0);
 		System.out.println(";");
 	}
+        
+        void checkTypes(){
+            returnVal.checkTypes();
+        }
 
 	private final exprNode returnVal;
 } // class returnNode
