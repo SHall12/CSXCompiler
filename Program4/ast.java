@@ -971,7 +971,21 @@ class callNode extends stmtNode {
 		args.Unparse(0);
 		System.out.println(");");
 	}
+        
+        void checkTypes(){
+            methodName.checkTypes();
+            args.checkTypes();
+            
+            SymbolInfo id;
+            id = (SymbolInfo) st.globalLookup(methodName.idname);
 
+            if (id == null) {
+                System.out.println(error() + id.name() + " is not declared.");
+                typeErrors++;
+                methodName.type = new Types(Types.Error);
+            }
+        } 
+        
 	private final identNode methodName;
 	private final argsNode args;
 } // class callNode
@@ -992,6 +1006,10 @@ class returnNode extends stmtNode {
 		returnVal.Unparse(0);
 		System.out.println(";");
 	}
+        
+        void checkTypes(){
+            returnVal.checkTypes();
+        }
 
 	private final exprNode returnVal;
 } // class returnNode
@@ -1012,6 +1030,20 @@ class blockNode extends stmtNode {
 		genIndent(indent);
 		System.out.println("}");
 	}
+        
+        void checkTypes(){
+            st.openScope();
+            decls.checkTypes();
+            stmts.checkTypes();
+            
+            try{
+                st.closeScope();
+            }catch(EmptySTException e){
+                System.err.println("Empty scope");
+                System.exit(-1);
+            }
+
+        }
 
 	private final fieldDeclsNode decls;
 	private final stmtsNode stmts;
@@ -1030,6 +1062,19 @@ class breakNode extends stmtNode {
 		label.Unparse(0);
 		System.out.println(";");
 	}
+        
+        void checkTypes(){
+            label.checkTypes();
+            
+            SymbolInfo id;
+            id = (SymbolInfo) st.globalLookup(label.idname);
+
+            if (id == null) {
+                System.out.println(error() + id.name() + " is not declared.");
+                typeErrors++;
+                label.type = new Types(Types.Error);
+            }
+        }
 
 	private final identNode label;
 } // class breakNode
@@ -1047,6 +1092,19 @@ class continueNode extends stmtNode {
 		label.Unparse(0);
 		System.out.println(";");
 	}
+        
+        void checkTypes(){
+            label.checkTypes();
+            
+            SymbolInfo id;
+            id = (SymbolInfo) st.globalLookup(label.idname);
+
+            if (id == null) {
+                System.out.println(error() + id.name() + " is not declared.");
+                typeErrors++;
+                label.type = new Types(Types.Error);
+            }
+        }
 
 	private final identNode label;
 } // class continueNode
@@ -1067,6 +1125,11 @@ class argsNode extends ASTNode {
 			moreArgs.Unparse(0);
 		}
 	}
+        
+        void checkTypes(){
+            argVal.checkTypes();
+            moreArgs.checkTypes();
+        }
 
 	static nullArgsNode NULL = new nullArgsNode();
 	private exprNode argVal;
@@ -1091,6 +1154,8 @@ class strLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(strval);
 	}
+        
+        void checkTypes(){}
 
 	private final String strval;
 } // class strLitNode
@@ -1121,6 +1186,7 @@ class nullExprNode extends exprNode {
 	}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
+        void checkTypes(){}
 } // class nullExprNode
 
 class binaryOpNode extends exprNode {
