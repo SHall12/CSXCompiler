@@ -1337,6 +1337,7 @@ class binaryOpNode extends exprNode {
                 }    
             case sym.CAND:
             case sym.COR:
+                type = new Types(Types.Boolean);
                 if (leftOperand.type.val == Types.Boolean && 
                         rightOperand.type.val == Types.Boolean){
                     //Do nothing
@@ -1355,8 +1356,8 @@ class binaryOpNode extends exprNode {
 } // class binaryOpNode
 
 class unaryOpNode extends exprNode {
-	unaryOpNode(int op, exprNode e, int line, int col) {
-		super(line, col);
+	unaryOpNode(int op, exprNode e, int line, int col, Types type) {
+		super(line, col, type, new Kinds(Kinds.Value));
 		operand = e;
 		operatorCode = op;
 	}
@@ -1378,6 +1379,19 @@ class unaryOpNode extends exprNode {
 		printOp(operatorCode);
 		operand.Unparse(0);
 	}
+        
+        void checkTypes(){
+            operand.checkTypes();
+            
+            if (operatorCode == sym.NOT){
+                typeMustBe(operand.type.val, Types.Boolean, error() 
+                        + "Operand must be a Boolean");
+                type = new Types(Types.Boolean);
+            } else{
+                mustBe(false);
+            }
+            
+        }
 
 	private final exprNode operand;
 	private final int operatorCode; // Token code of the operator
@@ -1433,6 +1447,20 @@ class fctCallNode extends exprNode {
 		methodArgs.Unparse(0);
 		System.out.print(")");
 	}
+        
+        void checkTypes() {
+            methodName.checkTypes();
+            methodArgs.checkTypes();
+            
+            SymbolInfo id;
+            id = (SymbolInfo) st.globalLookup(methodName.idname);
+
+            if (id == null) {
+                System.out.println(error() + id.name() + " is not declared.");
+                typeErrors++;
+                methodName.type = new Types(Types.Error);
+            }
+        }
 
 	private final identNode methodName;
 	private final argsNode methodArgs;
@@ -1540,16 +1568,20 @@ class intLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(intval);
 	}
+        
         int getVal(){
             return intval;
         }
-
-	private final int intval;
+        
+        void typeCheck(){}
+	
+        private final int intval;
 } // class intLitNode
 
 class floatLitNode extends exprNode {
 	floatLitNode(float val, int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Real),
+                        new Kinds(Kinds.Value));
 		floatval = val;
 	}
 
@@ -1557,13 +1589,16 @@ class floatLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(floatval);
 	}
+        
+        void typeCheck(){}
 
 	private final float floatval;
 } // class floatLitNode
 
 class charLitNode extends exprNode {
 	charLitNode(char val, int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Unknown),
+                        new Kinds(Kinds.Value));
 		charval = val;
 	}
 
@@ -1571,28 +1606,43 @@ class charLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(charval);
 	}
+        
+        int getVal(){
+            return charval;
+        }
+        
+        void typeCheck(){}
 
 	private final char charval;
 } // class charLitNode
 
 class trueNode extends exprNode {
-	trueNode(int line, int col) {
-		super(line, col);
-	}
-	void Unparse(int indent) {
-		genIndent(indent);
-		System.out.print("true");
-	}
+    trueNode(int line, int col) {
+	super(line, col);
+        type = new Types(Types.Boolean);
+        kind = new Kinds(Kinds.Value);
+    }
+    
+    void Unparse(int indent) {
+        genIndent(indent);
+	System.out.print("true");
+    }
+    
+    void checkTypes() {}
+        
 } // class trueNode
 
 class falseNode extends exprNode {
-	falseNode(int line, int col) {
-		super(line, col);
-	}
-	void Unparse(int indent) {
-		genIndent(indent);
-		System.out.print("false");
-	}
+    falseNode(int line, int col) {
+	super(line, col);
+        type = new Types(Types.Boolean);
+        kind = new Kinds(Kinds.Value);
+    }
+    
+    void Unparse(int indent) {
+	genIndent(indent);
+	System.out.print("false");
+    }
 } // class falseNode
 
 /**************************************************************************
@@ -1604,11 +1654,15 @@ class semicolonNode extends exprNode {
 	semicolonNode() {}
 	semicolonNode(int line, int col) {
 		super(line, col);
-	}
+        }
+        
 	void Unparse(int indent) {
 		genIndent(indent);
 		System.out.print(";");
 	}
+        
+        void typeCheck() {}
+        
 	static nullSemicolonNode NULL = new nullSemicolonNode();
 } // class semicolonNode
 
@@ -1617,7 +1671,8 @@ class nullSemicolonNode extends semicolonNode {
 	boolean isNull() {
 		return true;
 	}
-	void Unparse(int indent) {}
+        void Unparse(int indent) {}
+        void typeCheck() {}
 } // class nullSemicolonNode
 
 //Node for preincrement statement.
