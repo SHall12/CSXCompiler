@@ -997,6 +997,13 @@ class blockNode extends stmtNode {
 		genIndent(indent);
 		System.out.println("}");
 	}
+        
+        void checkTypes(){
+            st.openScope();
+            decls.checkTypes();
+            stmts.checkTypes();
+            st.closeScope();
+        }
 
 	private final fieldDeclsNode decls;
 	private final stmtsNode stmts;
