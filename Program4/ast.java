@@ -1204,75 +1204,143 @@ class nullExprNode extends exprNode {
 } // class nullExprNode
 
 class binaryOpNode extends exprNode {
-	binaryOpNode(exprNode e1, int op, exprNode e2, int line, int col) {
-		super(line, col);
-		operatorCode = op;
-		leftOperand = e1;
-		rightOperand = e2;
+    binaryOpNode(exprNode e1, int op, exprNode e2, int line, int col, Types type) {
+	super(line, col, type, new Kinds(Kinds.Value));
+	operatorCode = op;
+	leftOperand = e1;
+	rightOperand = e2;
+    }
+
+    static void printOp(int op) {
+	switch (op) {
+            case sym.PLUS:
+                System.out.print(" + ");
+                break;
+            case sym.MINUS:
+		System.out.print(" - ");
+		break;
+            case sym.LT:
+            	System.out.print(" < ");
+		break;
+            case sym.LEQ:
+		System.out.print(" <= ");
+		break;
+            case sym.GT:
+		System.out.print(" > ");
+		break;
+            case sym.GEQ:
+		System.out.print(" >= ");
+		break;
+            case sym.EQ:
+		System.out.print(" == ");
+		break;
+            case sym.NOTEQ:
+		System.out.print(" != ");
+		break;
+            case sym.COR:
+		System.out.print(" || ");
+		break;
+            case sym.CAND:
+		System.out.print(" && ");
+		break;
+            case sym.TIMES:
+		System.out.print(" * ");
+		break;
+            case sym.SLASH:
+		System.out.print(" / ");
+		break;
+            default:
+		throw new Error("printOp: case not found");
 	}
+    }
 
-	static void printOp(int op) {
-		switch (op) {
-			case sym.PLUS:
-				System.out.print(" + ");
-				break;
-			case sym.MINUS:
-				System.out.print(" - ");
-				break;
-			case sym.LT:
-				System.out.print(" < ");
-				break;
-			case sym.LEQ:
-				System.out.print(" <= ");
-				break;
-			case sym.GT:
-				System.out.print(" > ");
-				break;
-			case sym.GEQ:
-				System.out.print(" >= ");
-				break;
-			case sym.EQ:
-				System.out.print(" == ");
-				break;
-			case sym.NOTEQ:
-				System.out.print(" != ");
-				break;
-			case sym.COR:
-				System.out.print(" || ");
-				break;
-			case sym.CAND:
-				System.out.print(" && ");
-				break;
-			case sym.TIMES:
-				System.out.print(" * ");
-				break;
-			case sym.SLASH:
-				System.out.print(" / ");
-				break;
-			default:
-				throw new Error("printOp: case not found");
-		}
-	}
-
-	void Unparse(int indent) {
-		genIndent(indent);
-		System.out.print("(");
-		leftOperand.Unparse(0);
-		printOp(operatorCode);
-		rightOperand.Unparse(0);
-		System.out.print(")");
-	}
-
-        void checkTypes(){
-            //Check types of each side.
-            leftOperand.checkTypes();
-            rightOperand.checkTypes();
-
-            switch(operatorCode){
-
-            }
-
+    void Unparse(int indent) {
+	genIndent(indent);
+	System.out.print("(");
+	leftOperand.Unparse(0);
+	printOp(operatorCode);
+	rightOperand.Unparse(0);
+	System.out.print(")");
+    }
+        
+    void checkTypes(){
+        //Check types of each side.
+        leftOperand.checkTypes();
+        rightOperand.checkTypes();
+        type = leftOperand.type;
+            
+        switch(operatorCode){
+            case sym.PLUS:
+            case sym.MINUS:
+            case sym.SLASH:
+            case sym.TIMES:
+                switch(leftOperand.type.val){
+                    case Types.Character:
+                    case Types.Integer:
+                        switch(rightOperand.type.val){
+                            case Types.Character:
+                            case Types.Integer:
+                                if (leftOperand.type.val == Type.Integer || 
+                                        rightOperand.type.val == Type.Integer){
+                                    type = Type.Integer;
+                                }
+                                break;
+                            default:
+                                typeMustBe(Types.Error, 0, error() + 
+                                    "Both operands must be Integer or Character.");
+                        } 
+                        break;
+                    case Types.Real:
+                        typeMustBe(leftOperand.type.val, rightOperand.type.val,
+                            error() + "Both left and right operands must be Floats.");
+                        break;
+                    default:
+                        typeMustBe(Types.Error, 1 , error() + 
+                            "Left operand must be an int, float, or char.");
+                } 
+                break;
+            case sym.EQ:
+            case sym.NOTEQ:
+            case sym.GEQ:
+            case sym.GT:
+            case sym.LEQ:
+            case sym.LT:
+                switch(leftOperand.type.val){
+                    case Types.Integer:
+                    case Types.Character:
+                    case Types.Real: 
+                        switch(rightOperand.type.val){
+                            case Types.Integer:
+                            case Types.Character:
+                            case Types.Real: 
+                                break;
+                            default:
+                                typeMustBe(Types.Error, 1, error() +
+                                        "Right operand must be an int, float, or char."
+                        }
+                        break;
+                    case Types.Boolean:
+                        typeMustBe(Types.Boolean, rightOperand.type.val, error() +
+                                        "Right operand must be an Boolean."
+                        break;
+                    default:
+                        typeMustBe(Types.Error, 1, error() + 
+                                "Left operand must be an int, float, char, or boolean.")
+                }    
+            case sym.CAND:
+            case sym.COR:
+                type = Type.Boolean;
+                if (leftOperand.type.val == Type.Boolean && 
+                        rightOperand.type.val == Type.Boolean){
+                    //Do nothing
+                } else {
+                    typeMustBe(Type.Error, 1, error() + 
+                            "Both left and right operand must be a Boolean.")
+                }
+            default:
+                //Nothing wrong!
         }
+    }
 
 	private final exprNode leftOperand;
 	private final exprNode rightOperand;
