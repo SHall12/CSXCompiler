@@ -1022,6 +1022,19 @@ class breakNode extends stmtNode {
 		label.Unparse(0);
 		System.out.println(";");
 	}
+        
+        void checkTypes(){
+            label.checkTypes();
+            
+            SymbolInfo id;
+            id = (SymbolInfo) st.globalLookup(label.idname);
+
+            if (id == null) {
+                System.out.println(error() + id.name() + " is not declared.");
+                typeErrors++;
+                label.type = new Types(Types.Error);
+            }
+        }
 
 	private final identNode label;
 } // class breakNode
@@ -1039,6 +1052,19 @@ class continueNode extends stmtNode {
 		label.Unparse(0);
 		System.out.println(";");
 	}
+        
+        void checkTypes(){
+            label.checkTypes();
+            
+            SymbolInfo id;
+            id = (SymbolInfo) st.globalLookup(label.idname);
+
+            if (id == null) {
+                System.out.println(error() + id.name() + " is not declared.");
+                typeErrors++;
+                label.type = new Types(Types.Error);
+            }
+        }
 
 	private final identNode label;
 } // class continueNode
