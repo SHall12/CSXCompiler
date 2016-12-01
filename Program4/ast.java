@@ -713,15 +713,15 @@ class asgNode extends stmtNode {
 		System.out.println(";");
 	}
 
-        void checkTypes(){
-            target.checkTypes();
-            source.checkTypes();
-            mustBe(target.kind.val == Kinds.Var);
-            typeMustBe(source.type.val, target.type.val,
-                        error() + "Illegal assignement: Type mismatch");
-        }
+    void checkTypes(){
+        target.checkTypes();
+        source.checkTypes();
+        mustBe(target.kind.val == Kinds.Var);
+        typeMustBe(source.type.val, target.type.val,
+                    error() + "Illegal assignement: Type mismatch");
+    }
 
-        private final nameNode target;
+    private final nameNode target;
 	private final exprNode source;
 } // class asgNode
 
@@ -749,14 +749,14 @@ class ifThenNode extends stmtNode {
 		System.out.println ("}");
 	}
 
-        void checkTypes(){
-            condition.checkTypes();
-            thenPart.checkTypes();
-            elsePart.checkTypes();
+    void checkTypes(){
+        condition.checkTypes();
+        thenPart.checkTypes();
+        elsePart.checkTypes();
 
-            typeMustBe(condition.type.val, Types.Boolean, error() + "The conditional expression must be boolean.");
+        typeMustBe(condition.type.val, Types.Boolean, error() + "The conditional expression must be boolean.");
 
-        }
+    }
 
 	private final exprNode condition;
 	private final stmtsNode thenPart;
@@ -786,10 +786,34 @@ class whileNode extends stmtNode {
 		System.out.println ("}");
 	}
 
-        void checkTypes() {
-
-
+    void checkTypes() {
+        condition.checkTypes();
+        typeMustBe(condition.type.val, Types.Boolean, error() +
+            "The conditional expression must be boolean.");
+        st.openScope();
+        if(!label.isNull()){
+            SymbolInfo id;
+            id = (SymbolInfo) st.localLookup(label.idname);
+            if (id == null) {
+                id = new SymbolInfo(label.idname, new Kinds(Kinds.Label), Type.Void);
+                label.type = Type.Void;
+                try {
+    				st.insert(id);
+    			} catch (DuplicateException d) {
+    				/* can't happen */
+    			} catch (EmptySTException e) {
+    				/* can't happen */
+    			}
+                label.idinfo = id;
+            } else {
+                System.out.println(error() + id.name() + " is already declared.");
+                typeErrors++;
+                label.type = new Types(Types.Error);
+            } // id != null
         }
+        loopBody.checkTypes();
+        st.closeScope();
+    }
 
 	private final exprNode label;
 	private final exprNode condition;
