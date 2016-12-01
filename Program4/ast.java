@@ -132,12 +132,12 @@ class classNode extends ASTNode {
                                 new Types(Types.Unknown));
             className.type = new Types(Types.Unknown);
             try {
-		st.insert(id);
-            } catch (DuplicateException d) {
-                /* can't happen */
-            } catch (EmptySTException e) {
-		/* can't happen */
-            }
+				st.insert(id);
+			} catch (DuplicateException d) {
+				/* can't happen */
+			} catch (EmptySTException e) {
+				/* can't happen */
+			}
             className.idinfo = id;
         } else {
             System.out.println(error() + id.name() + " is already declared.");
@@ -202,6 +202,7 @@ class nullFieldDeclsNode extends fieldDeclsNode {
 		return true;
 	}
 	void Unparse(int indent) {}
+        void checkTypes() {}
 } // class nullFieldDeclsNode
 
 // abstract superclass; only subclasses are actually created
@@ -242,7 +243,7 @@ class varDeclNode extends declNode {
 		if (id == null) {
 			id = new SymbolInfo(varName.idname, new Kinds(Kinds.Var), varType.type);
 			varName.type = varType.type;
-			try {
+            try {
 				st.insert(id);
 			} catch (DuplicateException d) {
 				/* can't happen */
@@ -263,7 +264,7 @@ class varDeclNode extends declNode {
 } // class varDeclNode
 
 class constDeclNode extends declNode {
-	constDeclNode(identNode id,  exprNode e, int line, int col) {
+	constDeclNode(identNode id, exprNode e, int line, int col) {
 		super(line, col);
 		constName = id;
 		constValue = e;
@@ -278,9 +279,26 @@ class constDeclNode extends declNode {
 		System.out.println(";");
 	} // Unparse()
     void checkTypes() {
-        // If in scope already -> throw error
-        // Check if constValue
-        // add to scope
+        SymbolInfo id;
+        id = (SymbolInfo) st.localLookup(constName.idname);
+
+        if (id == null) {
+            id = new SymbolInfo(constName.idname,
+                new Kinds(Kinds.Var),constValue.type);
+            constName.type = constValue.type;
+            try {
+				st.insert(id);
+			} catch (DuplicateException d) {
+				/* can't happen */
+			} catch (EmptySTException e) {
+				/* can't happen */
+			}
+            constName.idinfo = id;
+        } else {  // If in scope already -> throw error
+            System.out.println(error() + id.name() + " is already declared.");
+            typeErrors++;
+            constName.type = new Types(Types.Error);
+        } // id != null
     } // checkTypes
 	private final identNode constName;
 	private final exprNode constValue;
@@ -306,23 +324,32 @@ class arrayDeclNode extends declNode {
 
     void checkTypes() {
         SymbolInfo id;
-		id = (SymbolInfo) st.localLookup(arrayName.idname);
-		if (id == null) {
-			id = new SymbolInfo(arrayName.idname, new Kinds(Kinds.Array), elementType.type);
-			arrayName.type = elementType.type;
-			try {
+        id = (SymbolInfo) st.localLookup(arrayName.idname);
+
+        if (id == null) {
+            id = new SymbolInfo(arrayName.idname,
+                new Kinds(Kinds.Var),elementType.type);
+            arrayName.type = elementType.type;
+            try {
 				st.insert(id);
 			} catch (DuplicateException d) {
 				/* can't happen */
 			} catch (EmptySTException e) {
 				/* can't happen */
 			}
-			arrayName.idinfo = id;
-		} else {
-			System.out.println(error() + id.name() + " is already declared.");
-			typeErrors++;
-			arrayName.type = new Types(Types.Error);
-		} // id != null
+            arrayName.idinfo = id;
+        } else {
+            System.out.println(error() + id.name() + " is already declared.");
+            typeErrors++;
+            arrayName.type = new Types(Types.Error);
+        } // id != null
+
+        //Array size must be > 0
+        if (arraySize.getVal() <= 0){
+            typeErrors++;
+            System.out.println(error() + arraySize.getVal()
+                                + ": array size must be greater than 0;");
+        }
     } // checkTypes
 	private final identNode arrayName;
 	private final typeNode elementType;
@@ -346,6 +373,7 @@ class nullTypeNode extends typeNode {
 		return true;
 	}
 	void Unparse(int indent) {}
+        void checkTypes() {}
 } // class nullTypeNode
 
 class intTypeNode extends typeNode {
@@ -453,14 +481,42 @@ class methodDeclNode extends ASTNode {
 		System.out.println("}");
 	} // Unparse()
     void checkTypes() {
-        // If in scope already -> throw error
+        SymbolInfo id;
+        id = (SymbolInfo) st.localLookup(name.idname);
+        if (id == null) {
+            id = new SymbolInfo(name.idname, new Kinds(Kinds.Method),
+                                returnType.type);
+            name.type = returnType.type;
+            try {
+				st.insert(id);
+			} catch (DuplicateException d) {
+				/* can't happen */
+			} catch (EmptySTException e) {
+				/* can't happen */
+			}
+            name.idinfo = id;
+        } else {
+            System.out.println(error() + id.name() + " is already declared.");
+            typeErrors++;
+            name.type = new Types(Types.Error);
+        } // id != null
+
         // Open new scope
         st.openScope();
-        // Add name to new scope or old scope?
-        // Add args to new scope
+
+        //Type-Check branches
         args.checkTypes();
         decls.checkTypes();
         stmts.checkTypes();
+
+        //Close scope after branches are checked
+        try{
+            st.closeScope();
+        }catch(EmptySTException e){
+            System.err.println("Error: Empty scope");
+            System.exit(-1);
+        }
+
     } // checkTypes
 	private final identNode name;
 	private final argDeclsNode args;
@@ -498,7 +554,7 @@ class argDeclsNode extends ASTNode {
 	} // Unparse()
 
     void checkTypes() {
-        // add thiDecl to scope if not in it
+        thisDecl.checkTypes();
         moreDecls.checkTypes();
     }
 
@@ -528,8 +584,25 @@ class arrayArgDeclNode extends argDeclNode {
 	} // Unparse()
 
     void checkType(){
-        // Check if argName in scope already
-        // Probably need to do other stuff here
+        SymbolInfo id;
+        id = (SymbolInfo) st.localLookup(argName.idname);
+        if (id == null) {
+            id = new SymbolInfo(argName.idname, new Kinds(Kinds.Var),
+                                elementType.type);
+            argName.type = elementType.type;
+            try {
+				st.insert(id);
+			} catch (DuplicateException d) {
+				/* can't happen */
+			} catch (EmptySTException e) {
+				/* can't happen */
+			}
+            argName.idinfo = id;
+        } else {
+            System.out.println(error() + id.name() + " is already declared.");
+            typeErrors++;
+            argName.type = new Types(Types.Error);
+        } // id != null
     }
 
 	private final identNode argName;
@@ -549,6 +622,29 @@ class valArgDeclNode extends argDeclNode {
 		System.out.print(" ");
 		argName.Unparse(0);
 	} // Unparse()
+
+    void checkTypes(){
+        SymbolInfo id;
+        id = (SymbolInfo) st.localLookup(argName.idname);
+
+        if (id == null) {
+            id = new SymbolInfo(argName.idname, new Kinds(Kinds.Var),
+                                argType.type);
+            argName.type = argType.type;
+            try {
+				st.insert(id);
+			} catch (DuplicateException d) {
+				/* can't happen */
+			} catch (EmptySTException e) {
+				/* can't happen */
+			}
+            argName.idinfo = id;
+        } else {
+            System.out.println(error() + id.name() + " is already declared.");
+            typeErrors++;
+            argName.type = new Types(Types.Error);
+        } // id != null
+    }
 
 	private final identNode argName;
 	private final typeNode argType;
@@ -585,7 +681,7 @@ class stmtsNode extends ASTNode {
 	}
 
     void checkTypes() {
-        //thisStmt.checkTypes();
+        thisStmt.checkTypes();
         moreStmts.checkTypes();
     }
 
@@ -617,7 +713,15 @@ class asgNode extends stmtNode {
 		System.out.println(";");
 	}
 
-	private final nameNode target;
+        void checkTypes(){
+            target.checkTypes();
+            source.checkTypes();
+            mustBe(target.kind.val == Kinds.Var);
+            typeMustBe(source.type.val, target.type.val,
+                        error() + "Illegal assignement: Type mismatch");
+        }
+
+        private final nameNode target;
 	private final exprNode source;
 } // class asgNode
 
@@ -644,6 +748,15 @@ class ifThenNode extends stmtNode {
 		genIndent(indent);
 		System.out.println ("}");
 	}
+
+        void checkTypes(){
+            condition.checkTypes();
+            thenPart.checkTypes();
+            elsePart.checkTypes();
+
+            typeMustBe(condition.type.val, Types.Boolean, error() + "The conditional expression must be boolean.");
+
+        }
 
 	private final exprNode condition;
 	private final stmtsNode thenPart;
@@ -672,6 +785,11 @@ class whileNode extends stmtNode {
 		genIndent(indent);
 		System.out.println ("}");
 	}
+
+        void checkTypes() {
+
+
+        }
 
 	private final exprNode label;
 	private final exprNode condition;
@@ -1105,7 +1223,7 @@ class identNode extends exprNode {
 
 class nameNode extends exprNode {
 	nameNode(identNode id, exprNode expr, int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Unknown), new Kinds(Kinds.Var));
 		varName = id;
 		subscriptVal = expr;
 	}
@@ -1120,13 +1238,19 @@ class nameNode extends exprNode {
 		}
 	}
 
+        void checkTypes(){
+            varName.checkTypes();
+            type = varName.type;
+        }
+
 	private final identNode varName;
 	private final exprNode subscriptVal;
 } // class nameNode
 
 class intLitNode extends exprNode {
 	intLitNode(int val, int line, int col) {
-		super(line, col);
+		super(line, col, new Types(Types.Integer),
+                        new Kinds(Kinds.Value));
 		intval = val;
 	}
 
@@ -1134,6 +1258,9 @@ class intLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(intval);
 	}
+        int getVal(){
+            return intval;
+        }
 
 	private final int intval;
 } // class intLitNode

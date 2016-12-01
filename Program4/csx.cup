@@ -197,7 +197,7 @@ Fielddecl       ::= Type:t IDENTIFIER:id SEMI
                     {:
                         RESULT= new constDeclNode(
                             new identNode(id.identifierText, id.linenum,id.colnum),
-                             e, c.linenum, c.colnum);
+                            		 e, c.linenum, c.colnum);
                     :}
                 ;
 Stmts           ::= Stmt:s1 Stmts:s2
