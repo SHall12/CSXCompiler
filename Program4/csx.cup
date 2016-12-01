@@ -387,12 +387,12 @@ Printlist       ::= Expr:e COMMA Printlist:pl
                 ;
 Expr            ::= Expr:e COR Term:t
                     {:
-                        RESULT = new binaryOpNode(e, sym.COR, t, e.linenum, e.colnum);
+                        RESULT = new binaryOpNode(e, sym.COR, t, e.linenum, e.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Expr:e CAND Term:t
                     {:
-                        RESULT = new binaryOpNode(e, sym.CAND, t, e.linenum, e.colnum);
+                        RESULT = new binaryOpNode(e, sym.CAND, t, e.linenum, e.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Term:t
