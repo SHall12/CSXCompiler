@@ -938,7 +938,21 @@ class callNode extends stmtNode {
 		args.Unparse(0);
 		System.out.println(");");
 	}
+        
+        void checkTypes(){
+            methodName.checkTypes();
+            args.checkTypes();
+            
+            SymbolInfo id;
+            id = (SymbolInfo) st.globalLookup(methodName.idname);
 
+            if (id != null) {
+                System.out.println(error() + id.name() + " is not declared.");
+                typeErrors++;
+                methodName.type = new Types(Types.Error);
+            }
+        } 
+        
 	private final identNode methodName;
 	private final argsNode args;
 } // class callNode
