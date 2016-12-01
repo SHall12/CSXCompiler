@@ -1002,7 +1002,14 @@ class blockNode extends stmtNode {
             st.openScope();
             decls.checkTypes();
             stmts.checkTypes();
-            st.closeScope();
+            
+            try{
+                st.closeScope();
+            }catch(EmptySTException e){
+                System.err.println("Empty scope");
+                System.exit(-1);
+            }
+
         }
 
 	private final fieldDeclsNode decls;
@@ -1085,6 +1092,7 @@ class argsNode extends ASTNode {
 			moreArgs.Unparse(0);
 		}
 	}
+        
 
 	static nullArgsNode NULL = new nullArgsNode();
 	private exprNode argVal;
