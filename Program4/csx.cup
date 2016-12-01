@@ -413,32 +413,32 @@ CondExpr        ::= LPAREN:l Expr:e1 CONDEXPR Expr:e2 MINUSCOLON Expr:e3 PLUSCOL
                 ;
 Term            ::= Factor:f1 LT Factor:f2
                     {:
-                        RESULT= new binaryOpNode(f1, sym.LT, f2, f1.linenum, f1.colnum);
+                        RESULT= new binaryOpNode(f1, sym.LT, f2, f1.linenum, f1.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Factor:f1 GT Factor:f2
                     {:
-                        RESULT= new binaryOpNode(f1, sym.GT, f2, f1.linenum, f1.colnum);
+                        RESULT= new binaryOpNode(f1, sym.GT, f2, f1.linenum, f1.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Factor:f1 LEQ Factor:f2
                     {:
-                        RESULT = new binaryOpNode(f1, sym.LEQ, f2, f1.linenum, f1.colnum);
+                        RESULT = new binaryOpNode(f1, sym.LEQ, f2, f1.linenum, f1.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Factor:f1 GEQ Factor:f2
                     {:
-                        RESULT = new binaryOpNode(f1, sym.GEQ, f2, f1.linenum, f1.colnum);
+                        RESULT = new binaryOpNode(f1, sym.GEQ, f2, f1.linenum, f1.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Factor:f1 EQ Factor:f2
                     {:
-                        RESULT = new binaryOpNode(f1, sym.EQ, f2, f1.linenum, f1.colnum);
+                        RESULT = new binaryOpNode(f1, sym.EQ, f2, f1.linenum, f1.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Factor:f1 NOTEQ Factor:f2
                     {:
-                        RESULT = new binaryOpNode(f1, sym.NOTEQ, f2, f1.linenum, f1.colnum);
+                        RESULT = new binaryOpNode(f1, sym.NOTEQ, f2, f1.linenum, f1.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Factor:f1
@@ -448,12 +448,12 @@ Term            ::= Factor:f1 LT Factor:f2
                 ;
 Factor          ::= Factor:f PLUS Pri:p
                     {:
-                        RESULT = new binaryOpNode(f, sym.PLUS, p, f.linenum, f.colnum);
+                        RESULT = new binaryOpNode(f, sym.PLUS, p, f.linenum, f.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Factor:f MINUS Pri:p
                     {:
-                        RESULT = new binaryOpNode(f, sym.MINUS, p, f.linenum, f.colnum);
+                        RESULT = new binaryOpNode(f, sym.MINUS, p, f.linenum, f.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Pri:p
@@ -463,12 +463,12 @@ Factor          ::= Factor:f PLUS Pri:p
                 ;
 Pri             ::= Pri:p TIMES Unary:u
                     {:
-                        RESULT = new binaryOpNode(p, sym.TIMES, u, p.linenum, p.colnum);
+                        RESULT = new binaryOpNode(p, sym.TIMES, u, p.linenum, p.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Pri:p SLASH Unary:u
                     {:
-                        RESULT = new binaryOpNode(p, sym.SLASH, u, p.linenum, p.colnum);
+                        RESULT = new binaryOpNode(p, sym.SLASH, u, p.linenum, p.colnum, new Types(Types.Unknown));
                     :}
 
                 |   Unary:u
