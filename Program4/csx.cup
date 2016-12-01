@@ -397,7 +397,7 @@ Expr            ::= Expr:e COR Term:t
 
                 |   Term:t
                     {:
-                        RESULT = new unaryOpNode(-1, t, t.linenum, t.colnum);
+                        RESULT = new unaryOpNode(-1, t, t.linenum, t.colnum, new Types(Types.Unknown));
                     :}
                 //Conditional Expression
                 |   CondExpr:c
@@ -443,7 +443,7 @@ Term            ::= Factor:f1 LT Factor:f2
 
                 |   Factor:f1
                     {:
-                        RESULT = new unaryOpNode(-1, f1, f1.linenum, f1.colnum);
+                        RESULT = new unaryOpNode(-1, f1, f1.linenum, f1.colnum, new Types(Types.Unknown));
                     :}
                 ;
 Factor          ::= Factor:f PLUS Pri:p
@@ -458,7 +458,7 @@ Factor          ::= Factor:f PLUS Pri:p
 
                 |   Pri:p
                     {:
-                        RESULT = new unaryOpNode(-1, p, p.linenum, p.colnum);
+                        RESULT = new unaryOpNode(-1, p, p.linenum, p.colnum, new Types(Types.Unknown));
                     :}
                 ;
 Pri             ::= Pri:p TIMES Unary:u
@@ -473,12 +473,12 @@ Pri             ::= Pri:p TIMES Unary:u
 
                 |   Unary:u
                     {:
-                        RESULT = new unaryOpNode(-1, u, u.linenum, u.colnum);
+                        RESULT = new unaryOpNode(-1, u, u.linenum, u.colnum, new Types(Types.Unknown));
                     :}
                 ;
 Unary           ::= NOT:n Unary:u
                     {:
-                        RESULT = new unaryOpNode(sym.NOT, u, n.linenum, n.colnum);
+                        RESULT = new unaryOpNode(sym.NOT, u, n.linenum, n.colnum, new Types(Types.Unknown));
                     :}
 
                 |   LPAREN:l Type:t RPAREN Unary:u
@@ -488,12 +488,12 @@ Unary           ::= NOT:n Unary:u
 
                 |   Unit:u
                     {:
-                        RESULT = new unaryOpNode(-1, u, u.linenum, u.colnum);
+                        RESULT = new unaryOpNode(-1, u, u.linenum, u.colnum, new Types(Types.Unknown));
                     :}
                 ;
 Unit            ::= Name:n
                     {:
-                        RESULT = new unaryOpNode(-1, n, n.linenum, n.colnum);
+                        RESULT = new unaryOpNode(-1, n, n.linenum, n.colnum, new Types(Types.Unknown));
                     :}
 
                 |   IDENTIFIER:id LPAREN RPAREN
@@ -542,7 +542,7 @@ Unit            ::= Name:n
 
                 |   LPAREN:l Expr:e RPAREN
                     {:
-                        RESULT= new unaryOpNode(-1, e, l.linenum, l.colnum);
+                        RESULT= new unaryOpNode(-1, e, l.linenum, l.colnum, new Types(Types.Unknown));
                     :}
                 ;
 Name            ::= IDENTIFIER:id
