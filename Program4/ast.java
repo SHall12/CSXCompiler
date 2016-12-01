@@ -751,11 +751,17 @@ class ifThenNode extends stmtNode {
 
     void checkTypes(){
         condition.checkTypes();
-        thenPart.checkTypes();
-        elsePart.checkTypes();
-
         typeMustBe(condition.type.val, Types.Boolean, error() + "The conditional expression must be boolean.");
-
+        try {
+            st.openScope();
+            thenPart.checkTypes();
+            st.closeScope();
+            st.openScope();
+            elsePart.checkTypes();
+            st.closeScope();
+        } catch(EmptySTException e) {
+            System.out.println("Closing scope of empty symbol table.");
+        }
     }
 
 	private final exprNode condition;
@@ -827,9 +833,9 @@ class whileNode extends stmtNode {
 class readNode extends stmtNode {
 	readNode() {}
 	readNode(nameNode n, readNode rn, int line, int col) {
-		super(line, col);
-		 targetVar = n;
-		 moreReads = rn;
+        super(line, col);
+        targetVar = n;
+        moreReads = rn;
 	}
 
 	void Unparse(int indent) {
