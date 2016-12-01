@@ -855,9 +855,15 @@ class readNode extends stmtNode {
 	}
 
     void checkTypes() {
-        if(!targetVar.isNull()) {
-            targetVar.checkTypes();
-            mustBe(targetVar.kind.val == Kinds.Var); // Not sure if correct
+        targetVar.checkTypes();
+        if((targetVar.type.val != Types.Integer
+                && targetVar.type.val != Types.Boolean)
+                || targetVar.kind.val != Kinds.Value) {
+            System.out.println(error() + " Can only read integer or float values");
+            typeErrors++;
+        }
+
+        if (!moreReads.isNull()) {
             moreReads.checkTypes();
         }
     }
@@ -904,6 +910,33 @@ class printNode extends stmtNode {
 
 		System.out.println(");");
 	}
+
+    void checkTypes() {
+        outputValue.checkTypes();
+
+        if (outputValue.kind.val != Kinds.Array) {
+            if (outputValue.kind.val != Kinds.Value) { // Note sure if correct
+                System.out.println(error() + " Can only print values");
+                typeErrors++;
+            }
+            if (outputValue.type.val != Types.Integer
+                    && outputValue.type.val != Types.Boolean
+                    && outputValue.type.val != Types.Real
+                    && outputValue.type.val != Types.Character
+                    && outputValue.type.val != Types.String) {
+                System.out.println(error() + " Current type is not printable.");
+                typeErrors++;
+            }
+        } else {
+            if(outputValue.type.val != Types.Character) {
+                System.out.println(error() + " Current array type is not printable.");
+                typeErrors++;
+            }
+        }
+        if (!morePrints.isNull()){
+            morePrints.checkTypes();
+        }
+    }
 
 	public printNode getPrintList() {
 		return morePrints;
@@ -1283,15 +1316,30 @@ class nameNode extends exprNode {
     void checkTypes(){
         varName.checkTypes();
         if (subscriptVal.isNull()) {
-            // Must be a variable
-            mustBe(varName.kind.val == Kinds.Var);
+            kind = varName.kind;
+            type = varName.type;
         } else {
             // Must be an array with int subscript
             subscriptVal.checkTypes();
-            mustBe(varName.kind.val == Kinds.Array);
-            typeMustBe(subscriptVal.type.val, Types.Integer, error() + " subscript must be an integer");
+
+            if(varName.kind.val != Kinds.Array) {
+                System.out.println(error() + varName.idname + " is not an array.");
+                typeErrors++;
+            }
+            if(subscriptVal.kind.val != Kinds.Value
+                    && subscriptVal.kind.val != Kinds.Var
+                    && subscriptVal.kind.val != Kinds.Scalar_Parameter){
+                System.out.println(error() + " subscript must be a scalar.");
+                typeErrors++;
+            }
+            if(subscriptVal.type.val != Types.Integer
+                    && subscriptVal.type.val != Types.Character) {
+                System.out.println(error() + " Subscript must be an integer");
+                typeErrors++;
+            }
+            type = varName.type;
+            kind = new Kinds(Kinds.Var);
         }
-        type = varName.type;
     }
 
 	private final identNode varName;
