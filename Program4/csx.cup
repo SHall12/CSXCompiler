@@ -228,18 +228,16 @@ Stmt            ::=   rw_IF:i CondExpr:c Stmts:s ENDIF
                     :}
                 |   rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
                     {:
-                        RESULT= new whileNode(exprNode.NULL, e, s, w.linenum, w.colnum);
+                        RESULT= new whileNode(identNode.NULL, e, s, w.linenum, w.colnum);
                     :}
                 |   rw_WHILE:w CondExpr:c Stmt:s
                     {:
-                        RESULT= new whileCondExprNode(exprNode.NULL, c, s, w.linenum, w.colnum);
+                        RESULT= new whileCondExprNode(identNode.NULL, c, s, w.linenum, w.colnum);
                     :}
 
                 |   IDENTIFIER:id COLON rw_WHILE:w LPAREN Expr:e RPAREN Stmt:s
                     {:
-                        RESULT= new whileNode(
-                            new identNode(id.identifierText, id.linenum,id.colnum),
-                            e, s, w.linenum, w.colnum);
+                        RESULT= new whileNode(new identNode(id.identifierText, id.linenum,id.colnum), e, s, w.linenum, w.colnum);
                     :}
                 |   IDENTIFIER:id COLON rw_WHILE:w CondExpr:c Stmt:s
                     {:

@@ -764,7 +764,7 @@ class ifThenNode extends stmtNode {
 } // class ifThenNode
 
 class whileNode extends stmtNode {
-	whileNode(exprNode i, exprNode e, stmtNode s, int line, int col) {
+	whileNode(identNode i, exprNode e, stmtNode s, int line, int col) {
 		super(line, col);
 	 label = i;
 	 condition = e;
@@ -1497,7 +1497,7 @@ class ifCondExprNode extends stmtNode {
 
 //This class is needed to use Conditional Expressions with while statements.
 class whileCondExprNode extends stmtNode {
-	whileCondExprNode(exprNode i, exprNode e, stmtNode s, int line, int col) {
+	whileCondExprNode(identNode e, exprNode e, stmtNode s, int line, int col) {
 		super(line, col);
 	 label = i;
 	 condition = e;
@@ -1519,7 +1519,7 @@ class whileCondExprNode extends stmtNode {
 		System.out.println ("}");
 	}
 
-	private final exprNode label;
+	private final identNode label;
 	private final exprNode condition;
 	private final stmtNode loopBody;
 } // class whileCondExprNode
