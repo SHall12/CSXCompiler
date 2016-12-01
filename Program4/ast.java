@@ -1268,7 +1268,8 @@ class binaryOpNode extends exprNode {
         leftOperand.checkTypes();
         rightOperand.checkTypes();
         type = leftOperand.type;
-            
+        
+        //Get op code to begin process.
         switch(operatorCode){
             case sym.PLUS:
             case sym.MINUS:
@@ -1280,9 +1281,9 @@ class binaryOpNode extends exprNode {
                         switch(rightOperand.type.val){
                             case Types.Character:
                             case Types.Integer:
-                                if (leftOperand.type.val == Type.Integer || 
-                                        rightOperand.type.val == Type.Integer){
-                                    type = Type.Integer;
+                                //Sets type to correct kind.
+                                if (rightOperand.type.val == Types.Integer){ 
+                                    type = rightOperand.type;
                                 }
                                 break;
                             default:
@@ -1313,29 +1314,35 @@ class binaryOpNode extends exprNode {
                             case Types.Integer:
                             case Types.Character:
                             case Types.Real: 
+                                //Sets highest type
+                                if (rightOperand.type.val > rightOperand.type.val){
+                                    type = rightOperand.type;
+                                } else {
+                                    type = leftOperand.type;    
+                                }
+                                
                                 break;
                             default:
                                 typeMustBe(Types.Error, 1, error() +
-                                        "Right operand must be an int, float, or char."
+                                        "Right operand must be an int, float, or char.");
                         }
                         break;
                     case Types.Boolean:
                         typeMustBe(Types.Boolean, rightOperand.type.val, error() +
-                                        "Right operand must be an Boolean."
+                                        "Right operand must be an Boolean.");
                         break;
                     default:
                         typeMustBe(Types.Error, 1, error() + 
-                                "Left operand must be an int, float, char, or boolean.")
+                                "Left operand must be an int, float, char, or boolean.");
                 }    
             case sym.CAND:
             case sym.COR:
-                type = Type.Boolean;
-                if (leftOperand.type.val == Type.Boolean && 
-                        rightOperand.type.val == Type.Boolean){
+                if (leftOperand.type.val == Types.Boolean && 
+                        rightOperand.type.val == Types.Boolean){
                     //Do nothing
                 } else {
-                    typeMustBe(Type.Error, 1, error() + 
-                            "Both left and right operand must be a Boolean.")
+                    typeMustBe(Types.Error, 1, error() + 
+                            "Both left and right operand must be a Boolean.");
                 }
             default:
                 //Nothing wrong!
