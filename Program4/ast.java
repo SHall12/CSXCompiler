@@ -1093,6 +1093,10 @@ class argsNode extends ASTNode {
 		}
 	}
         
+        void checkTypes(){
+            argVal.checkTypes();
+            moreArgs.checkTypes();
+        }
 
 	static nullArgsNode NULL = new nullArgsNode();
 	private exprNode argVal;
@@ -1117,6 +1121,8 @@ class strLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(strval);
 	}
+        
+        void checkTypes(){}
 
 	private final String strval;
 } // class strLitNode
@@ -1147,6 +1153,7 @@ class nullExprNode extends exprNode {
 	}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
+        void checkTypes(){}
 } // class nullExprNode
 
 class binaryOpNode extends exprNode {
