@@ -971,11 +971,11 @@ class callNode extends stmtNode {
 		args.Unparse(0);
 		System.out.println(");");
 	}
-        
+
         void checkTypes(){
             methodName.checkTypes();
             args.checkTypes();
-            
+
             SymbolInfo id;
             id = (SymbolInfo) st.globalLookup(methodName.idname);
 
@@ -984,8 +984,8 @@ class callNode extends stmtNode {
                 typeErrors++;
                 methodName.type = new Types(Types.Error);
             }
-        } 
-        
+        }
+
 	private final identNode methodName;
 	private final argsNode args;
 } // class callNode
@@ -1006,7 +1006,7 @@ class returnNode extends stmtNode {
 		returnVal.Unparse(0);
 		System.out.println(";");
 	}
-        
+
         void checkTypes(){
             returnVal.checkTypes();
         }
@@ -1030,12 +1030,12 @@ class blockNode extends stmtNode {
 		genIndent(indent);
 		System.out.println("}");
 	}
-        
+
         void checkTypes(){
             st.openScope();
             decls.checkTypes();
             stmts.checkTypes();
-            
+
             try{
                 st.closeScope();
             }catch(EmptySTException e){
@@ -1062,10 +1062,10 @@ class breakNode extends stmtNode {
 		label.Unparse(0);
 		System.out.println(";");
 	}
-        
+
         void checkTypes(){
             label.checkTypes();
-            
+
             SymbolInfo id;
             id = (SymbolInfo) st.globalLookup(label.idname);
 
@@ -1092,10 +1092,10 @@ class continueNode extends stmtNode {
 		label.Unparse(0);
 		System.out.println(";");
 	}
-        
+
         void checkTypes(){
             label.checkTypes();
-            
+
             SymbolInfo id;
             id = (SymbolInfo) st.globalLookup(label.idname);
 
@@ -1125,7 +1125,7 @@ class argsNode extends ASTNode {
 			moreArgs.Unparse(0);
 		}
 	}
-        
+
         void checkTypes(){
             argVal.checkTypes();
             moreArgs.checkTypes();
@@ -1154,7 +1154,7 @@ class strLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(strval);
 	}
-        
+
         void checkTypes(){}
 
 	private final String strval;
@@ -1297,6 +1297,23 @@ class castNode extends exprNode {
 		System.out.print(")");
 		operand.Unparse(0);
 	}
+
+    void checkTypes() {
+        operand.checkTypes();
+        if(operand.type.val != Types.Integer
+                && operand.type.val != Types.Character
+                && operand.type.val != Types.Real) {
+            System.out.println(error() + "Type-cast operand must be an int, char, or bool.");
+            typeErrors++;
+        }
+        if(resultType.type.val  != Types.Integer
+                && resultType.type.val  != Types.Character
+                && resultType.type.val  != Types.Real
+                && resultType.type.val  != Types.Boolean) {
+            System.out.println(error() + "Can only Type-cast to int, char, float, or bool.");
+            typeErrors++;
+        }
+    }
 
 	private final exprNode operand;
 	private final typeNode resultType;
