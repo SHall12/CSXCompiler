@@ -862,18 +862,18 @@ class whileNode extends stmtNode {
 } // class whileNode
 
 class readNode extends stmtNode {
-	readNode() {}
-	readNode(nameNode n, readNode rn, int line, int col) {
-        super(line, col);
-        targetVar = n;
-        moreReads = rn;
-	}
+    readNode() {}
+    readNode(nameNode n, readNode rn, int line, int col) {
+    super(line, col);
+    targetVar = n;
+    moreReads = rn;
+}
 
-	void Unparse(int indent) {
-		System.out.print(linenum + ":");
-		genIndent(indent);
-		System.out.print("read(");
-		targetVar.Unparse(0);
+    void Unparse(int indent) {
+    	System.out.print(linenum + ":");
+	genIndent(indent);
+	System.out.print("read(");
+	targetVar.Unparse(0);
 
         // Print out the whole read list
         readNode child = moreReads;
@@ -882,33 +882,37 @@ class readNode extends stmtNode {
             child.getTargetVar().Unparse(0);
             child = child.getReadList();
         }
-		System.out.println(");");
-	}
+	System.out.println(");");
+    }
 
     void checkTypes() {
         targetVar.checkTypes();
-        if((targetVar.type.val != Types.Integer
-                && targetVar.type.val != Types.Boolean)
-                || targetVar.kind.val != Kinds.Value) {
-            System.out.println(error() + " Can only read integer or float values");
-            typeErrors++;
-        }
-
         if (!moreReads.isNull()) {
             moreReads.checkTypes();
         }
+        
+        switch(targetVar.type.val){
+            case Types.Integer:
+            case Types.Real:
+                //Do nothing!
+                break;
+            default:
+                System.out.println(error() + "Can only read integer or float values");
+                typeErrors++;
+                break;
+        }
     }
 
-	public readNode getReadList() {
-		return moreReads;
-	}
-	public nameNode getTargetVar() {
-		return targetVar;
-	}
+    public readNode getReadList() {
+	return moreReads;
+    }
+    public nameNode getTargetVar() {
+	return targetVar;
+    }
 
-	static nullReadNode NULL = new nullReadNode();
-	private nameNode targetVar;
-	private readNode moreReads;
+    static nullReadNode NULL = new nullReadNode();
+    private nameNode targetVar;
+    private readNode moreReads;
 } // class readNode
 
 class nullReadNode extends readNode {
