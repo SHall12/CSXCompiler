@@ -1063,25 +1063,24 @@ class breakNode extends stmtNode {
 		System.out.println(";");
 	}
 
-        void checkTypes(){
+    void checkTypes(){
+        if (!label.isNull()) {
             label.checkTypes();
 
             SymbolInfo id;
-            id = (SymbolInfo) st.localLookup(label.idname);
+            id = (SymbolInfo) st.globalLookup(label.idname);
 
             if (id == null) {
-                id = (SymbolInfo) st.globalLookup(label.idname);
-
-                if (id == null){
-                    System.out.println(error() + id.name() + "is not declared.");
-                }else {
-                    System.out.println(error() + id.name() + "is declared out of scope.");
-                }
-
+                System.out.println(error() + label.idname + " is not declared.");
                 typeErrors++;
-                label.type = new Types(Types.Error);
+            } else {
+                if (id.kind.val != Kinds.Label) {
+                    System.out.println(error() + label.idname + " is not a label.");
+                    typeErrors++;
+                }
             }
         }
+    }
 
 	private final identNode label;
 } // class breakNode
@@ -1100,25 +1099,24 @@ class continueNode extends stmtNode {
 		System.out.println(";");
 	}
 
-        void checkTypes(){
+    void checkTypes(){
+        if (!label.isNull()) {
             label.checkTypes();
 
             SymbolInfo id;
-            id = (SymbolInfo) st.localLookup(label.idname);
+            id = (SymbolInfo) st.globalLookup(label.idname);
 
             if (id == null) {
-                id = (SymbolInfo) st.globalLookup(label.idname);
-
-                if (id == null){
-                    System.out.println(error() + id.name() + "is not declared.");
-                }else {
-                    System.out.println(error() + id.name() + "is declared out of scope.");
-                }
-
+                System.out.println(error() + label.idname + " is not declared.");
                 typeErrors++;
-                label.type = new Types(Types.Error);
+            } else {
+                if (id.kind.val != Kinds.Label) {
+                    System.out.println(error() + label.idname + " is not a label.");
+                    typeErrors++;
+                }
             }
         }
+    }
 
 	private final identNode label;
 } // class continueNode
@@ -1456,7 +1454,7 @@ class fctCallNode extends exprNode {
             id = (SymbolInfo) st.globalLookup(methodName.idname);
 
             if (id == null) {
-                System.out.println(error() + id.name() + " is not declared.");
+                System.out.println(error() + methodName.idname + " is not declared.");
                 typeErrors++;
                 methodName.type = new Types(Types.Error);
             }
