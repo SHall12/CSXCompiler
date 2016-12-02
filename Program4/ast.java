@@ -1853,6 +1853,7 @@ class preIncrementNode extends stmtNode {
             System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
         } else {
+            idName.checkTypes();
             switch(idName.type.val){
                 case Types.Integer:
                 case Types.Real:
@@ -1860,6 +1861,7 @@ class preIncrementNode extends stmtNode {
                 default:
                     System.out.println(error() + idName.idname + " has to be an int or float.");
                     typeErrors++;
+                    break;
             }
         }
     }
@@ -1890,6 +1892,7 @@ class postIncrementNode extends stmtNode {
             System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
         } else {
+            idName.checkTypes();
             switch(idName.type.val){
                 case Types.Integer:
                 case Types.Real:
@@ -1928,6 +1931,7 @@ class preDecrementNode extends stmtNode {
             System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
         } else {
+            idName.checkTypes();
             switch(idName.type.val){
                 case Types.Integer:
                 case Types.Real:
@@ -1965,6 +1969,7 @@ class postDecrementNode extends stmtNode {
             System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
         } else {
+            idName.checkTypes();
             switch(idName.type.val){
                 case Types.Integer:
                 case Types.Real:
@@ -2100,8 +2105,8 @@ class whileCondExprNode extends stmtNode {
     void checkTypes(){
         condition.checkTypes();
         
-        typeMustBe(condition.type.val, Types.Boolean, error() +
-            "The conditional expression must be boolean.");
+        typeMustBe(condition.type.val, Types.Boolean, error() 
+            + "Return value of the Conditional Expression must be a Boolean.");
         st.openScope();
         if(!label.isNull()){
             SymbolInfo id;
