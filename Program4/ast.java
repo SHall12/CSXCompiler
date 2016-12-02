@@ -283,20 +283,24 @@ class constDeclNode extends declNode {
 		System.out.println(";");
 	} // Unparse()
     void checkTypes() {
+        constValue.checkTypes();
+        
         SymbolInfo id;
-        id = (SymbolInfo) st.localLookup(constName.idname);
+        id = (SymbolInfo) st.globalLookup(constName.idname);
 
         if (id == null) {
             id = new SymbolInfo(constName.idname,
-                new Kinds(Kinds.Var),constValue.type);
+                new Kinds(Kinds.Value), constValue.type);
             constName.type = constValue.type;
+            constName.kind = new Kinds(Kinds.Value);
+            
             try {
-				st.insert(id);
-			} catch (DuplicateException d) {
-				/* can't happen */
-			} catch (EmptySTException e) {
-				/* can't happen */
-			}
+		st.insert(id);
+            } catch (DuplicateException d) {
+			/* can't happen */
+            } catch (EmptySTException e) {
+			/* can't happen */
+            }
             constName.idinfo = id;
         } else {  // If in scope already -> throw error
             System.out.println(error() + id.name() + " is already declared.");
@@ -746,7 +750,13 @@ class asgNode extends stmtNode {
     void checkTypes(){
         target.checkTypes();
         source.checkTypes();
-        mustBe(target.kind.val == Kinds.Var);
+        
+        if (target.kind.val == Kinds.Value){
+            typeErrors++;
+            System.out.println(error() + "Illegal assignment: "+ target.varName.idname    
+                                + " is a constant.");
+        }
+        
         typeMustBe(source.type.val, target.type.val,
                     error() + "Illegal assignment: Type mismatch " 
                     + source.type + " to " + target.type);
@@ -1516,9 +1526,9 @@ class fctCallNode extends exprNode {
 
 class identNode extends exprNode {
 	identNode(String identname, int line, int col) {
-		super(line, col, new Types(Types.Unknown), new Kinds(Kinds.Var));
-		idname   = identname;
-        nullFlag = false;
+                super(line, col, new Types(Types.Unknown), new Kinds(Kinds.Var));
+            idname   = identname;
+            nullFlag = false;
 	}
 
     identNode(boolean flag) {
@@ -1546,12 +1556,13 @@ class identNode extends exprNode {
 			type = new Types(Types.Error);
 		} else {
                 	type = id.type;
+                        kind = id.kind;
 			idinfo = id; // Save ptr to correct symbol table entry
 		} // id != null
 	} // checkTypes
 
 	public final String idname;
-    public SymbolInfo idinfo; // symbol table entry for this ident
+        public SymbolInfo idinfo; // symbol table entry for this ident
 	private final boolean nullFlag;
 } // class identNode
 
@@ -1573,9 +1584,7 @@ class nameNode extends exprNode {
 	}
 
     void checkTypes(){
-        //System.out.println("VarName: " + varName.type.val);
         varName.checkTypes();
-        //System.out.println("VarName: " + varName.type.val);
         if (subscriptVal.isNull()) {
             kind = varName.kind;
             type = varName.type;
@@ -1604,7 +1613,7 @@ class nameNode extends exprNode {
         }
     }
 
-	private final identNode varName;
+	protected final identNode varName;
 	private final exprNode subscriptVal;
 } // class nameNode
 
