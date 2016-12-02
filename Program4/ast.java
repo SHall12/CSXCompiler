@@ -535,7 +535,7 @@ class methodDeclNode extends ASTNode {
     } // checkTypes
 
     public boolean isMain() {
-        return (name.idname.toLowerCase() == "main" && args.isNull() 
+        return (name.idname.toLowerCase().equals("main") && args.isNull() 
                 && returnType.type.val == Types.Void);
     }
 
@@ -745,7 +745,7 @@ class asgNode extends stmtNode {
         mustBe(target.kind.val == Kinds.Var);
         typeMustBe(source.type.val, target.type.val,
                     error() + "Illegal assignement: Type mismatch " 
-                    + target.type.val + " " + source.type.val);
+                    + source.type + " to " + target.type);
     }
 
     private final nameNode target;
@@ -1167,7 +1167,9 @@ class argsNode extends ASTNode {
 
         void checkTypes(){
             argVal.checkTypes();
-            moreArgs.checkTypes();
+            if (!moreArgs.checkTypes()) {
+                moreArgs.checkTypes();
+            }
         }
 
 	static nullArgsNode NULL = new nullArgsNode();
@@ -1884,13 +1886,13 @@ class condExprNode extends exprNode {
             
             typeMustBe(Types.Integer, condition1.type.val, error() +
                     "The first expression must be an Integer.");
-            /*
+            
             if (condition2.type.val == condition3.type.val && condition3.type.val == condition4.type.val){
                 //Types are correct, do nothing!
             } else {
                 System.out.println(error() + "Condition 2, 3, and 4 has to be the same type.");
                 typeErrors++;
-            }*/
+            }
         }
 
 	private final exprNode condition1;
