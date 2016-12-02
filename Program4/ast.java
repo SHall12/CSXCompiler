@@ -1394,6 +1394,7 @@ class binaryOpNode extends exprNode {
             case sym.MINUS:
             case sym.SLASH:
             case sym.TIMES:
+                type = leftOperand.type;
                 switch(leftOperand.type.val){
                     case Types.Character:
                     case Types.Integer:
@@ -1408,15 +1409,20 @@ class binaryOpNode extends exprNode {
                             default:
                                 typeMustBe(Types.Error, 0, error() +
                                     "Both operands must be Integer or Character.");
+                                type = new Types(Types.Integer);
+                                break;
                         }
                         break;
                     case Types.Real:
                         typeMustBe(leftOperand.type.val, rightOperand.type.val,
                             error() + "Both left and right operands must be Floats.");
+                            type = new Types(Types.Integer);
                         break;
                     default:
                         typeMustBe(Types.Error, 1 , error() +
                             "Left operand must be an int, float, or char.");
+                            type = new Types(Types.Integer);
+                        break;
                 }
                 break;
             case sym.EQ:
@@ -1859,7 +1865,8 @@ class preIncrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + idName.idname + " has to be an int or float.");
+                    System.out.println(error() + "Variable: " + idName.idname 
+                            + " has to be an Integer or Float.");
                     typeErrors++;
                     break;
             }
@@ -1898,7 +1905,8 @@ class postIncrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + idName.idname + " has to be an int or float.");
+                    System.out.println(error() + "Variable: " + idName.idname 
+                            + " has to be an Integer or Float.");
                     typeErrors++;
             }
         }
@@ -1937,7 +1945,8 @@ class preDecrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + idName.idname + " has to be an int or float.");
+                    System.out.println(error() + "Variable: " + idName.idname 
+                            + " has to be an Integer or Float.");
                     typeErrors++;
             }
         }
@@ -1975,7 +1984,8 @@ class postDecrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + idName.idname + " has to be an int or float.");
+                    System.out.println(error() + "Variable: " + idName.idname 
+                            + " has to be an Integer or Float.");
                     typeErrors++;
             }
         }
