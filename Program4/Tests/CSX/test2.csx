@@ -1,6 +1,6 @@
 class testDecls {
     bool z = true;
-    
+
     void voidFunc() {
         int x;
         int x;                                  //This should error
@@ -12,9 +12,15 @@ class testDecls {
         x = 1;
     }
 
-    bool boolFunc(){         // NEED TO HAVE RETURNS
+    bool boolFunc(){         // NEED TO HAVE RETURNS OF CORRCT TYPE
         int x;
         x = 1;
+        return x;
+    }
+
+    int funcWithParams(int a, int b, char c[]) {
+        print(a);
+        return (a + b);
     }
 
     void main() {
@@ -23,18 +29,25 @@ class testDecls {
         float floatVar = 1.1;
         bool boolVar = true;
 
+        char charArray[10];
+        bool boolArray[10];
+        int badArray[0];                       //This should error
+
         const constIntVar = 1;
         const constFloatVar = 1.1;
         const constBoolVar = true;
-        intVar = constIntVar; 
+        intVar = constIntVar;
         intVar = constFloatVar;                 //This should error
         intVar = constBoolVar;                  //This should error
         constIntVar = 2;                        //This should error
-        
+
         //Function calls
-        intVar = intFunc();                     
+        intVar = intFunc();
         intVar = voidFunc();                    //This should error
-        
+        intVar = funcWithParams(intVar, charVar, charArray);
+        intVar = funcWithParams();              // This should error
+        intVar = funcWithParams(intVar, floatVar, boolArray);   // This should error
+
         //Print and Read
         print(intVar);
         print(charVar);
@@ -44,7 +57,7 @@ class testDecls {
         read(floatVar);
         read(charVar);                          //This should error
         read(boolVar);                          //This should error
-        
+
         //Binary Operators
         intVar = intVar + intVar;
         intVar = charVar - intVar;
@@ -58,12 +71,12 @@ class testDecls {
         boolVar = 3 && 2;                       //This should error
         boolVar = 'a' || 2;                     //This should error
         boolVar = !1;                           //This should error
-        
+
         boolVar = 1 == 2;
         boolVar = boolVar != boolVar;
         boolVar = intVar < boolVar;             //This should error
         boolVar = boolVar > intVar;             //This should error
-        
+
         while(true){
             int x;
             x = 2;
