@@ -520,13 +520,14 @@ class methodDeclNode extends ASTNode {
         // Open new scope
         st.openScope();
 
+            
         //Type-Check branches
         if (!args.isNull()) {
             args.checkTypes();
         }
         decls.checkTypes();
         stmts.checkTypes();
-
+        name.type = returnType.type;
         //Close scope after branches are checked
         try{
             st.closeScope();
@@ -747,12 +748,12 @@ class asgNode extends stmtNode {
         source.checkTypes();
         mustBe(target.kind.val == Kinds.Var);
         typeMustBe(source.type.val, target.type.val,
-                    error() + "Illegal assignement: Type mismatch " 
+                    error() + "Illegal assignment: Type mismatch " 
                     + source.type + " to " + target.type);
     }
 
     private final nameNode target;
-	private final exprNode source;
+    private final exprNode source;
 } // class asgNode
 
 class ifThenNode extends stmtNode {
@@ -1219,7 +1220,8 @@ abstract class exprNode extends ASTNode {
 		type = t;
 		kind = k;
 	} // exprNode
-	static nullExprNode NULL = new nullExprNode();
+    
+    static nullExprNode NULL = new nullExprNode();
     protected Types type; // Used for typechecking: the type of this node
     protected Kinds kind; // Used for typechecking: the kind of this node
 }
@@ -1480,12 +1482,13 @@ class fctCallNode extends exprNode {
         
         void checkTypes() {
             methodName.checkTypes();
+            type = methodName.type;
             
             // NEEDS TO CHECK IF CORRECT PARAMETERS            
             if (!methodArgs.isNull()) {
                 methodArgs.checkTypes();
             }
-            
+
             SymbolInfo id;
             id = (SymbolInfo) st.globalLookup(methodName.idname);
            
@@ -1527,13 +1530,11 @@ class identNode extends exprNode {
 		mustBe(kind.val != Kinds.Other);
 		id = (SymbolInfo) st.globalLookup(idname);
                 if (id == null) {
-                        System.out.println(id);
-			System.out.println(error() + idname + " is not declared.");
+                        System.out.println(error() + idname + " is not declared.");
 			typeErrors++;
 			type = new Types(Types.Error);
 		} else {
-            //System.out.println("Ident node: " + id.type);
-			type = id.type;
+                	type = id.type;
 			idinfo = id; // Save ptr to correct symbol table entry
 		} // id != null
 	} // checkTypes
