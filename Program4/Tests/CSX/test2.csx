@@ -107,12 +107,15 @@ class testDecls {
         intVar = (intVar ? intVar -: intVar +: intVar);
         intVar = (intVar ? boolVar -: intVar +: intVar);    //This should error
         
-        if (intVar? boolVar -: boolVar +: boolVar){
+        if(intVar? boolVar -: boolVar +: boolVar){
             intVar = 1;
         } ENDIF
-        if (intVar? intVar -: intVar +: intVar){            //This should error
+        if(intVar? intVar -: intVar +: intVar){            //This should error
             intVar = 1;
         } ENDIF
+        while(intVar? intVar -: intVar +: intVar){            //This should error
+            intVar = 1;
+        } 
 
     }
 }
