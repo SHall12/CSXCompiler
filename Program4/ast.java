@@ -122,8 +122,8 @@ class classNode extends ASTNode {
 		checkTypes();
 		return (typeErrors == 0);
 	} // isTypeCorrect
-
-    void checkTypes() {
+        
+        void checkTypes() {
         SymbolInfo id;
         id = (SymbolInfo) st.localLookup(className.idname);
 
@@ -785,10 +785,14 @@ class ifThenNode extends stmtNode {
         typeMustBe(condition.type.val, Types.Boolean, error() + "The conditional expression must be boolean.");
         try {
             st.openScope();
-            thenPart.checkTypes();
+            if(!thenPart.isNull()){
+                thenPart.checkTypes();
+            }
             st.closeScope();
             st.openScope();
-            elsePart.checkTypes();
+            if(!elsePart.isNull()){
+                elsePart.checkTypes();
+            }
             st.closeScope();
         } catch(EmptySTException e) {
             System.out.println("Closing scope of empty symbol table.");
@@ -848,7 +852,11 @@ class whileNode extends stmtNode {
                 label.type = new Types(Types.Error);
             } // id != null
         }
-        loopBody.checkTypes();
+        
+        if(!loopBody.isNull()){
+            loopBody.checkTypes();
+        }
+        
         try {
             st.closeScope();
         } catch (EmptySTException e) {
@@ -1342,6 +1350,7 @@ class binaryOpNode extends exprNode {
             case sym.GT:
             case sym.LEQ:
             case sym.LT:
+                type = new Types(Types.Boolean);
                 switch(leftOperand.type.val){
                     case Types.Integer:
                     case Types.Character:
@@ -1350,17 +1359,11 @@ class binaryOpNode extends exprNode {
                             case Types.Integer:
                             case Types.Character:
                             case Types.Real: 
-                                //Sets highest type
-                                if (rightOperand.type.val > rightOperand.type.val){
-                                    type = rightOperand.type;
-                                } else {
-                                    type = leftOperand.type;    
-                                }
-                                
                                 break;
                             default:
-                                typeMustBe(Types.Error, 1, error() +
+                                typeMustBe(leftOperand.type.val, rightOperand.type.val, error() +
                                         "Right operand must be an int, float, or char.");
+                                break;
                         }
                         break;
                     case Types.Boolean:
@@ -1370,7 +1373,9 @@ class binaryOpNode extends exprNode {
                     default:
                         typeMustBe(Types.Error, 1, error() + 
                                 "Left operand must be an int, float, char, or boolean.");
-                }    
+                        break;
+                }
+                break;
             case sym.CAND:
             case sym.COR:
                 type = new Types(Types.Boolean);
