@@ -104,6 +104,15 @@ class testDecls {
             } ENDIF
         } ENDIF
         
+        intVar = (intVar ? intVar -: intVar +: intVar);
+        intVar = (intVar ? boolVar -: intVar +: intVar);    //This should error
+        
+        if (intVar? boolVar -: boolVar +: boolVar){
+            intVar = 1;
+        }
+        if (intVar? intVar -: intVar +: intVar){            //This should error
+            intVar = 1;
+        }
         
 
     }
