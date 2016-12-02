@@ -573,8 +573,11 @@ class argDeclsNode extends ASTNode {
 	} // Unparse()
 
     void checkTypes() {
-        thisDecl.checkTypes();
-        moreDecls.checkTypes();
+        /*if (!thisDecl.isNull()) {
+            thisDecl.Unparse(0);
+            thisDecl.checkTypes();
+            moreDecls.checkTypes();
+        }*/
     }
 
 	private argDeclNode thisDecl;
@@ -701,7 +704,9 @@ class stmtsNode extends ASTNode {
 
     void checkTypes() {
         thisStmt.checkTypes();
-        moreStmts.checkTypes();
+        if(!moreStmts.isNull()){
+            moreStmts.checkTypes();
+        }
     }
 
 	static nullStmtsNode NULL = new nullStmtsNode();
@@ -737,7 +742,8 @@ class asgNode extends stmtNode {
         source.checkTypes();
         mustBe(target.kind.val == Kinds.Var);
         typeMustBe(source.type.val, target.type.val,
-                    error() + "Illegal assignement: Type mismatch");
+                    error() + "Illegal assignement: Type mismatch " 
+                    + target.type.val + " " + source.type.val);
     }
 
     private final nameNode target;
@@ -1404,10 +1410,10 @@ class unaryOpNode extends exprNode {
                 typeMustBe(operand.type.val, Types.Boolean, error() 
                         + "Operand must be a Boolean");
                 type = new Types(Types.Boolean);
-            } else{
-                mustBe(false);
+            } else {
+                type = operand.type;
+                kind = new Kinds(Kinds.Value);
             }
-            
         }
 
 	private final exprNode operand;
@@ -1514,6 +1520,7 @@ class identNode extends exprNode {
 			typeErrors++;
 			type = new Types(Types.Error);
 		} else {
+            //System.out.println("Ident node: " + id.type);
 			type = id.type;
 			idinfo = id; // Save ptr to correct symbol table entry
 		} // id != null
@@ -1542,10 +1549,13 @@ class nameNode extends exprNode {
 	}
 
     void checkTypes(){
+        //System.out.println("VarName: " + varName.type.val);
         varName.checkTypes();
+        //System.out.println("VarName: " + varName.type.val);
         if (subscriptVal.isNull()) {
             kind = varName.kind;
             type = varName.type;
+            //System.out.println("FinalType: " + type.val);
         } else {
             // Must be an array with int subscript
             subscriptVal.checkTypes();
