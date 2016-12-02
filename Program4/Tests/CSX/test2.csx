@@ -41,12 +41,16 @@ class testDecls {
         intVar = constBoolVar;                  //This should error
         constIntVar = 2;                        //This should error
 
-        //Function calls
+        //Function Calls
         intVar = intFunc();
         intVar = voidFunc();                    //This should error
         intVar = funcWithParams(intVar, charVar, charArray);
         intVar = funcWithParams();              // This should error
         intVar = funcWithParams(intVar, floatVar, boolArray);   // This should error
+
+        //Procedure Call
+        intFunc();
+        voidFunc();                             //This should error
 
         //Print and Read
         print(intVar);
@@ -91,6 +95,8 @@ class testDecls {
                 intVar = 2;
             } ENDIF
         } ENDIF
-    }
 
+
+
+    }
 }

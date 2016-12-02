@@ -1065,6 +1065,11 @@ class callNode extends stmtNode {
         id = (SymbolInfo) st.globalLookup(methodName.idname);
 
         if (id != null) {
+            if (methodName.type.val != Types.Void){
+                System.out.println(error() + methodName.idname +
+                        ": is not a void procedures.");
+                typeErrors++;
+            }
             if (id.kind.val == Kinds.Method) {
                 ArrayList<SymbolInfo> paramTypes = ((FunctSymbol)id).getParams();
 
