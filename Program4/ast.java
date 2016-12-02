@@ -1181,25 +1181,22 @@ class breakNode extends stmtNode {
 	}
 
     void checkTypes(){
-        if (!label.isNull()) {
-            label.checkTypes();
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(label.idname);
 
-            SymbolInfo id;
-            id = (SymbolInfo) st.globalLookup(label.idname);
-
-            if (id == null) {
-                System.out.println(error() + label.idname + " is not declared.");
+        if (id == null) {
+            System.out.println(error() + label.idname + " is not declared.");
+            typeErrors++;
+        } else {
+            if (id.kind.val != Kinds.Label) {
+                System.out.println(error() + label.idname + " is not a label.");
                 typeErrors++;
-            } else {
-                if (id.kind.val != Kinds.Label) {
-                    System.out.println(error() + label.idname + " is not a label.");
-                    typeErrors++;
-                }
             }
         }
     }
 
-	private final identNode label;
+
+    private final identNode label;
 } // class breakNode
 
 class continueNode extends stmtNode {
@@ -1217,21 +1214,17 @@ class continueNode extends stmtNode {
 	}
 
     void checkTypes(){
-        if (!label.isNull()) {
-            label.checkTypes();
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(label.idname);
 
-            SymbolInfo id;
-            id = (SymbolInfo) st.globalLookup(label.idname);
-
-            if (id == null) {
-                System.out.println(error() + label.idname + " is not declared.");
+        if (id == null) {
+            System.out.println(error() + label.idname + " is not declared.");
+            typeErrors++;
+        } else {
+            if (id.kind.val != Kinds.Label) {
+                System.out.println(error() + label.idname + " is not a label.");
                 typeErrors++;
-            } else {
-                if (id.kind.val != Kinds.Label) {
-                    System.out.println(error() + label.idname + " is not a label.");
-                    typeErrors++;
-                }
-            }
+            }         
         }
     }
 
@@ -1852,7 +1845,7 @@ class preIncrementNode extends stmtNode {
 	System.out.println(";");
     }
 
-    void typeCheck(){
+    void checkTypes(){
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(idName.idname);
 
@@ -1889,7 +1882,7 @@ class postIncrementNode extends stmtNode {
 	System.out.println("++;");
     }
 
-    void typeCheck(){
+    void checkTypes(){
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(idName.idname);
 
@@ -1927,7 +1920,7 @@ class preDecrementNode extends stmtNode {
 	System.out.println(";");
     }
 
-    void typeCheck(){
+    void checkTypes(){
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(idName.idname);
 
@@ -1964,7 +1957,7 @@ class postDecrementNode extends stmtNode {
         System.out.println("--;");
     }
 
-    void typeCheck(){
+    void checkTypes(){
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(idName.idname);
 
@@ -2010,11 +2003,12 @@ class condExprNode extends exprNode {
 		System.out.print(")");
 	}
 
-        void typeCheck(){
+        void checkTypes(){
             condition1.checkTypes();
             condition2.checkTypes();
             condition3.checkTypes();
             condition4.checkTypes();
+            type = condition2.type;
 
             typeMustBe(Types.Integer, condition1.type.val, error() +
                     "The first expression must be an Integer.");
@@ -2058,10 +2052,18 @@ class ifCondExprNode extends stmtNode {
 		System.out.println ("}");
 	}
 
-        void typeCheck(){
+        void checkTypes(){
             condition.checkTypes();
-            thenPart.checkTypes();
-            elsePart.checkTypes();
+            
+            if (!thenPart.isNull()) {
+                thenPart.checkTypes();
+            }
+            if (!elsePart.isNull()) {
+                elsePart.checkTypes();
+            }
+            
+            typeMustBe(condition.type.val, Types.Boolean, error() 
+                + "Return value of the Conditional Expression must be a Boolean.");
         }
 
 	private final exprNode condition;
@@ -2095,16 +2097,41 @@ class whileCondExprNode extends stmtNode {
         System.out.println ("}");
     }
 
-    void typeCheck(){
+    void checkTypes(){
         condition.checkTypes();
-        loopBody.checkTypes();
+        
+        typeMustBe(condition.type.val, Types.Boolean, error() +
+            "The conditional expression must be boolean.");
+        st.openScope();
+        if(!label.isNull()){
+            SymbolInfo id;
+            id = (SymbolInfo) st.localLookup(label.idname);
+            if (id == null) {
+                id = new SymbolInfo(label.idname, new Kinds(Kinds.Label), new Types(Types.Void));
+                label.type = new Types(Types.Void);
+                try {
+    				st.insert(id);
+    			} catch (DuplicateException d) {
+    				/* can't happen */
+    			} catch (EmptySTException e) {
+    				/* can't happen */
+    			}
+                label.idinfo = id;
+            } else {
+                System.out.println(error() + id.name() + " is already declared.");
+                typeErrors++;
+                label.type = new Types(Types.Error);
+            } // id != null
+        }
 
-        SymbolInfo id;
-        id = (SymbolInfo) st.globalLookup(label.idname);
+        if(!loopBody.isNull()){
+            loopBody.checkTypes();
+        }
 
-        if (id == null) {
-            System.out.println(error() + label.idname + " is not declared.");
-            typeErrors++;
+        try {
+            st.closeScope();
+        } catch (EmptySTException e) {
+            System.out.println("Closing scope of empty symbol table.");
         }
     }
 
