@@ -1665,7 +1665,6 @@ class falseNode extends exprNode {
 /**************************************************************************
 ***********************NEW AUXILIARY CLASSES ******************************
 **************************************************************************/
-
 //Created to hold optional semicolons
 class semicolonNode extends exprNode {
 	semicolonNode() {}
@@ -1864,11 +1863,28 @@ class condExprNode extends exprNode {
 		condition4.Unparse(0);
 		System.out.print(")");
 	}
+        
+        void typeCheck(){
+            condition1.checkTypes();
+            condition2.checkTypes();
+            condition3.checkTypes();
+            condition4.checkTypes();
+            
+            typeMustBe(Types.Integer, condition1.type.val, error() +
+                    "The first expression must be an Integer.");
+            /*
+            if (condition2.type.val == condition3.type.val && condition3.type.val == condition4.type.val){
+                //Types are correct, do nothing!
+            } else {
+                System.out.println(error() + "Condition 2, 3, and 4 has to be the same type.");
+                typeErrors++;
+            }*/
+        }
 
-	private final exprNode  condition1;
-	private final exprNode  condition2;
-	private final exprNode  condition3;
-	private final exprNode  condition4;
+	private final exprNode condition1;
+	private final exprNode condition2;
+	private final exprNode condition3;
+	private final exprNode condition4;
 } // class condExprNode
 
 //This class is needed for IF statements using the Conditional Expression
@@ -1895,6 +1911,12 @@ class ifCondExprNode extends stmtNode {
 		genIndent(indent);
 		System.out.println ("}");
 	}
+        
+        void typeCheck(){
+            condition.checkTypes();
+            thenPart.checkTypes();
+            elsePart.checkTypes();
+        }
 
 	private final exprNode condition;
 	private final stmtsNode thenPart;
@@ -1903,27 +1925,42 @@ class ifCondExprNode extends stmtNode {
 
 //This class is needed to use Conditional Expressions with while statements.
 class whileCondExprNode extends stmtNode {
-	whileCondExprNode(identNode i, exprNode e, stmtNode s, int line, int col) {
-		super(line, col);
-	 label = i;
-	 condition = e;
-	 loopBody = s;
-	}
+    whileCondExprNode(identNode i, exprNode e, stmtNode s, int line, int col) {
+	super(line, col);
+	label = i;
+	condition = e;
+	loopBody = s;
+    }
 
-	void Unparse(int indent) {
-		System.out.print(linenum + ":");
-		genIndent(indent);
-		if(!label.isNull()) {
-			label.Unparse(0);
-			System.out.print(": ");
-		}
-		System.out.print("while ");
-		condition.Unparse(0);
-		System.out.println(" {");
-		loopBody.Unparse(indent+1);
-		genIndent(indent);
-		System.out.println ("}");
+    void Unparse(int indent) {
+	System.out.print(linenum + ":");
+	genIndent(indent);
+        
+	if(!label.isNull()) {
+            label.Unparse(0);
+            System.out.print(": ");
 	}
+            
+        System.out.print("while ");
+        condition.Unparse(0);
+        System.out.println(" {");
+        loopBody.Unparse(indent+1);
+        genIndent(indent);
+        System.out.println ("}");
+    }
+        
+    void typeCheck(){
+        condition.checkTypes();
+        loopBody.checkTypes();
+            
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(label.idname);
+        
+        if (id == null) {
+            System.out.println(error() + label.idname + " is not declared.");
+            typeErrors++;
+        }        
+    }
 
 	private final identNode label;
 	private final exprNode condition;
