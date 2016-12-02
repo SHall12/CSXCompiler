@@ -575,11 +575,10 @@ class argDeclsNode extends ASTNode {
 	} // Unparse()
 
     void checkTypes() {
-        /*if (!thisDecl.isNull()) {
-            thisDecl.Unparse(0);
-            thisDecl.checkTypes();
+        thisDecl.checkTypes();
+        if (!moreDecls.isNull()) {
             moreDecls.checkTypes();
-        }*/
+        }
     }
 
 	private argDeclNode thisDecl;
@@ -1167,7 +1166,7 @@ class argsNode extends ASTNode {
 
         void checkTypes(){
             argVal.checkTypes();
-            if (!moreArgs.checkTypes()) {
+            if (!moreArgs.isNull()) {
                 moreArgs.checkTypes();
             }
         }
