@@ -168,6 +168,10 @@ class memberDeclsNode extends ASTNode {
     void checkTypes() {
         fields.checkTypes();
         methods.checkTypes();
+        if(!methods.checkLastIsMain()) {
+            System.out.println(error() + " last method must be void main().");
+            typeErrors++;        
+        }
     } // checkTypes
 
 	fieldDeclsNode fields;
@@ -445,6 +449,15 @@ class methodDeclsNode extends ASTNode {
         thisDecl.checkTypes();
         moreDecls.checkTypes();
     } // checkTypes
+
+    boolean checkLastIsMain() {
+        if (!moreDecls.isNull()) {
+            return moreDecls.checkLastIsMain();
+        } else {
+            return thisDecl.isMain(); 
+        }
+    }
+
 	static nullMethodDeclsNode NULL = new nullMethodDeclsNode();
 	private methodDeclNode thisDecl;
 	private methodDeclsNode moreDecls;
@@ -518,6 +531,12 @@ class methodDeclNode extends ASTNode {
         }
 
     } // checkTypes
+
+    public boolean isMain() {
+        return (name.idname.toLowerCase() == "main" && args.isNull() 
+                && returnType.type.val == Types.Void);
+    }
+
 	private final identNode name;
 	private final argDeclsNode args;
 	private final typeNode returnType;
@@ -980,7 +999,7 @@ class callNode extends stmtNode {
             id = (SymbolInfo) st.globalLookup(methodName.idname);
 
             if (id == null) {
-                System.out.println(error() + id.name() + " is not declared.");
+                System.out.println(error() + methodName.idname + " is not declared.");
                 typeErrors++;
                 methodName.type = new Types(Types.Error);
             }
