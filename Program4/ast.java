@@ -1027,8 +1027,10 @@ class callNode extends stmtNode {
 
         void checkTypes(){
             methodName.checkTypes();
-            args.checkTypes();
-
+            if (!args.isNull()) {
+                args.checkTypes();
+            }
+            
             SymbolInfo id;
             id = (SymbolInfo) st.globalLookup(methodName.idname);
 
@@ -1036,6 +1038,12 @@ class callNode extends stmtNode {
                 System.out.println(error() + methodName.idname + " is not declared.");
                 typeErrors++;
                 methodName.type = new Types(Types.Error);
+            }
+            
+            if (methodName.type.val != Types.Void){
+                System.out.println(error() + methodName.idname + 
+                        ": is not a void procedures.");
+                typeErrors++;
             }
         }
 
@@ -1192,7 +1200,10 @@ class argsNode extends ASTNode {
 	}
 
         void checkTypes(){
-            argVal.checkTypes();
+            if (!argVal.isNull()) {
+                argVal.checkTypes();
+            }
+            
             if (!moreArgs.isNull()) {
                 moreArgs.checkTypes();
             }
