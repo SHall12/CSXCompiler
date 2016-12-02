@@ -1690,10 +1690,10 @@ class preIncrementNode extends stmtNode {
         
     void typeCheck(){
         SymbolInfo id;
-        id = (SymbolInfo) st.globalLookup(name.idName);
+        id = (SymbolInfo) st.globalLookup(idName.idname);
         
         if (id == null) {
-            System.out.println(error() + name.idName + " is not declared.");
+            System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
         } else {
             switch(idName.type.val){
@@ -1701,7 +1701,7 @@ class preIncrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + name.idName + " has to be an int or float.");
+                    System.out.println(error() + idName.idname + " has to be an int or float.");
                     typeErrors++;
             }
         }
@@ -1727,10 +1727,10 @@ class postIncrementNode extends stmtNode {
     
     void typeCheck(){
         SymbolInfo id;
-        id = (SymbolInfo) st.globalLookup(name.idName);
+        id = (SymbolInfo) st.globalLookup(idName.idname);
         
         if (id == null) {
-            System.out.println(error() + name.idName + " is not declared.");
+            System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
         } else {
             switch(idName.type.val){
@@ -1738,7 +1738,7 @@ class postIncrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + name.idName + " has to be an int or float.");
+                    System.out.println(error() + idName.idname + " has to be an int or float.");
                     typeErrors++;
             }
         }
@@ -1765,10 +1765,10 @@ class preDecrementNode extends stmtNode {
     
     void typeCheck(){
         SymbolInfo id;
-        id = (SymbolInfo) st.globalLookup(name.idName);
+        id = (SymbolInfo) st.globalLookup(idName.idname);
         
         if (id == null) {
-            System.out.println(error() + name.idName + " is not declared.");
+            System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
         } else {
             switch(idName.type.val){
@@ -1776,7 +1776,7 @@ class preDecrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + name.idName + " has to be an int or float.");
+                    System.out.println(error() + idName.idname + " has to be an int or float.");
                     typeErrors++;
             }
         }
@@ -1802,10 +1802,10 @@ class postDecrementNode extends stmtNode {
 
     void typeCheck(){
         SymbolInfo id;
-        id = (SymbolInfo) st.globalLookup(name.idName);
+        id = (SymbolInfo) st.globalLookup(idName.idname);
         
         if (id == null) {
-            System.out.println(error() + name.idName + " is not declared.");
+            System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
         } else {
             switch(idName.type.val){
@@ -1813,7 +1813,7 @@ class postDecrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + name.idName + " has to be an int or float.");
+                    System.out.println(error() + idName.idname + " has to be an int or float.");
                     typeErrors++;
             }
         }
