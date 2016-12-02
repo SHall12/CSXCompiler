@@ -30,11 +30,11 @@ class P4 {
 			System.exit(0);
 		}
 
-		/*final boolean ok = ((classNode)root.value).isTypeCorrect();
+		final boolean ok = ((classNode)root.value).isTypeCorrect();
 		if (ok) {
 			System.out.println("No CSX type errors detected.");
 		} else {
 			System.out.println("\nCSX compilation halted due to type errors.");
-		}*/
+		}
 	} // main
 } // class P4
