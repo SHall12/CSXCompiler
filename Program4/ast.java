@@ -3,6 +3,7 @@
  * @Authors:  Long Bui and Shane Hall           11/11/2016
  * FileName:  ast.java
  ***************************************************************************/
+ import java.util.ArrayList;
 
 abstract class ASTNode {
 // abstract superclass; only subclasses are actually created
@@ -122,7 +123,7 @@ class classNode extends ASTNode {
 		checkTypes();
 		return (typeErrors == 0);
 	} // isTypeCorrect
-        
+
         void checkTypes() {
         SymbolInfo id;
         id = (SymbolInfo) st.localLookup(className.idname);
@@ -170,7 +171,7 @@ class memberDeclsNode extends ASTNode {
         methods.checkTypes();
         if(!methods.checkLastIsMain()) {
             System.out.println(error() + " last method must be void main().");
-            typeErrors++;        
+            typeErrors++;
         }
     } // checkTypes
 
@@ -284,7 +285,7 @@ class constDeclNode extends declNode {
 	} // Unparse()
     void checkTypes() {
         constValue.checkTypes();
-        
+
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(constName.idname);
 
@@ -293,7 +294,7 @@ class constDeclNode extends declNode {
                 new Kinds(Kinds.Value), constValue.type);
             constName.type = constValue.type;
             constName.kind = new Kinds(Kinds.Value);
-            
+
             try {
 		st.insert(id);
             } catch (DuplicateException d) {
@@ -460,7 +461,7 @@ class methodDeclsNode extends ASTNode {
         if (!moreDecls.isNull()) {
             return moreDecls.checkLastIsMain();
         } else {
-            return thisDecl.isMain(); 
+            return thisDecl.isMain();
         }
     }
 
@@ -500,35 +501,40 @@ class methodDeclNode extends ASTNode {
 		System.out.println("}");
 	} // Unparse()
     void checkTypes() {
-        // TODO: KEEP TRACK OF ARG LIST
         SymbolInfo id;
         id = (SymbolInfo) st.localLookup(name.idname);
-        if (id == null) {
-            id = new SymbolInfo(name.idname, new Kinds(Kinds.Method),
-                                returnType.type);
-            name.type = returnType.type;
-            try {
-				st.insert(id);
-			} catch (DuplicateException d) {
-				/* can't happen */
-			} catch (EmptySTException e) {
-				/* can't happen */
-			}
-            name.idinfo = id;
-        } else {
+        if (id != null) { // Check if already declared
             System.out.println(error() + id.name() + " is already declared.");
             typeErrors++;
             name.type = new Types(Types.Error);
-        } // id != null
-
-        // Open new scope
-        st.openScope();
-
-            
-        //Type-Check branches
+        }
+        st.openScope(); // Open new Scope
         if (!args.isNull()) {
             args.checkTypes();
         }
+        if (id == null) {
+            // Construct arraylist of args types
+            ArrayList<SymbolInfo> paramTypes = new ArrayList<SymbolInfo>();
+            argDeclsNode nodesLeft = args;
+            while(!nodesLeft.isNull()){
+                paramTypes.add(nodesLeft.getThisDecl().getParamInfo());
+                nodesLeft = nodesLeft.getNextDecls();
+            }
+            id = new FunctSymbol(name.idname,
+                                new Kinds(Kinds.Method),
+                                returnType.type,
+                                paramTypes);
+            name.type = returnType.type;
+            try {
+                st.insert(id);
+            } catch (DuplicateException d) {
+                /* can't happen */
+            } catch (EmptySTException e) {
+                /* can't happen */
+            }
+            name.idinfo = id;
+        }
+
         decls.checkTypes();
         stmts.checkTypes();
         name.type = returnType.type;
@@ -543,7 +549,7 @@ class methodDeclNode extends ASTNode {
     } // checkTypes
 
     public boolean isMain() {
-        return (name.idname.toLowerCase().equals("main") && args.isNull() 
+        return (name.idname.toLowerCase().equals("main") && args.isNull()
                 && returnType.type.val == Types.Void);
     }
 
@@ -562,6 +568,9 @@ abstract class argDeclNode extends ASTNode {
 	argDeclNode(int l, int c) {
 		super(l, c);
 	}
+    public SymbolInfo getParamInfo() {
+        return null;
+    }
 }
 
 class argDeclsNode extends ASTNode {
@@ -582,12 +591,19 @@ class argDeclsNode extends ASTNode {
         }
 	} // Unparse()
 
-    void checkTypes() {
-        System.out.println("PRINTING ME");
+    public void checkTypes() {
         thisDecl.checkTypes();
         if (!moreDecls.isNull()) {
             moreDecls.checkTypes();
         }
+    }
+
+    public argDeclNode getThisDecl() {
+        return thisDecl;
+    }
+
+    public argDeclsNode getNextDecls() {
+        return moreDecls;
     }
 
 	private argDeclNode thisDecl;
@@ -598,6 +614,7 @@ class nullArgDeclsNode extends argDeclsNode {
 	nullArgDeclsNode() {}
 	boolean   isNull() {return true;}
 	void Unparse(int indent) {}
+
 } // class nullArgDeclsNode
 
 class arrayArgDeclNode extends argDeclNode {
@@ -615,7 +632,7 @@ class arrayArgDeclNode extends argDeclNode {
 		System.out.print("[]");
 	} // Unparse()
 
-    void checkType(){
+    public void checkTypes(){
         SymbolInfo id;
         id = (SymbolInfo) st.localLookup(argName.idname);
         if (id == null) {
@@ -631,10 +648,14 @@ class arrayArgDeclNode extends argDeclNode {
 			}
             argName.idinfo = id;
         } else {
-            System.out.println(error() + id.name() + " is already declared.");
+            System.out.println(error() + id.name() + " is already a parameter.");
             typeErrors++;
             argName.type = new Types(Types.Error);
         } // id != null
+    }
+
+    public SymbolInfo getParamInfo() {
+        return new SymbolInfo("", new Kinds(Kinds.Array_Parameter), argName.idinfo.type);
     }
 
 	private final identNode argName;
@@ -655,7 +676,7 @@ class valArgDeclNode extends argDeclNode {
 		argName.Unparse(0);
 	} // Unparse()
 
-    void checkTypes(){
+    public void checkTypes(){
         SymbolInfo id;
         id = (SymbolInfo) st.localLookup(argName.idname);
 
@@ -676,6 +697,10 @@ class valArgDeclNode extends argDeclNode {
             typeErrors++;
             argName.type = new Types(Types.Error);
         } // id != null
+    }
+
+    public SymbolInfo getParamInfo() {
+        return new SymbolInfo("", new Kinds(Kinds.Scalar_Parameter) , argName.idinfo.type);
     }
 
 	private final identNode argName;
@@ -750,15 +775,15 @@ class asgNode extends stmtNode {
     void checkTypes(){
         target.checkTypes();
         source.checkTypes();
-        
+
         if (target.kind.val == Kinds.Value){
             typeErrors++;
-            System.out.println(error() + "Illegal assignment: "+ target.varName.idname    
+            System.out.println(error() + "Illegal assignment: "+ target.varName.idname
                                 + " is a constant.");
         }
-        
+
         typeMustBe(source.type.val, target.type.val,
-                    error() + "Illegal assignment: Type mismatch " 
+                    error() + "Illegal assignment: Type mismatch "
                     + source.type + " to " + target.type);
     }
 
@@ -862,11 +887,11 @@ class whileNode extends stmtNode {
                 label.type = new Types(Types.Error);
             } // id != null
         }
-        
+
         if(!loopBody.isNull()){
             loopBody.checkTypes();
         }
-        
+
         try {
             st.closeScope();
         } catch (EmptySTException e) {
@@ -908,7 +933,7 @@ class readNode extends stmtNode {
         if (!moreReads.isNull()) {
             moreReads.checkTypes();
         }
-        
+
         switch(targetVar.type.val){
             case Types.Integer:
             case Types.Real:
@@ -1025,19 +1050,53 @@ class callNode extends stmtNode {
 		System.out.println(");");
 	}
 
-        void checkTypes(){
-            methodName.checkTypes();
+    void checkTypes() {
+        methodName.checkTypes();
+        Types type = methodName.type;
+
+        //int kind = Kinds.Value; or void
+
+        // NEEDS TO CHECK IF CORRECT PARAMETERS
+        if (!args.isNull()) {
             args.checkTypes();
-
-            SymbolInfo id;
-            id = (SymbolInfo) st.globalLookup(methodName.idname);
-
-            if (id == null) {
-                System.out.println(error() + methodName.idname + " is not declared.");
-                typeErrors++;
-                methodName.type = new Types(Types.Error);
-            }
         }
+
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(methodName.idname);
+
+        if (id != null) {
+            if (id.kind.val == Kinds.Method) {
+                ArrayList<SymbolInfo> paramTypes = ((FunctSymbol)id).getParams();
+
+                // Get list of arguement types
+                ArrayList<SymbolInfo> argTypes = new ArrayList<SymbolInfo>();
+                argsNode nodesLeft = args;
+                while(!nodesLeft.isNull()){
+                    argTypes.add(nodesLeft.getArgInfo());
+                    nodesLeft = nodesLeft.getNextArgs();
+                }
+
+                // Compare lengths
+                if (paramTypes.size() != argTypes.size()) {
+                    // Compare types
+                    /* For each element of paramTyes and argTypes
+                    // If paramType.type != ArgType.type, error
+                    // If paramType.kind == Array_Parameter,
+                        if argType.kind != Kinds.Array_Parameter || argType.kind != Kinds.Array_Parameter, error
+                    // else
+                        if argType.kind != Var, Val, Scalar_Parameter, error
+                    */
+                } else {
+                    System.out.println(error() + " number of parameters does not match number of arguements.");
+                    typeErrors++;
+                }
+            }
+        } else {
+            System.out.println(error() + methodName.idname + " is not declared.");
+            typeErrors++;
+            methodName.type = new Types(Types.Error);
+        }
+    }
 
 	private final identNode methodName;
 	private final argsNode args;
@@ -1191,12 +1250,20 @@ class argsNode extends ASTNode {
 		}
 	}
 
-        void checkTypes(){
-            argVal.checkTypes();
-            if (!moreArgs.isNull()) {
-                moreArgs.checkTypes();
-            }
+    void checkTypes(){
+        argVal.checkTypes();
+        if (!moreArgs.isNull()) {
+            moreArgs.checkTypes();
         }
+    }
+
+    public SymbolInfo getArgInfo() {
+        return new SymbolInfo("", argVal.kind ,argVal.type);
+    }
+
+    public argsNode getNextArgs() {
+        return moreArgs;
+    }
 
 	static nullArgsNode NULL = new nullArgsNode();
 	private exprNode argVal;
@@ -1242,7 +1309,7 @@ abstract class exprNode extends ASTNode {
 		type = t;
 		kind = k;
 	} // exprNode
-    
+
     static nullExprNode NULL = new nullExprNode();
     protected Types type; // Used for typechecking: the type of this node
     protected Kinds kind; // Used for typechecking: the kind of this node
@@ -1316,13 +1383,13 @@ class binaryOpNode extends exprNode {
 	rightOperand.Unparse(0);
 	System.out.print(")");
     }
-        
+
     void checkTypes(){
         //Check types of each side.
         leftOperand.checkTypes();
         rightOperand.checkTypes();
         type = leftOperand.type;
-        
+
         //Get op code to begin process.
         switch(operatorCode){
             case sym.PLUS:
@@ -1336,23 +1403,23 @@ class binaryOpNode extends exprNode {
                             case Types.Character:
                             case Types.Integer:
                                 //Sets type to correct kind.
-                                if (rightOperand.type.val == Types.Integer){ 
+                                if (rightOperand.type.val == Types.Integer){
                                     type = rightOperand.type;
                                 }
                                 break;
                             default:
-                                typeMustBe(Types.Error, 0, error() + 
+                                typeMustBe(Types.Error, 0, error() +
                                     "Both operands must be Integer or Character.");
-                        } 
+                        }
                         break;
                     case Types.Real:
                         typeMustBe(leftOperand.type.val, rightOperand.type.val,
                             error() + "Both left and right operands must be Floats.");
                         break;
                     default:
-                        typeMustBe(Types.Error, 1 , error() + 
+                        typeMustBe(Types.Error, 1 , error() +
                             "Left operand must be an int, float, or char.");
-                } 
+                }
                 break;
             case sym.EQ:
             case sym.NOTEQ:
@@ -1364,11 +1431,11 @@ class binaryOpNode extends exprNode {
                 switch(leftOperand.type.val){
                     case Types.Integer:
                     case Types.Character:
-                    case Types.Real: 
+                    case Types.Real:
                         switch(rightOperand.type.val){
                             case Types.Integer:
                             case Types.Character:
-                            case Types.Real: 
+                            case Types.Real:
                                 break;
                             default:
                                 typeMustBe(leftOperand.type.val, rightOperand.type.val, error() +
@@ -1381,7 +1448,7 @@ class binaryOpNode extends exprNode {
                                         "Right operand must be an Boolean.");
                         break;
                     default:
-                        typeMustBe(Types.Error, 1, error() + 
+                        typeMustBe(Types.Error, 1, error() +
                                 "Left operand must be an int, float, char, or boolean.");
                         break;
                 }
@@ -1389,8 +1456,8 @@ class binaryOpNode extends exprNode {
             case sym.CAND:
             case sym.COR:
                 type = new Types(Types.Boolean);
-                
-                if ((leftOperand.type.val == Types.Boolean) 
+
+                if ((leftOperand.type.val == Types.Boolean)
                         && (rightOperand.type.val == Types.Boolean)){
                     //Do nothing
                 } else {
@@ -1432,12 +1499,12 @@ class unaryOpNode extends exprNode {
 		printOp(operatorCode);
 		operand.Unparse(0);
 	}
-        
+
         void checkTypes(){
             operand.checkTypes();
-            
+
             if (operatorCode == sym.NOT){
-                typeMustBe(operand.type.val, Types.Boolean, error() 
+                typeMustBe(operand.type.val, Types.Boolean, error()
                         + "Operand must be a Boolean");
                 type = new Types(Types.Boolean);
             } else {
@@ -1490,39 +1557,70 @@ class fctCallNode extends exprNode {
 	fctCallNode(identNode id, argsNode a, int line, int col) {
 		super(line, col);
 		methodName = id;
-		methodArgs = a;
+		args = a;
 	}
 
 	void Unparse(int indent) {
+		System.out.print(linenum + ":");
 		genIndent(indent);
 		methodName.Unparse(0);
 		System.out.print("(");
-		methodArgs.Unparse(0);
-		System.out.print(")");
+		args.Unparse(0);
+		System.out.println(");");
 	}
-        
-        void checkTypes() {
-            methodName.checkTypes();
-            type = methodName.type;
-            
-            // NEEDS TO CHECK IF CORRECT PARAMETERS            
-            if (!methodArgs.isNull()) {
-                methodArgs.checkTypes();
-            }
 
-            SymbolInfo id;
-            id = (SymbolInfo) st.globalLookup(methodName.idname);
-           
-            if (id == null) {
-                System.out.println(error() + methodName.idname + " is not declared.");
-                typeErrors++;
-                methodName.type = new Types(Types.Error);
-            }
+    void checkTypes() {
+        methodName.checkTypes();
+        Types type = methodName.type;
+
+        //int kind = Kinds.Value; or void
+
+        // NEEDS TO CHECK IF CORRECT PARAMETERS
+        if (!args.isNull()) {
+            args.checkTypes();
         }
 
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(methodName.idname);
+
+        if (id != null) {
+            if (id.kind.val == Kinds.Method) {
+                ArrayList<SymbolInfo> paramTypes = ((FunctSymbol)id).getParams();
+
+                // Get list of arguement types
+                ArrayList<SymbolInfo> argTypes = new ArrayList<SymbolInfo>();
+                argsNode nodesLeft = args;
+                while(!nodesLeft.isNull()){
+                    argTypes.add(nodesLeft.getArgInfo());
+                    nodesLeft = nodesLeft.getNextArgs();
+                }
+
+                // Compare lengths
+                if (paramTypes.size() != argTypes.size()) {
+                    // Compare types
+                    /* For each element of paramTyes and argTypes
+                    // If paramType.type != ArgType.type, error
+                    // If paramType.kind == Array_Parameter,
+                        if argType.kind != Kinds.Array_Parameter || argType.kind != Kinds.Array_Parameter, error
+                    // else
+                        if argType.kind != Var, Val, Scalar_Parameter, error
+                    */
+                } else {
+                    System.out.println(error() + " number of parameters does not match number of arguements.");
+                    typeErrors++;
+                }
+            }
+        } else {
+            System.out.println(error() + methodName.idname + " is not declared.");
+            typeErrors++;
+            methodName.type = new Types(Types.Error);
+        }
+    }
+
 	private final identNode methodName;
-	private final argsNode methodArgs;
-} // class fctCallNode
+	private final argsNode args;
+} // class callNode
+
 
 class identNode extends exprNode {
 	identNode(String identname, int line, int col) {
@@ -1628,13 +1726,13 @@ class intLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(intval);
 	}
-        
+
         int getVal(){
             return intval;
         }
-        
+
         void typeCheck(){}
-	
+
         private final int intval;
 } // class intLitNode
 
@@ -1649,7 +1747,7 @@ class floatLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(floatval);
 	}
-        
+
         void typeCheck(){}
 
 	private final float floatval;
@@ -1666,11 +1764,11 @@ class charLitNode extends exprNode {
 		genIndent(indent);
 		System.out.print(charval);
 	}
-        
+
         int getVal(){
             return charval;
         }
-        
+
         void typeCheck(){}
 
 	private final char charval;
@@ -1682,14 +1780,14 @@ class trueNode extends exprNode {
         type = new Types(Types.Boolean);
         kind = new Kinds(Kinds.Value);
     }
-    
+
     void Unparse(int indent) {
         genIndent(indent);
 	System.out.print("true");
     }
-    
+
     void checkTypes() {}
-        
+
 } // class trueNode
 
 class falseNode extends exprNode {
@@ -1698,7 +1796,7 @@ class falseNode extends exprNode {
         type = new Types(Types.Boolean);
         kind = new Kinds(Kinds.Value);
     }
-    
+
     void Unparse(int indent) {
 	genIndent(indent);
 	System.out.print("false");
@@ -1714,14 +1812,14 @@ class semicolonNode extends exprNode {
 	semicolonNode(int line, int col) {
 		super(line, col);
         }
-        
+
 	void Unparse(int indent) {
 		genIndent(indent);
 		System.out.print(";");
 	}
-        
+
         void typeCheck() {}
-        
+
 	static nullSemicolonNode NULL = new nullSemicolonNode();
 } // class semicolonNode
 
@@ -1748,11 +1846,11 @@ class preIncrementNode extends stmtNode {
 	idName.Unparse(0);
 	System.out.println(";");
     }
-        
+
     void typeCheck(){
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(idName.idname);
-        
+
         if (id == null) {
             System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
@@ -1767,7 +1865,7 @@ class preIncrementNode extends stmtNode {
             }
         }
     }
-        
+
     private final identNode idName;
 
 } // class preIncrementNode
@@ -1785,11 +1883,11 @@ class postIncrementNode extends stmtNode {
 	idName.Unparse(0);
 	System.out.println("++;");
     }
-    
+
     void typeCheck(){
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(idName.idname);
-        
+
         if (id == null) {
             System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
@@ -1804,7 +1902,7 @@ class postIncrementNode extends stmtNode {
             }
         }
     }
-    
+
     private final identNode idName;
 
 } // class postIncrementNode
@@ -1823,11 +1921,11 @@ class preDecrementNode extends stmtNode {
 	idName.Unparse(0);
 	System.out.println(";");
     }
-    
+
     void typeCheck(){
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(idName.idname);
-        
+
         if (id == null) {
             System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
@@ -1841,8 +1939,8 @@ class preDecrementNode extends stmtNode {
                     typeErrors++;
             }
         }
-    }  
-    
+    }
+
     private final identNode idName;
 
 } // class preDecrementNode
@@ -1864,7 +1962,7 @@ class postDecrementNode extends stmtNode {
     void typeCheck(){
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(idName.idname);
-        
+
         if (id == null) {
             System.out.println(error() + idName.idname + " is not declared.");
             typeErrors++;
@@ -1879,7 +1977,7 @@ class postDecrementNode extends stmtNode {
             }
         }
     }
-    
+
     private final identNode idName;
 
 } // class postDecrementNode
@@ -1906,16 +2004,16 @@ class condExprNode extends exprNode {
 		condition4.Unparse(0);
 		System.out.print(")");
 	}
-        
+
         void typeCheck(){
             condition1.checkTypes();
             condition2.checkTypes();
             condition3.checkTypes();
             condition4.checkTypes();
-            
+
             typeMustBe(Types.Integer, condition1.type.val, error() +
                     "The first expression must be an Integer.");
-            
+
             if (condition2.type.val == condition3.type.val && condition3.type.val == condition4.type.val){
                 //Types are correct, do nothing!
             } else {
@@ -1954,7 +2052,7 @@ class ifCondExprNode extends stmtNode {
 		genIndent(indent);
 		System.out.println ("}");
 	}
-        
+
         void typeCheck(){
             condition.checkTypes();
             thenPart.checkTypes();
@@ -1978,12 +2076,12 @@ class whileCondExprNode extends stmtNode {
     void Unparse(int indent) {
 	System.out.print(linenum + ":");
 	genIndent(indent);
-        
+
 	if(!label.isNull()) {
             label.Unparse(0);
             System.out.print(": ");
 	}
-            
+
         System.out.print("while ");
         condition.Unparse(0);
         System.out.println(" {");
@@ -1991,18 +2089,18 @@ class whileCondExprNode extends stmtNode {
         genIndent(indent);
         System.out.println ("}");
     }
-        
+
     void typeCheck(){
         condition.checkTypes();
         loopBody.checkTypes();
-            
+
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(label.idname);
-        
+
         if (id == null) {
             System.out.println(error() + label.idname + " is not declared.");
             typeErrors++;
-        }        
+        }
     }
 
 	private final identNode label;
