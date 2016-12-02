@@ -496,6 +496,7 @@ class methodDeclNode extends ASTNode {
 		System.out.println("}");
 	} // Unparse()
     void checkTypes() {
+        // TODO: KEEP TRACK OF ARG LIST
         SymbolInfo id;
         id = (SymbolInfo) st.localLookup(name.idname);
         if (id == null) {
@@ -520,7 +521,9 @@ class methodDeclNode extends ASTNode {
         st.openScope();
 
         //Type-Check branches
-        args.checkTypes();
+        if (!args.isNull()) {
+            args.checkTypes();
+        }
         decls.checkTypes();
         stmts.checkTypes();
 
@@ -575,6 +578,7 @@ class argDeclsNode extends ASTNode {
 	} // Unparse()
 
     void checkTypes() {
+        System.out.println("PRINTING ME");
         thisDecl.checkTypes();
         if (!moreDecls.isNull()) {
             moreDecls.checkTypes();
@@ -1476,7 +1480,11 @@ class fctCallNode extends exprNode {
         
         void checkTypes() {
             methodName.checkTypes();
-            methodArgs.checkTypes();
+            
+            // NEEDS TO CHECK IF CORRECT PARAMETERS            
+            if (!methodArgs.isNull()) {
+                methodArgs.checkTypes();
+            }
             
             SymbolInfo id;
             id = (SymbolInfo) st.globalLookup(methodName.idname);
