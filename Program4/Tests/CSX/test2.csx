@@ -104,6 +104,7 @@ class testDecls {
             } ENDIF
         } ENDIF
         
+        //Conditional Expressions
         intVar = (intVar ? intVar -: intVar +: intVar);
         intVar = (intVar ? boolVar -: intVar +: intVar);    //This should error
         
@@ -117,5 +118,22 @@ class testDecls {
             intVar = 1;
         } 
 
+        //Increment and Decrement
+        intVar++;
+        intVar--;
+        ++intVar;
+        --intVar;
+        floatVar++;
+        floatVar--;
+        ++floatVar;
+        --floatVar;
+        boolVar++;                                          //This should error
+        boolVar--;                                          //This should error
+        ++boolVar;                                          //This should error
+        --boolVar;                                          //This should error
+        charVar++;                                          //This should error
+        charVar--;                                          //This should error    
+        ++charVar;                                          //This should error
+        --charVar;                                          //This should error
     }
 }
