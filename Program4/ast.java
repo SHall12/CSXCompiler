@@ -1694,75 +1694,151 @@ class nullSemicolonNode extends semicolonNode {
 
 //Node for preincrement statement.
 class preIncrementNode extends stmtNode {
-	preIncrementNode(identNode i, int line, int col) {
-		super(line, col);
-		idName = i;
-	}
+    preIncrementNode(identNode i, int line, int col) {
+	super(line, col);
+	idName = i;
+    }
 
-	void Unparse(int indent) {
-		System.out.print(linenum + ":");
-		genIndent(indent);
-		System.out.print("++");
-		idName.Unparse(0);
-		System.out.println(";");
-	}
-
-	private final identNode idName;
+    void Unparse(int indent) {
+	System.out.print(linenum + ":");
+	genIndent(indent);
+	System.out.print("++");
+	idName.Unparse(0);
+	System.out.println(";");
+    }
+        
+    void typeCheck(){
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(idName.idname);
+        
+        if (id == null) {
+            System.out.println(error() + idName.idname + " is not declared.");
+            typeErrors++;
+        } else {
+            switch(idName.type.val){
+                case Types.Integer:
+                case Types.Real:
+                    break;
+                default:
+                    System.out.println(error() + idName.idname + " has to be an int or float.");
+                    typeErrors++;
+            }
+        }
+    }
+        
+    private final identNode idName;
 
 } // class preIncrementNode
 
 //Node for postincrement statement.
 class postIncrementNode extends stmtNode {
-	postIncrementNode(identNode i, int line, int col) {
-		super(line, col);
-		idName = i;
-	}
+    postIncrementNode(identNode i, int line, int col) {
+	super(line, col);
+	idName = i;
+    }
 
-	void Unparse(int indent) {
-		System.out.print(linenum + ":");
-		genIndent(indent);
-		idName.Unparse(0);
-		System.out.println("++;");
-	}
-
-	private final identNode idName;
+    void Unparse(int indent) {
+	System.out.print(linenum + ":");
+	genIndent(indent);
+	idName.Unparse(0);
+	System.out.println("++;");
+    }
+    
+    void typeCheck(){
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(idName.idname);
+        
+        if (id == null) {
+            System.out.println(error() + idName.idname + " is not declared.");
+            typeErrors++;
+        } else {
+            switch(idName.type.val){
+                case Types.Integer:
+                case Types.Real:
+                    break;
+                default:
+                    System.out.println(error() + idName.idname + " has to be an int or float.");
+                    typeErrors++;
+            }
+        }
+    }
+    
+    private final identNode idName;
 
 } // class postIncrementNode
 
 //Node for predecrement statement.
 class preDecrementNode extends stmtNode {
-	preDecrementNode(identNode i, int line, int col) {
-		super(line, col);
-		idName = i;
-	}
+    preDecrementNode(identNode i, int line, int col) {
+	super(line, col);
+	idName = i;
+    }
 
-	void Unparse(int indent) {
-		System.out.print(linenum + ":");
-		genIndent(indent);
-                System.out.print("--");
-		idName.Unparse(0);
-		System.out.println(";");
-	}
-
-	private final identNode idName;
+    void Unparse(int indent) {
+	System.out.print(linenum + ":");
+	genIndent(indent);
+        System.out.print("--");
+	idName.Unparse(0);
+	System.out.println(";");
+    }
+    
+    void typeCheck(){
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(idName.idname);
+        
+        if (id == null) {
+            System.out.println(error() + idName.idname + " is not declared.");
+            typeErrors++;
+        } else {
+            switch(idName.type.val){
+                case Types.Integer:
+                case Types.Real:
+                    break;
+                default:
+                    System.out.println(error() + idName.idname + " has to be an int or float.");
+                    typeErrors++;
+            }
+        }
+    }  
+    
+    private final identNode idName;
 
 } // class preDecrementNode
 
 //Node for post decrement statement.
 class postDecrementNode extends stmtNode {
-	postDecrementNode(identNode i, int line, int col) {
-		super(line, col);
-		idName = i;
-	}
+    postDecrementNode(identNode i, int line, int col) {
+	super(line, col);
+	idName = i;
+    }
 
-	void Unparse(int indent) {
-		System.out.print(linenum + ":");
-		genIndent(indent);
-		idName.Unparse(0);
-                System.out.println("--;");
-	}
+    void Unparse(int indent) {
+	System.out.print(linenum + ":");
+	genIndent(indent);
+	idName.Unparse(0);
+        System.out.println("--;");
+    }
 
-	private final identNode idName;
+    void typeCheck(){
+        SymbolInfo id;
+        id = (SymbolInfo) st.globalLookup(idName.idname);
+        
+        if (id == null) {
+            System.out.println(error() + idName.idname + " is not declared.");
+            typeErrors++;
+        } else {
+            switch(idName.type.val){
+                case Types.Integer:
+                case Types.Real:
+                    break;
+                default:
+                    System.out.println(error() + idName.idname + " has to be an int or float.");
+                    typeErrors++;
+            }
+        }
+    }
+    
+    private final identNode idName;
 
 } // class postDecrementNode
 
