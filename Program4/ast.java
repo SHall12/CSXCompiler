@@ -447,7 +447,9 @@ class methodDeclsNode extends ASTNode {
 	} // Unparse()
     void checkTypes() {
         thisDecl.checkTypes();
-        moreDecls.checkTypes();
+        if (!moreDecls.isNull()) {
+            moreDecls.checkTypes();
+        }
     } // checkTypes
 
     boolean checkLastIsMain() {
