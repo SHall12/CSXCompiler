@@ -81,22 +81,30 @@ class testDecls {
         boolVar = intVar < boolVar;             //This should error
         boolVar = boolVar > intVar;             //This should error
 
-        while(true){
+        whileID: while(true){
             int x;
             x = 2;
             while(intVar){                      //This should error
                 int x;       //same variable declared in new scope should be okay.
                 x = 2;
             }
-        }
-
+            while(true){
+                break whileID;
+                continue whileID;
+            }
+            break whileID;
+            continue whileID; 
+        }   
+        break whileID;                          //This should error
+        continue whileID;                          //This should error
+        
         if(true){
             if(intVar){                         //This should error
                 intVar = 2;
             } ENDIF
         } ENDIF
-
-
+        
+        
 
     }
 }
