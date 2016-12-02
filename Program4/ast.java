@@ -1374,13 +1374,15 @@ class binaryOpNode extends exprNode {
             case sym.CAND:
             case sym.COR:
                 type = new Types(Types.Boolean);
-                if (leftOperand.type.val == Types.Boolean && 
-                        rightOperand.type.val == Types.Boolean){
+                
+                if ((leftOperand.type.val == Types.Boolean) 
+                        && (rightOperand.type.val == Types.Boolean)){
                     //Do nothing
                 } else {
-                    typeMustBe(Types.Error, 1, error() + 
-                            "Both left and right operand must be a Boolean.");
+                    System.out.println(error() + "Left and right operands must be Boolean.");
+                    typeErrors++;
                 }
+                break;
             default:
                 //Nothing wrong!
         }
