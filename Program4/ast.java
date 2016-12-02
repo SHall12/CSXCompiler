@@ -1488,7 +1488,7 @@ class fctCallNode extends exprNode {
             
             SymbolInfo id;
             id = (SymbolInfo) st.globalLookup(methodName.idname);
-
+           
             if (id == null) {
                 System.out.println(error() + methodName.idname + " is not declared.");
                 typeErrors++;
@@ -1525,8 +1525,9 @@ class identNode extends exprNode {
     void checkTypes() {
 		SymbolInfo id;
 		mustBe(kind.val != Kinds.Other);
-		id = (SymbolInfo) st.localLookup(idname);
-		if (id == null) {
+		id = (SymbolInfo) st.globalLookup(idname);
+                if (id == null) {
+                        System.out.println(id);
 			System.out.println(error() + idname + " is not declared.");
 			typeErrors++;
 			type = new Types(Types.Error);
