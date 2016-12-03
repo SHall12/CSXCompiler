@@ -46,7 +46,7 @@ class testDecls {
         
         //Array Referencing
         intVar = intArray[intVar];
-        intVar = intArray[charVar];             //This should error
+        intVar = intArray[charVar];             
         intVar = intArray[floatVar];            //This should error
         intVar = intArray[boolVar];             //This should error
         intVar = intArray[intArray];            //This should error
