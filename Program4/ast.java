@@ -27,8 +27,10 @@ abstract class ASTNode {
 	} // typeMustBe
 
     String error() {
-		return "Error (line " + linenum + "): ";
-	} // error
+	return "Error (line " + linenum + ", " + colnum + "): ";
+    } // error
+    
+    
 
 	static void genIndent(int indent) {
 		for (int i = 1; i <= indent; i++) {
