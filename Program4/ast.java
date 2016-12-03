@@ -961,11 +961,14 @@ class readNode extends stmtNode {
         if (!moreReads.isNull()) {
             moreReads.checkTypes();
         }
-
+System.out.println(targetVar.type);
         switch(targetVar.type.val){
             case Types.Integer:
             case Types.Real:
-                //Do nothing!
+                if (targetVar.kind.val == Kinds.Array){
+                    System.out.println(error() + 
+                    "Arrays variables cannot be read.");
+                }
                 break;
             default:
                 System.out.println(error() + "Can only read integer or float values");
