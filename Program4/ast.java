@@ -250,7 +250,7 @@ class varDeclNode extends declNode {
 		if (id == null) {
 			id = new SymbolInfo(varName.idname, new Kinds(Kinds.Var), varType.type);
 			varName.type = varType.type;
-            try {
+                try {
 				st.insert(id);
 			} catch (DuplicateException d) {
 				/* can't happen */
@@ -263,7 +263,8 @@ class varDeclNode extends declNode {
 			typeErrors++;
 			varName.type = new Types(Types.Error);
 		} // id != null
-	} // checkTypes
+                
+        } // checkTypes
 
 	private final identNode varName;
 	private final typeNode varType;
@@ -339,7 +340,7 @@ class arrayDeclNode extends declNode {
 
         if (id == null) {
             id = new SymbolInfo(arrayName.idname,
-                new Kinds(Kinds.Var),elementType.type);
+                new Kinds(Kinds.Array),elementType.type);
             arrayName.type = elementType.type;
             try {
 				st.insert(id);
@@ -354,7 +355,8 @@ class arrayDeclNode extends declNode {
             typeErrors++;
             arrayName.type = new Types(Types.Error);
         } // id != null
-
+        
+                
         //Array size must be > 0
         if (arraySize.getVal() <= 0){
             typeErrors++;
@@ -1708,9 +1710,15 @@ class nameNode extends exprNode {
                 typeErrors++;
             }
             if(subscriptVal.type.val != Types.Integer
-                    && subscriptVal.type.val != Types.Character) {
-                System.out.println(error() + " Subscript must be an integer");
+                    && subscriptVal.type.val != Types.Character){
+                System.out.println(error() + "Subscript must be an integer.");
                 typeErrors++;
+            } else {
+System.out.println(subscriptVal.kind);
+                if (subscriptVal.kind.val == Kinds.Array){
+                    System.out.println(error() + "Subscript cannot be an array.");
+                    typeErrors++;
+                }
             }
             type = varName.type;
             kind = new Kinds(Kinds.Var);
