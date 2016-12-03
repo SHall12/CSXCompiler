@@ -29,8 +29,8 @@ abstract class ASTNode {
     String error() {
 	return "Error (line " + linenum + ", " + colnum + "): ";
     } // error
-    
-    
+
+
 
 	static void genIndent(int indent) {
 		for (int i = 1; i <= indent; i++) {
@@ -1123,12 +1123,12 @@ class callNode extends stmtNode {
                             if (paramTypes.get(i).kind.val == Kinds.Scalar_Parameter) {
                                 if (argKindVal.val != Kinds.Var && argKindVal.val != Kinds.Value
                                         && argKindVal.val != Kinds.Scalar_Parameter) {
-                                    System.out.println(error() + "Parameter " + (i+1) + " is not a scalar. " + argKindVal + "was given.");
+                                    System.out.println(error() + "Parameter " + (i+1) + " is not a scalar. " + argKindVal + " was given.");
                                     typeErrors++;
                                 }
                             } else {
                                 if (argKindVal.val != Kinds.Array && argKindVal.val != Kinds.Array_Parameter) {
-                                    System.out.println(error() + "Parameter " + (i+1) + " is not an array. " + argKindVal + "was given.");
+                                    System.out.println(error() + "Parameter " + (i+1) + " is not an array. " + argKindVal + " was given.");
                                     typeErrors++;
                                 }
                             }
@@ -1666,12 +1666,12 @@ class fctCallNode extends exprNode {
                             if (paramTypes.get(i).kind.val == Kinds.Scalar_Parameter) {
                                 if (argKindVal.val != Kinds.Var && argKindVal.val != Kinds.Value
                                         && argKindVal.val != Kinds.Scalar_Parameter) {
-                                    System.out.println(error() + "Parameter " + (i+1) + " is not a scalar. " + argKindVal + "was given.");
+                                    System.out.println(error() + "Parameter " + (i+1) + " is not a scalar. " + argKindVal + " was given.");
                                     typeErrors++;
                                 }
                             } else {
                                 if (argKindVal.val != Kinds.Array && argKindVal.val != Kinds.Array_Parameter) {
-                                    System.out.println(error() + "Parameter " + (i+1) + " is not an array. " + argKindVal + "was given.");
+                                    System.out.println(error() + "Parameter " + (i+1) + " is not an array. " + argKindVal + " was given.");
                                     typeErrors++;
                                 }
                             }
