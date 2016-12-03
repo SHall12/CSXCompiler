@@ -1453,8 +1453,9 @@ class binaryOpNode extends exprNode {
                                 }
                                 break;
                             default:
-                                typeMustBe(Types.Error, 0, error() +
+                                System.out.println(error() +
                                     "Both operands must be Integer or Character.");
+                                typeErrors++;
                                 type = new Types(Types.Integer);
                                 break;
                         }
@@ -1465,7 +1466,7 @@ class binaryOpNode extends exprNode {
                             type = new Types(Types.Integer);
                         break;
                     default:
-                        typeMustBe(Types.Error, 1 , error() +
+                        typeMustBe(0, 1 , error() +
                             "Left operand must be an int, float, or char.");
                             type = new Types(Types.Integer);
                         break;
@@ -1498,7 +1499,7 @@ class binaryOpNode extends exprNode {
                                         "Right operand must be an Boolean.");
                         break;
                     default:
-                        typeMustBe(Types.Error, 1, error() +
+                        typeMustBe(0, 1, error() +
                                 "Left operand must be an int, float, char, or boolean.");
                         break;
                 }
