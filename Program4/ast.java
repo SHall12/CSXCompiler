@@ -249,7 +249,7 @@ class varDeclNode extends declNode {
 		if (id == null) {
 			id = new SymbolInfo(varName.idname, new Kinds(Kinds.Var), varType.type);
 			varName.type = varType.type;
-            try {
+                try {
 				st.insert(id);
 			} catch (DuplicateException d) {
 				/* can't happen */
@@ -262,7 +262,8 @@ class varDeclNode extends declNode {
 			typeErrors++;
 			varName.type = new Types(Types.Error);
 		} // id != null
-	} // checkTypes
+                
+        } // checkTypes
 
 	private final identNode varName;
 	private final typeNode varType;
@@ -353,7 +354,8 @@ class arrayDeclNode extends declNode {
             typeErrors++;
             arrayName.type = new Types(Types.Error);
         } // id != null
-
+        
+                
         //Array size must be > 0
         if (arraySize.getVal() <= 0){
             typeErrors++;
@@ -1019,10 +1021,6 @@ class printNode extends stmtNode {
         outputValue.checkTypes();
 
         if (outputValue.kind.val != Kinds.Array) {
-            if (outputValue.kind.val != Kinds.Value) { // Note sure if correct
-                System.out.println(error() + " Can only print values");
-                typeErrors++;
-            }
             if (outputValue.type.val != Types.Integer
                     && outputValue.type.val != Types.Boolean
                     && outputValue.type.val != Types.Real
@@ -1472,8 +1470,9 @@ class binaryOpNode extends exprNode {
                                 }
                                 break;
                             default:
-                                typeMustBe(Types.Error, 0, error() +
+                                System.out.println(error() +
                                     "Both operands must be Integer or Character.");
+                                typeErrors++;
                                 type = new Types(Types.Integer);
                                 break;
                         }
@@ -1484,7 +1483,7 @@ class binaryOpNode extends exprNode {
                             type = new Types(Types.Integer);
                         break;
                     default:
-                        typeMustBe(Types.Error, 1 , error() +
+                        typeMustBe(0, 1 , error() +
                             "Left operand must be an int, float, or char.");
                             type = new Types(Types.Integer);
                         break;
@@ -1517,7 +1516,7 @@ class binaryOpNode extends exprNode {
                                         "Right operand must be an Boolean.");
                         break;
                     default:
-                        typeMustBe(Types.Error, 1, error() +
+                        typeMustBe(0, 1, error() +
                                 "Left operand must be an int, float, char, or boolean.");
                         break;
                 }
@@ -1789,16 +1788,15 @@ class nameNode extends exprNode {
                 System.out.println(error() + varName.idname + " is not an array.");
                 typeErrors++;
             }
-            if(subscriptVal.kind.val != Kinds.Value
-                    && subscriptVal.kind.val != Kinds.Var
-                    && subscriptVal.kind.val != Kinds.Scalar_Parameter){
-                System.out.println(error() + " subscript must be a scalar.");
-                typeErrors++;
-            }
             if(subscriptVal.type.val != Types.Integer
-                    && subscriptVal.type.val != Types.Character) {
-                System.out.println(error() + " Subscript must be an integer");
+                    && subscriptVal.type.val != Types.Character){
+                System.out.println(error() + "Subscript must be an integer.");
                 typeErrors++;
+            } else {
+                if (subscriptVal.kind.val == Kinds.Array){
+                    System.out.println(error() + "Subscript cannot be an array.");
+                    typeErrors++;
+                }
             }
             type = varName.type;
             kind = new Kinds(Kinds.Var);
