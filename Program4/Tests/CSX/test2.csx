@@ -33,8 +33,9 @@ class testDecls {
         char charArray[10];
         float floatArray[10];
         bool boolArray[10];
+        
         int badArray[0];                       //This should error
-
+        
         const constIntVar = 1;
         const constFloatVar = 1.1;
         const constBoolVar = true;
@@ -42,7 +43,17 @@ class testDecls {
         intVar = constFloatVar;                 //This should error
         intVar = constBoolVar;                  //This should error
         constIntVar = 2;                        //This should error
-
+        
+        //Array Referencing
+        intVar = intArray[intVar];
+        intVar = intArray[charVar];             //This should error
+        intVar = intArray[floatVar];            //This should error
+        intVar = intArray[boolVar];             //This should error
+        intVar = intArray[intArray];            //This should error
+        intVar = intArray[charArray];           //This should error
+        intVar = intArray[floatArray];          //This should error
+        intVar = intArray[boolArray];           //This should error
+        
         //Function Calls
         intVar = intFunc();
         intVar = voidFunc();                    //This should error
@@ -147,4 +158,6 @@ class testDecls {
         ++charVar;                                          //This should error
         --charVar;                                          //This should error
     }
+
+
 }
