@@ -3,14 +3,15 @@
  * @Authors:  Long Bui and Shane Hall           11/11/2016
  * FileName:  ast.java
  ***************************************************************************/
- import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.Stack;
 
 abstract class ASTNode {
 // abstract superclass; only subclasses are actually created
-
 	int linenum;
 	int colnum;
     static int typeErrors = 0; // Total number of type errors found
+    static Stack<Types> methodTypes = new Stack<Types>();
     public static SymbolTable st = new SymbolTable();
 
     static void mustBe(boolean assertion) {
@@ -29,8 +30,6 @@ abstract class ASTNode {
     String error() {
 	return "Error (line " + linenum + ", " + colnum + "): ";
     } // error
-
-
 
 	static void genIndent(int indent) {
 		for (int i = 1; i <= indent; i++) {
@@ -445,7 +444,7 @@ class methodDeclsNode extends ASTNode {
 			int line, int col) {
 		super(line, col);
 		thisDecl = m;
-	 moreDecls = ms;
+        moreDecls = ms;
 	}
 
 	void Unparse(int indent) {
@@ -557,12 +556,14 @@ class methodDeclNode extends ASTNode {
         //System.out.println("AFTER ADDING METHOD\n" + st);
 
         st.openScope();
+        name.type = returnType.type;
+        methodTypes.add(returnType.type);   // For return types
         if (!args.isNull()) {
             args.checkTypes();
         }
         decls.checkTypes();
         stmts.checkTypes();
-        name.type = returnType.type;
+        methodTypes.pop();
         //Close scope after branches are checked
         try{
             //System.out.println("AFTER ADDING GOING THROUGH METHOD\n" + st);
@@ -1165,16 +1166,32 @@ class returnNode extends stmtNode {
 		System.out.print(linenum + ":");
 		genIndent(indent);
 		if (returnVal == exprNode.NULL)
-                    System.out.print("return");
-                else
-                    System.out.print("return ");
+            System.out.print("return");
+        else
+            System.out.print("return ");
 		returnVal.Unparse(0);
 		System.out.println(";");
 	}
 
-        void checkTypes(){
-            returnVal.checkTypes();
+    void checkTypes(){
+        returnVal.checkTypes();
+        if (methodTypes.size() > 0) {
+            if (methodTypes.peek().val != Types.Void) {
+                if (methodTypes.peek().val != returnVal.type.val) {
+                    System.out.println(error() + "Return type of " + methodTypes.peek() + " expected. "
+                        + returnVal.type + " was supplied.");
+                    typeErrors++;
+                }
+            } else {
+                System.out.println(error() + "Return statement in void method.");
+                typeErrors++;
+            }
+        } else {
+            System.out.println(error() + "Return not in method.");
+            typeErrors++;
         }
+
+    }
 
 	private final exprNode returnVal;
 } // class returnNode
