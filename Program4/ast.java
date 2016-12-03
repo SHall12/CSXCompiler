@@ -1774,12 +1774,6 @@ class nameNode extends exprNode {
                 System.out.println(error() + varName.idname + " is not an array.");
                 typeErrors++;
             }
-            if(subscriptVal.kind.val != Kinds.Value
-                    && subscriptVal.kind.val != Kinds.Var
-                    && subscriptVal.kind.val != Kinds.Scalar_Parameter){
-                System.out.println(error() + " subscript must be a scalar.");
-                typeErrors++;
-            }
             if(subscriptVal.type.val != Types.Integer
                     && subscriptVal.type.val != Types.Character){
                 System.out.println(error() + "Subscript must be an integer.");
