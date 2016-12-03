@@ -1020,10 +1020,6 @@ class printNode extends stmtNode {
         outputValue.checkTypes();
 
         if (outputValue.kind.val != Kinds.Array) {
-            if (outputValue.kind.val != Kinds.Value) { // Note sure if correct
-                System.out.println(error() + " Can only print values");
-                typeErrors++;
-            }
             if (outputValue.type.val != Types.Integer
                     && outputValue.type.val != Types.Boolean
                     && outputValue.type.val != Types.Real
