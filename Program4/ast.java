@@ -28,7 +28,7 @@ abstract class ASTNode {
 	} // typeMustBe
 
     String error() {
-	return "Error (line " + linenum + ", " + colnum + "): ";
+	return "Error (" + linenum + ", " + colnum + "): ";
     } // error
 
 	static void genIndent(int indent) {
@@ -262,7 +262,7 @@ class varDeclNode extends declNode {
 			typeErrors++;
 			varName.type = new Types(Types.Error);
 		} // id != null
-                
+
         } // checkTypes
 
 	private final identNode varName;
@@ -354,8 +354,8 @@ class arrayDeclNode extends declNode {
             typeErrors++;
             arrayName.type = new Types(Types.Error);
         } // id != null
-        
-                
+
+
         //Array size must be > 0
         if (arraySize.getVal() <= 0){
             typeErrors++;
@@ -1602,11 +1602,14 @@ class castNode extends exprNode {
 
     void checkTypes() {
         operand.checkTypes();
+        kind = operand.kind;
+        type = resultType.type;
         if(operand.type.val != Types.Integer
                 && operand.type.val != Types.Character
-                && operand.type.val != Types.Real) {
+                && operand.type.val != Types.Boolean) {
             System.out.println(error() + "Type-cast operand must be an int, char, or bool.");
             typeErrors++;
+            type = new Types(Types.Error);
         }
         if(resultType.type.val  != Types.Integer
                 && resultType.type.val  != Types.Character
@@ -1614,6 +1617,7 @@ class castNode extends exprNode {
                 && resultType.type.val  != Types.Boolean) {
             System.out.println(error() + "Can only Type-cast to int, char, float, or bool.");
             typeErrors++;
+            type = new Types(Types.Error);
         }
     }
 
