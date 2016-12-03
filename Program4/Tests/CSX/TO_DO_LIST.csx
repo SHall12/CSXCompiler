@@ -10,6 +10,3 @@
 - If necessary, an implicit return statement is assumed at the end of a method.
 - Any expression (including variables, constants and literals) of type int, char or bool may be type-cast to an int, char, float or bool value. These are the only type casts allowed.
 - An identifier that labels a while statement is considered to be a local declaration in the scope immediately containing the while statement. No other declaration of the identifier in the same scope is allowed.
-- An identifier referenced in a break or continue statement must denote a label (on a while statement). Moreover, the break or continue statement must appear within the body of the while statement that is selected by the label.
-
-- Only expressions of type int or char may be used to index arrays.
