@@ -1,8 +1,8 @@
 - The scope of a field declared in the CSX class comprises all fields and methods that follow it; forward references to fields not yet declared are not allowed.
 - The scope of a method comprises its own body and all methods that follow it. Recursive calls are allowed, but calls to methods not yet declared are not allowed.
 - A formal parameter of a method is considered local to the body of the method.
-- int, bool, float, and char values, char arrays and string literals may be printed.
-- Only int and float values may be read.
+
+
 - The types of an actual parameter and its corresponding formal parameter must be identical.
 - Arrays may only be passed as reference parameters.
  return statements with an expression may only appear in functions. The expression returned by a return statement must have the same type as the function within which it appears.
