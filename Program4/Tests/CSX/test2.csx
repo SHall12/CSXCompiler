@@ -19,6 +19,10 @@ class testDecls {
         return x;
     }
 
+    bool isThisRecursive() {        // Is this even legal??
+        return isThisRecursive();
+    }
+
     int funcWithParams(int a, int b, char c[]) {
         print(a);
         return (a + b);
