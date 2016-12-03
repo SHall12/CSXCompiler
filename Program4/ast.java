@@ -894,7 +894,6 @@ class whileNode extends stmtNode {
         condition.checkTypes();
         typeMustBe(condition.type.val, Types.Boolean, error() +
             "The conditional expression must be boolean.");
-        st.openScope();
         if(!label.isNull()){
             SymbolInfo id;
             id = (SymbolInfo) st.localLookup(label.idname);
@@ -915,7 +914,8 @@ class whileNode extends stmtNode {
                 label.type = new Types(Types.Error);
             } // id != null
         }
-
+        
+        st.openScope();
         if(!loopBody.isNull()){
             loopBody.checkTypes();
         }
@@ -961,7 +961,6 @@ class readNode extends stmtNode {
         if (!moreReads.isNull()) {
             moreReads.checkTypes();
         }
-System.out.println(targetVar.type);
         switch(targetVar.type.val){
             case Types.Integer:
             case Types.Real:
@@ -2212,7 +2211,6 @@ class whileCondExprNode extends stmtNode {
 
         typeMustBe(condition.type.val, Types.Boolean, error()
             + "Return value of the Conditional Expression must be a Boolean.");
-        st.openScope();
         if(!label.isNull()){
             SymbolInfo id;
             id = (SymbolInfo) st.localLookup(label.idname);
@@ -2233,7 +2231,8 @@ class whileCondExprNode extends stmtNode {
                 label.type = new Types(Types.Error);
             } // id != null
         }
-
+        
+        st.openScope();
         if(!loopBody.isNull()){
             loopBody.checkTypes();
         }
