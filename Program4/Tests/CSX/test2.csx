@@ -28,8 +28,10 @@ class testDecls {
         char charVar = 1;
         float floatVar = 1.1;
         bool boolVar = true;
-
+        
+        int intArray[10];
         char charArray[10];
+        float floatArray[10];
         bool boolArray[10];
         int badArray[0];                       //This should error
 
@@ -57,10 +59,19 @@ class testDecls {
         print(charVar);
         print(floatVar);
         print(boolVar);
+        print(charArray);                       
+        print(intArray);                        //This should error
+        print(floatArray);                      //This should error
+        print(boolArray);                       //This should error
+                
         read(intVar);
         read(floatVar);
         read(charVar);                          //This should error
         read(boolVar);                          //This should error
+        read(charArray);                        //This should error
+        read(intArray);                         //This should error
+        read(floatArray);                       //This should error
+        read(boolArray);                        //This should error
 
         //Binary Operators
         intVar = intVar + intVar;
