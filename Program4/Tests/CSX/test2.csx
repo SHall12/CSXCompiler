@@ -23,12 +23,16 @@ class testDecls {
         return (a + b);
     }
 
+    void withReturn() {     // Void should not have return
+        return 5;
+    }
+
     void main() {
         int intVar = 1;
         char charVar = 1;
         float floatVar = 1.1;
         bool boolVar = true;
-        
+
         int intArray[10];
         char charArray[10];
         float floatArray[10];
@@ -60,7 +64,7 @@ class testDecls {
         intVar = funcWithParams(intVar, intVar, charArray);
         intVar = funcWithParams();              // This should error
         intVar = funcWithParams(intVar, floatVar, boolArray);   // This should error
-        intVar = funcWithParams(intVar, intVar, charVal);
+        intVar = funcWithParams(intVar, intVar, charVar);
 
         //Procedure Call
         intFunc();
@@ -71,11 +75,11 @@ class testDecls {
         print(charVar);
         print(floatVar);
         print(boolVar);
-        print(charArray);                       
+        print(charArray);
         print(intArray);                        //This should error
         print(floatArray);                      //This should error
         print(boolArray);                       //This should error
-                
+
         read(intVar);
         read(floatVar);
         read(charVar);                          //This should error
