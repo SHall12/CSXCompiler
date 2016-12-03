@@ -16,7 +16,7 @@ class testDecls {
     bool boolFunc(){         // NEED TO HAVE RETURNS OF CORRCT TYPE
         int x;
         x = 1;
-        return x;
+        return x;                               //This should error
     }
 
     bool isThisRecursive() {        // Is this even legal??
@@ -29,7 +29,7 @@ class testDecls {
     }
 
     void withReturn() {     // Void should not have return
-        return 5;
+        return 5;                               //This should error
     }
 
     void main() {
@@ -77,8 +77,8 @@ class testDecls {
         intVar = funcWithParams(intVar, intVar, charVar);
 
         //Procedure Call
-        intFunc();
-        voidFunc();                             //This should error
+        intFunc();                              //This should error
+        voidFunc();                             
 
         //Print and Read
         print(intVar);
