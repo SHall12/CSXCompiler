@@ -131,7 +131,18 @@ class testDecls {
             }
             break whileID;
             continue whileID;
+            
+            whileID: while(true){             
+                int x;
+            x = 2;
+            }
+
         }
+         whileID: while(true){              //This should error
+                int x;
+            x = 2;
+            }
+
         break whileID;                          //This should error
         continue whileID;                          //This should error
 
