@@ -1785,7 +1785,6 @@ class nameNode extends exprNode {
                 System.out.println(error() + "Subscript must be an integer.");
                 typeErrors++;
             } else {
-System.out.println(subscriptVal.kind);
                 if (subscriptVal.kind.val == Kinds.Array){
                     System.out.println(error() + "Subscript cannot be an array.");
                     typeErrors++;
