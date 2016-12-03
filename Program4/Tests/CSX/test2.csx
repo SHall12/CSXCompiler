@@ -44,9 +44,10 @@ class testDecls {
         //Function Calls
         intVar = intFunc();
         intVar = voidFunc();                    //This should error
-        intVar = funcWithParams(intVar, charVar, charArray);
+        intVar = funcWithParams(intVar, intVar, charArray);
         intVar = funcWithParams();              // This should error
         intVar = funcWithParams(intVar, floatVar, boolArray);   // This should error
+        intVar = funcWithParams(intVar, intVar, charVal);
 
         //Procedure Call
         intFunc();
@@ -93,21 +94,21 @@ class testDecls {
                 continue whileID;
             }
             break whileID;
-            continue whileID; 
-        }   
+            continue whileID;
+        }
         break whileID;                          //This should error
         continue whileID;                          //This should error
-        
+
         if(true){
             if(intVar){                         //This should error
                 intVar = 2;
             } ENDIF
         } ENDIF
-        
+
         //Conditional Expressions
         intVar = (intVar ? intVar -: intVar +: intVar);
         intVar = (intVar ? boolVar -: intVar +: intVar);    //This should error
-        
+
         if(intVar? boolVar -: boolVar +: boolVar){
             intVar = 1;
         } ENDIF
@@ -116,7 +117,7 @@ class testDecls {
         } ENDIF
         while(intVar? intVar -: intVar +: intVar){            //This should error
             intVar = 1;
-        } 
+        }
 
         //Increment and Decrement
         intVar++;
@@ -132,7 +133,7 @@ class testDecls {
         ++boolVar;                                          //This should error
         --boolVar;                                          //This should error
         charVar++;                                          //This should error
-        charVar--;                                          //This should error    
+        charVar--;                                          //This should error
         ++charVar;                                          //This should error
         --charVar;                                          //This should error
     }
