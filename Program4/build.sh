@@ -19,7 +19,7 @@ do
 done
 
 echo "****Building Project****"
-for file in Kinds.java Types.java SymbolInfo.java SymbolTable.java ast.java parser.java P4.java
+for file in Kinds.java Types.java SymbolInfo.java FunctSymbol.java SymbolTable.java ast.java parser.java P4.java
 do
     echo Compiling $file
     javac -cp tools/java-cup-10l.jar:. $file
