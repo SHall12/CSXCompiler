@@ -1247,14 +1247,15 @@ class breakNode extends stmtNode {
 
     void checkTypes(){
         SymbolInfo id;
-        id = (SymbolInfo) st.globalLookup(label.idname);
+        id = (SymbolInfo) st.localLookup(label.idname);
 
-        if (id == null) {
-            System.out.println(error() + label.idname + " is not declared.");
+        if (id != null) {
+            System.out.println(error() + label.idname + " already exists in this scope.");
             typeErrors++;
         } else {
-            if (id.kind.val != Kinds.Label) {
-                System.out.println(error() + label.idname + " is not a label.");
+            id = (SymbolInfo) st.globalLookup(label.idname);
+            if (id == null){
+                System.out.println(error() + label.idname + " does not exist.");
                 typeErrors++;
             }
         }
@@ -1280,14 +1281,15 @@ class continueNode extends stmtNode {
 
     void checkTypes(){
         SymbolInfo id;
-        id = (SymbolInfo) st.globalLookup(label.idname);
+        id = (SymbolInfo) st.localLookup(label.idname);
 
-        if (id == null) {
-            System.out.println(error() + label.idname + " is not declared.");
+        if (id != null) {
+            System.out.println(error() + label.idname + " already exists in this scope.");
             typeErrors++;
         } else {
-            if (id.kind.val != Kinds.Label) {
-                System.out.println(error() + label.idname + " is not a label.");
+            id = (SymbolInfo) st.globalLookup(label.idname);
+            if (id == null){
+                System.out.println(error() + label.idname + " does not exist.");
                 typeErrors++;
             }
         }
