@@ -511,12 +511,17 @@ class methodDeclNode extends ASTNode {
             System.out.println(error() + id.name() + " is already declared.");
             typeErrors++;
             name.type = new Types(Types.Error);
-        }
-        st.openScope(); // Open new Scope
-        if (!args.isNull()) {
-            args.checkTypes();
-        }
-        if (id == null) {
+        } else {
+            /*
+                Use next scope to store argument types and then reset the scope
+                Add the method to the top scope
+                Finish typechecking like normal
+            */
+            id = new SymbolInfo(name.idname, new Kinds(Kinds.Method), returnType.type);
+            st.openScope();
+            if (!args.isNull()) {
+                args.checkTypes();
+            }
             // Construct arraylist of args types
             ArrayList<SymbolInfo> paramTypes = new ArrayList<SymbolInfo>();
             argDeclsNode nodesLeft = args;
@@ -524,6 +529,17 @@ class methodDeclNode extends ASTNode {
                 paramTypes.add(nodesLeft.getThisDecl().getParamInfo());
                 nodesLeft = nodesLeft.getNextDecls();
             }
+
+            //System.out.println("AFTER ADDING ARGS\n" + st);
+
+            try{    // To add function to higher scope
+                st.closeScope();
+            } catch(EmptySTException e){
+                System.err.println("Error: Empty scope");
+                System.exit(-1);
+            }
+
+            // Insert the new symbol
             id = new FunctSymbol(name.idname,
                                 new Kinds(Kinds.Method),
                                 returnType.type,
@@ -531,6 +547,7 @@ class methodDeclNode extends ASTNode {
             name.type = returnType.type;
             try {
                 st.insert(id);
+                //System.out.println("Method declared: " + id);
             } catch (DuplicateException d) {
                 /* can't happen */
             } catch (EmptySTException e) {
@@ -539,17 +556,23 @@ class methodDeclNode extends ASTNode {
             name.idinfo = id;
         }
 
+        //System.out.println("AFTER ADDING METHOD\n" + st);
+
+        st.openScope();
+        if (!args.isNull()) {
+            args.checkTypes();
+        }
         decls.checkTypes();
         stmts.checkTypes();
         name.type = returnType.type;
         //Close scope after branches are checked
         try{
+            //System.out.println("AFTER ADDING GOING THROUGH METHOD\n" + st);
             st.closeScope();
         }catch(EmptySTException e){
             System.err.println("Error: Empty scope");
             System.exit(-1);
         }
-
     } // checkTypes
 
     public boolean isMain() {
@@ -1056,9 +1079,6 @@ class callNode extends stmtNode {
 
     void checkTypes() {
         methodName.checkTypes();
-        Types type = methodName.type;
-
-        //int kind = Kinds.Value; or void
 
         // NEEDS TO CHECK IF CORRECT PARAMETERS
         if (!args.isNull()) {
@@ -1067,11 +1087,12 @@ class callNode extends stmtNode {
 
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(methodName.idname);
-
+        //System.out.println("Function call: " + id);
+        //System.out.println(st.toString());
         if (id != null) {
             if (methodName.type.val != Types.Void){
                 System.out.println(error() + methodName.idname +
-                        ": is not a void procedures.");
+                        " is not Void.");
                 typeErrors++;
             }
             if (id.kind.val == Kinds.Method) {
@@ -1085,8 +1106,11 @@ class callNode extends stmtNode {
                     nodesLeft = nodesLeft.getNextArgs();
                 }
 
+                //System.out.println("\nPARAMS: " + paramTypes);
+                //System.out.println("ARGS: " + argTypes);
+
                 // Compare lengths
-                if (paramTypes.size() != argTypes.size()) {
+                if (paramTypes.size() == argTypes.size()) {
                     // Compare types
                     /* For each element of paramTyes and argTypes
                     // If paramType.type != ArgType.type, error
@@ -1095,8 +1119,30 @@ class callNode extends stmtNode {
                     // else
                         if argType.kind != Var, Val, Scalar_Parameter, error
                     */
+                    for (int i = 0; i < paramTypes.size(); ++i) {
+                        if (argTypes.get(i).type.val == paramTypes.get(i).type.val ) {
+                            Kinds argKindVal = argTypes.get(i).kind;
+                            if (paramTypes.get(i).kind.val == Kinds.Scalar_Parameter) {
+                                if (argKindVal.val != Kinds.Var && argKindVal.val != Kinds.Value
+                                        && argKindVal.val != Kinds.Scalar_Parameter) {
+                                    System.out.println(error() + "Parameter " + (i+1) + " is not a scalar. " + argKindVal + "was given.");
+                                    typeErrors++;
+                                }
+                            } else {
+                                if (argKindVal.val != Kinds.Array && argKindVal.val != Kinds.Array_Parameter) {
+                                    System.out.println(error() + "Parameter " + (i+1) + " is not an array. " + argKindVal + "was given.");
+                                    typeErrors++;
+                                }
+                            }
+                        } else {
+                            System.out.println(error() + "Parameter " + (i+1) + " should be "
+                                + paramTypes.get(i).type + ". " + argTypes.get(i).type + " was given.");
+                            typeErrors++;
+                        }
+                    }
                 } else {
-                    System.out.println(error() + " number of parameters does not match number of arguements.");
+                    System.out.println(error() + methodName.idname + " requires " + paramTypes.size() +
+                        " parameters. " + argTypes.size() + " supplied.");
                     typeErrors++;
                 }
             }
@@ -1228,7 +1274,7 @@ class continueNode extends stmtNode {
             if (id.kind.val != Kinds.Label) {
                 System.out.println(error() + label.idname + " is not a label.");
                 typeErrors++;
-            }         
+            }
         }
     }
 
@@ -1517,7 +1563,7 @@ class unaryOpNode extends exprNode {
                 type = new Types(Types.Boolean);
             } else {
                 type = operand.type;
-                kind = new Kinds(Kinds.Value);
+                kind = operand.kind;
             }
         }
 
@@ -1579,9 +1625,8 @@ class fctCallNode extends exprNode {
 
     void checkTypes() {
         methodName.checkTypes();
-        Types type = methodName.type;
-
-        //int kind = Kinds.Value; or void
+        type = methodName.type;
+        kind = new Kinds(Kinds.Value);
 
         // NEEDS TO CHECK IF CORRECT PARAMETERS
         if (!args.isNull()) {
@@ -1590,7 +1635,8 @@ class fctCallNode extends exprNode {
 
         SymbolInfo id;
         id = (SymbolInfo) st.globalLookup(methodName.idname);
-
+        //System.out.println("Function call: " + id);
+        //System.out.println(st.toString());
         if (id != null) {
             if (id.kind.val == Kinds.Method) {
                 ArrayList<SymbolInfo> paramTypes = ((FunctSymbol)id).getParams();
@@ -1603,8 +1649,11 @@ class fctCallNode extends exprNode {
                     nodesLeft = nodesLeft.getNextArgs();
                 }
 
+                //System.out.println("\nPARAMS: " + paramTypes);
+                //System.out.println("ARGS: " + argTypes);
+
                 // Compare lengths
-                if (paramTypes.size() != argTypes.size()) {
+                if (paramTypes.size() == argTypes.size()) {
                     // Compare types
                     /* For each element of paramTyes and argTypes
                     // If paramType.type != ArgType.type, error
@@ -1613,8 +1662,30 @@ class fctCallNode extends exprNode {
                     // else
                         if argType.kind != Var, Val, Scalar_Parameter, error
                     */
+                    for (int i = 0; i < paramTypes.size(); ++i) {
+                        if (argTypes.get(i).type.val == paramTypes.get(i).type.val ) {
+                            Kinds argKindVal = argTypes.get(i).kind;
+                            if (paramTypes.get(i).kind.val == Kinds.Scalar_Parameter) {
+                                if (argKindVal.val != Kinds.Var && argKindVal.val != Kinds.Value
+                                        && argKindVal.val != Kinds.Scalar_Parameter) {
+                                    System.out.println(error() + "Parameter " + (i+1) + " is not a scalar. " + argKindVal + "was given.");
+                                    typeErrors++;
+                                }
+                            } else {
+                                if (argKindVal.val != Kinds.Array && argKindVal.val != Kinds.Array_Parameter) {
+                                    System.out.println(error() + "Parameter " + (i+1) + " is not an array. " + argKindVal + "was given.");
+                                    typeErrors++;
+                                }
+                            }
+                        } else {
+                            System.out.println(error() + "Parameter " + (i+1) + " should be "
+                                + paramTypes.get(i).type + ". " + argTypes.get(i).type + " was given.");
+                            typeErrors++;
+                        }
+                    }
                 } else {
-                    System.out.println(error() + " number of parameters does not match number of arguements.");
+                    System.out.println(error() + methodName.idname + " requires " + paramTypes.size() +
+                        " parameters. " + argTypes.size() + " supplied.");
                     typeErrors++;
                 }
             }
@@ -1656,19 +1727,19 @@ class identNode extends exprNode {
 		SymbolInfo id;
 		mustBe(kind.val != Kinds.Other);
 		id = (SymbolInfo) st.globalLookup(idname);
-                if (id == null) {
-                        System.out.println(error() + idname + " is not declared.");
+        if (id == null) {
+            System.out.println(error() + idname + " is not declared.");
 			typeErrors++;
 			type = new Types(Types.Error);
 		} else {
-                	type = id.type;
-                        kind = id.kind;
+        	type = id.type;
+            kind = id.kind;
 			idinfo = id; // Save ptr to correct symbol table entry
 		} // id != null
 	} // checkTypes
 
 	public final String idname;
-        public SymbolInfo idinfo; // symbol table entry for this ident
+    public SymbolInfo idinfo; // symbol table entry for this ident
 	private final boolean nullFlag;
 } // class identNode
 
@@ -1875,7 +1946,7 @@ class preIncrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + "Variable: " + idName.idname 
+                    System.out.println(error() + "Variable: " + idName.idname
                             + " has to be an Integer or Float.");
                     typeErrors++;
                     break;
@@ -1915,7 +1986,7 @@ class postIncrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + "Variable: " + idName.idname 
+                    System.out.println(error() + "Variable: " + idName.idname
                             + " has to be an Integer or Float.");
                     typeErrors++;
             }
@@ -1955,7 +2026,7 @@ class preDecrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + "Variable: " + idName.idname 
+                    System.out.println(error() + "Variable: " + idName.idname
                             + " has to be an Integer or Float.");
                     typeErrors++;
             }
@@ -1994,7 +2065,7 @@ class postDecrementNode extends stmtNode {
                 case Types.Real:
                     break;
                 default:
-                    System.out.println(error() + "Variable: " + idName.idname 
+                    System.out.println(error() + "Variable: " + idName.idname
                             + " has to be an Integer or Float.");
                     typeErrors++;
             }
@@ -2079,15 +2150,15 @@ class ifCondExprNode extends stmtNode {
 
         void checkTypes(){
             condition.checkTypes();
-            
+
             if (!thenPart.isNull()) {
                 thenPart.checkTypes();
             }
             if (!elsePart.isNull()) {
                 elsePart.checkTypes();
             }
-            
-            typeMustBe(condition.type.val, Types.Boolean, error() 
+
+            typeMustBe(condition.type.val, Types.Boolean, error()
                 + "Return value of the Conditional Expression must be a Boolean.");
         }
 
@@ -2124,8 +2195,8 @@ class whileCondExprNode extends stmtNode {
 
     void checkTypes(){
         condition.checkTypes();
-        
-        typeMustBe(condition.type.val, Types.Boolean, error() 
+
+        typeMustBe(condition.type.val, Types.Boolean, error()
             + "Return value of the Conditional Expression must be a Boolean.");
         st.openScope();
         if(!label.isNull()){
