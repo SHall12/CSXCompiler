@@ -23,9 +23,9 @@ public class CodeGenerator{
         //Create a printstream file for output.
         File file = new File("simple.j");
         PrintStream ps = new PrintStream(file);
+        PrintStream stdout = System.out;
         System.setOut(ps);
-        
-        
+                
         System.out.println(".class public simple");
         System.out.println(".super java/lang/Object");
         System.out.println("");
@@ -152,6 +152,17 @@ public class CodeGenerator{
         System.out.println("aload_0");
         System.out.println("invokestatic simple/computeMax([D)V       ; calls computeMax");        
         System.out.println("return");
-        System.out.println(".end method");        
+        System.out.println(".end method");     
+        
+        System.setOut(stdout);      //Resets output back to System.out
+        // execute jasmin code
+        try {
+            Runtime.getRuntime().exec("java -jar jasmin.jar simple.j");
+            Runtime.getRuntime().exec("java simple > output.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
