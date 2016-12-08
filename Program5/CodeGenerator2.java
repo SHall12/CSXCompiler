@@ -45,7 +45,8 @@ public class CodeGenerator {
         // execute jasmin code
         try {
             Runtime.getRuntime().exec("java -jar jasmin.jar simple.j");
-            Runtime.getRuntime().exec("java simple > output.txt");
+            String command = "java simple > output.txt";
+            Runtime.getRuntime().exec(new String[] { "bash", "-c", command });
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
