@@ -9,8 +9,8 @@
 .end method
 
 .method public static main([Ljava/lang/String;)V
-    .limit stack 6
-    .limit locals 2
+    .limit stack 4
+    .limit locals 1
 
     iconst_4
     newarray double          ; Create 10 element array of doubles
@@ -36,8 +36,11 @@
     ldc2_w -99.   ; value to store
     dastore     ; store value in location
 
-    ;aload_0
-    ;invokevirtual computeMax([D)V   ; Call function
+    aload_0
+    invokestatic simple/computeMax([D)V   ; Call function
+
+    aload_0
+    invokestatic simple/computeMin([D)V   ; Call function
     return      ; return from main
 .end method
 
@@ -75,7 +78,7 @@
             dload 4     ; load current score
             dload_2     ; load max
             dcmpg       ; compare current score to max
-            ifgt incrementIndex ; check if element > max, NEEDS OFFSET = after next statment
+            iflt incrementIndex ; check if element > max, NEEDS OFFSET = after next statment
                 dload 4         ; set max to element
                 dstore_2
 
@@ -98,7 +101,64 @@
         getstatic java/lang/System/out Ljava/io/PrintStream;
         dload_2
         invokevirtual java/io/PrintStream/println(D)V
-
     return
+.end method
 
+.method public static computeMin([D)V
+    .limit stack 4
+    .limit locals 6
+    ; 0 stores array of scores
+    ; 1 stores index of current score
+    ; 2 stores target score
+    ; 4 stores current score
+
+    ; Store 0 to local variable, stores index
+    iconst_0
+    istore_1
+
+    ; Set max to first element
+    aload_0
+    iload_1     ; current index
+    daload
+    dstore_2
+
+    ; Store first element as current
+    aload_0
+    iload_1         ; load index
+    daload          ; load array element
+    dstore 4
+
+    checkScore:
+        ; check if current score != -99
+        dload 4
+        ldc2_w -99.      ; load constant -99
+        dcmpg           ; compare current score to -99
+        ifeq printScore
+            ; Set new max
+            dload 4
+            dload_2
+            dcmpg
+            ifgt incrementIndex
+                dload 4
+                dstore_2
+
+        incrementIndex:
+        iload_1
+        iconst_1
+        iadd
+        istore_1
+
+        ; Update current score
+        aload_0
+        iload_1         ; load index
+        daload          ; load array element
+        dstore 4        ; update current score
+
+        ; Jump back to loop
+        goto checkScore
+    printScore:
+        getstatic java/lang/System/out Ljava/io/PrintStream;
+        dload_2
+        invokevirtual java/io/PrintStream/println(D)V
+    return
 .end method
