@@ -146,6 +146,20 @@ public class CodeGenerator{
         System.out.println("\t;starts storing arrays");
         
         for (int i = 0; i < index; i++){
+            if (index <= 5){
+                System.out.println("\taload_0             ; push array reference onto stack");
+                System.out.println("\tldc_" + i + "               ; push index onto stack");
+                System.out.println("\tldc2_w " + num[i] + "         ; push first value onto stack");
+                System.out.println("\tdastore             ; store value in array at index");
+        
+            } else {
+                System.out.println("\taload_0             ; push array reference onto stack");
+                System.out.println("\tldc " + i + "               ; push index onto stack");
+                System.out.println("\tldc2_w " + num[i] + "         ; push first value onto stack");
+                System.out.println("\tdastore             ; store value in array at index");
+        
+            }
+            
             System.out.println("\taload_0             ; push array reference onto stack");
             System.out.println("\tldc " + i + "               ; push index onto stack");
             System.out.println("\tldc2_w " + num[i] + "         ; push first value onto stack");
