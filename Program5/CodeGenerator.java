@@ -1,3 +1,10 @@
+/***************************************************************************
+ * CSX Project: Program 5: Code Generator
+ * @Authors:  Long Bui and Shane Hall           12/08/2016
+ * FileName:  CodeGenerator.java
+ ***************************************************************************/
+
+
 import java.io.*;
 import java.util.Scanner;
 import java.io.PrintStream;
@@ -146,8 +153,14 @@ public class CodeGenerator{
         }
         
         System.out.println("\t; finished storing arrays");
-        System.out.println("\taload_0");
         System.out.println("");
+        System.out.println("\t;Set System.out to a file!");
+	System.out.println("\tnew java/io/PrintStream");
+	System.out.println("\tdup");
+	System.out.println("\tldc \"output.txt\"");
+	System.out.println("\tinvokespecial java/io/PrintStream/<init>(Ljava/lang/String;)V");
+	System.out.println("\tinvokestatic java/lang/System.setOut(Ljava/io/PrintStream;)V");
+        System.out.println("\taload_0");
         System.out.println("\tinvokestatic simple/computeMin([D)V      ; calls computeMin");
         System.out.println("\taload_0");
         System.out.println("\tinvokestatic simple/computeMax([D)V       ; calls computeMax");        
@@ -158,7 +171,6 @@ public class CodeGenerator{
         // execute jasmin code
         try {
             Runtime.getRuntime().exec("java -jar jasmin.jar simple.j");
-            Runtime.getRuntime().exec("java simple > output.txt");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
